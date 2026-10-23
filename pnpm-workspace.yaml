@@ -1,2 +1,15 @@
 allowBuilds:
+  '@prisma/engines': true
+  esbuild: false
+  prisma: true
   unrs-resolver: false
+  workerd: false
+minimumReleaseAgeExclude:
+  - '@prisma/composer-cli@0.34.0'
+  - '@prisma/composer@0.34.0'
+  - '@prisma/orm-framework@8.0.0-rc.20'
+  - '@prisma/orm-toolchain@8.0.0-rc.20'
+  - prisma@8.0.0-rc.27
+  - '@prisma/orm-family-sql@8.0.0-rc.20'
+  - '@prisma/orm-postgres@8.0.0-rc.20'
+  - '@prisma/orm-target-postgres@8.0.0-rc.20'
