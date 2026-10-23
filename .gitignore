@@ -42,3 +42,12 @@ next-env.d.ts
 node_modules/
 dist/
 .env
+
+# jetbrains setting folder
+.idea/
+
+# skills de agentes (se reinstalan desde skills-lock.json)
+.agents/
+.aider-desk/
+.claude/skills/
+.claude/settings.local.json
