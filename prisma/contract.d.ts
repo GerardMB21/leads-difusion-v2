@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'69a278a77759168b4f7c9eb3f922795d51f0568590a45216f5901142a5f10b04'>;
+  StorageHashBase<'ec873a2e6cb66320b5cc5e7e23e1f58c535c275d5f4e708fdf9f84d1e40964b9'>;
 export type ExecutionHash =
   ExecutionHashBase<'1e2fae45d0791946070bf397881dfc826575621d0d0f9609517ace05e89adaca'>;
 export type ProfileHash =
@@ -286,8 +286,9 @@ export namespace Models {
     updatedAt: FieldOutputTypes['public']['Lead']['updatedAt'];
     beforePipeline: public_Pipeline | null;
     pipeline: public_Pipeline;
+    tags: public_TagInLead[];
     template: public_Template | null;
-    readonly [RelationKeys]?: 'beforePipeline' | 'pipeline' | 'template';
+    readonly [RelationKeys]?: 'beforePipeline' | 'pipeline' | 'tags' | 'template';
   };
   export type public_Pipeline = {
     createdAt: FieldOutputTypes['public']['Pipeline']['createdAt'];
@@ -307,7 +308,15 @@ export namespace Models {
     id: FieldOutputTypes['public']['Tag']['id'];
     name: FieldOutputTypes['public']['Tag']['name'];
     updatedAt: FieldOutputTypes['public']['Tag']['updatedAt'];
-    readonly [RelationKeys]?: never;
+    leads: public_TagInLead[];
+    readonly [RelationKeys]?: 'leads';
+  };
+  export type public_TagInLead = {
+    leadId: FieldOutputTypes['public']['TagInLead']['leadId'];
+    tagId: FieldOutputTypes['public']['TagInLead']['tagId'];
+    lead: public_Lead;
+    tag: public_Tag;
+    readonly [RelationKeys]?: 'lead' | 'tag';
   };
   export type public_Template = {
     createdAt: FieldOutputTypes['public']['Template']['createdAt'];
@@ -327,6 +336,7 @@ export declare const models: {
     Lead: Models.public_Lead;
     Pipeline: Models.public_Pipeline;
     Tag: Models.public_Tag;
+    TagInLead: Models.public_TagInLead;
     Template: Models.public_Template;
   };
 };
@@ -602,6 +612,64 @@ type ContractBase = Omit<
               indexes: readonly [];
               foreignKeys: readonly [];
             };
+            readonly TagInLead: {
+              columns: {
+                readonly leadId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly tagId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['tagId', 'leadId'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'TagInLead_leadId_idx_9113844c';
+                  readonly prefix: 'TagInLead_leadId_idx';
+                  readonly columns: readonly ['leadId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'TagInLead_tagId_idx_86854244';
+                  readonly prefix: 'TagInLead_tagId_idx';
+                  readonly columns: readonly ['tagId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'TagInLead';
+                    readonly columns: readonly ['tagId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Tag';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'TagInLead';
+                    readonly columns: readonly ['leadId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Lead';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly Template: {
               columns: {
                 readonly createdAt: {
@@ -671,6 +739,7 @@ type ContractBase = Omit<
     readonly Lead: { readonly namespace: 'public' & NamespaceId; readonly model: 'Lead' };
     readonly Pipeline: { readonly namespace: 'public' & NamespaceId; readonly model: 'Pipeline' };
     readonly Tag: { readonly namespace: 'public' & NamespaceId; readonly model: 'Tag' };
+    readonly TagInLead: { readonly namespace: 'public' & NamespaceId; readonly model: 'TagInLead' };
     readonly Template: { readonly namespace: 'public' & NamespaceId; readonly model: 'Template' };
   };
   readonly domain: {
@@ -767,6 +836,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['pipelineId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly tags: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'TagInLead';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['leadId'];
                 };
               };
               readonly template: {
@@ -906,7 +986,19 @@ type ContractBase = Omit<
                 };
               };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly leads: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'TagInLead';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['tagId'];
+                };
+              };
+            };
             readonly storage: {
               readonly table: 'Tag';
               readonly namespaceId: 'public';
@@ -916,6 +1008,46 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly TagInLead: {
+            readonly fields: {
+              readonly leadId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly tagId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly lead: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Lead' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['leadId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly tag: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Tag' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['tagId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'TagInLead';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly leadId: { readonly column: 'leadId' };
+                readonly tagId: { readonly column: 'tagId' };
               };
             };
           };

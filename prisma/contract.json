@@ -16,6 +16,10 @@
       "model": "Tag",
       "namespace": "public"
     },
+    "TagInLead": {
+      "model": "TagInLead",
+      "namespace": "public"
+    },
     "Template": {
       "model": "Template",
       "namespace": "public"
@@ -149,6 +153,21 @@
                 },
                 "to": {
                   "model": "Pipeline",
+                  "namespace": "public"
+                }
+              },
+              "tags": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "leadId"
+                  ]
+                },
+                "to": {
+                  "model": "TagInLead",
                   "namespace": "public"
                 }
               },
@@ -365,7 +384,23 @@
                 }
               }
             },
-            "relations": {},
+            "relations": {
+              "leads": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tagId"
+                  ]
+                },
+                "to": {
+                  "model": "TagInLead",
+                  "namespace": "public"
+                }
+              }
+            },
             "storage": {
               "fields": {
                 "createdAt": {
@@ -386,6 +421,70 @@
               },
               "namespaceId": "public",
               "table": "Tag"
+            }
+          },
+          "TagInLead": {
+            "fields": {
+              "leadId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "tagId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "lead": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "leadId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Lead",
+                  "namespace": "public"
+                }
+              },
+              "tag": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tagId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tag",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "leadId": {
+                  "column": "leadId"
+                },
+                "tagId": {
+                  "column": "tagId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "TagInLead"
             }
           },
           "Template": {
@@ -508,6 +607,11 @@
               "kind": "rls",
               "namespaceId": "public",
               "tableName": "Tag"
+            },
+            "TagInLead": {
+              "kind": "rls",
+              "namespaceId": "public",
+              "tableName": "TagInLead"
             },
             "Template": {
               "kind": "rls",
@@ -804,6 +908,85 @@
                 }
               ]
             },
+            "TagInLead": {
+              "columns": {
+                "leadId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "tagId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "TagInLead_tagId_idx_86854244"
+                  },
+                  "source": {
+                    "columns": [
+                      "tagId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "TagInLead"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Tag"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "TagInLead_leadId_idx_9113844c"
+                  },
+                  "source": {
+                    "columns": [
+                      "leadId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "TagInLead"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Lead"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "leadId"
+                  ],
+                  "name": "TagInLead_leadId_idx_9113844c",
+                  "prefix": "TagInLead_leadId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tagId"
+                  ],
+                  "name": "TagInLead_tagId_idx_86854244",
+                  "prefix": "TagInLead_tagId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "tagId",
+                  "leadId"
+                ]
+              },
+              "uniques": []
+            },
             "Template": {
               "columns": {
                 "createdAt": {
@@ -871,7 +1054,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "69a278a77759168b4f7c9eb3f922795d51f0568590a45216f5901142a5f10b04"
+    "storageHash": "ec873a2e6cb66320b5cc5e7e23e1f58c535c275d5f4e708fdf9f84d1e40964b9"
   },
   "execution": {
     "executionHash": "1e2fae45d0791946070bf397881dfc826575621d0d0f9609517ace05e89adaca",
