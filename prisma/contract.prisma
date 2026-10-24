@@ -7,19 +7,31 @@ model mixin DefaultCols {
   deletedAt   TimestamptzString?
 }
 
-model Lead {
+model Pipeline {
   +DefaultCols
-  contactName      String
-  phone            String
-  order            Int
-  enrollmentDate   TimestamptzString
-  lastContact      Int?
-  messageResponse  Boolean? @default(false)
-  templateId       Int?
-  pipelineId       Int
-  beforePipelineId Int?
+  name            String             @unique
+  order           Int
+  default         Boolean            @default(false)
+  // leads           Lead[]
+  // leadsBefore     Lead[]             @relation("BeforePipeline")
+  // workflowsFrom   WorkflowPipeline[] @relation("PipelineFrom")
+  // workflowsTo     WorkflowPipeline[] @relation("PipelineTo")
   @@rls
-  // pipeline            Pipeline  @relation(fields: [pipelineId], references: [id])
-  // beforePipeline       Pipeline? @relation("beforePipeline", fields: [beforePipelineId], references: [id])
-  // lastTemplate         Template? @relation(fields: [lastTemplateId], references: [id])
 }
+
+// model Lead {
+//   +DefaultCols
+//   contactName      String
+//   phone            String
+//   order            Int
+//   enrollmentDate   TimestamptzString
+//   lastContact      Int?
+//   messageResponse  Boolean? @default(false)
+//   templateId       Int?
+//   pipelineId       Int
+//   beforePipelineId Int?
+//   @@rls
+//   // pipeline            Pipeline  @relation(fields: [pipelineId], references: [id])
+//   // beforePipeline       Pipeline? @relation("beforePipeline", fields: [beforePipelineId], references: [id])
+//   // lastTemplate         Template? @relation(fields: [lastTemplateId], references: [id])
+// }

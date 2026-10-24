@@ -4,8 +4,8 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
-    "Lead": {
-      "model": "Lead",
+    "Pipeline": {
+      "model": "Pipeline",
       "namespace": "public"
     }
   },
@@ -13,22 +13,8 @@
     "namespaces": {
       "public": {
         "models": {
-          "Lead": {
+          "Pipeline": {
             "fields": {
-              "beforePipelineId": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "contactName": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -36,15 +22,15 @@
                   "kind": "scalar"
                 }
               },
-              "deletedAt": {
-                "nullable": true,
+              "default": {
+                "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/bool@1",
                   "kind": "scalar"
                 }
               },
-              "enrollmentDate": {
-                "nullable": false,
+              "deletedAt": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
@@ -57,43 +43,15 @@
                   "kind": "scalar"
                 }
               },
-              "lastContact": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "messageResponse": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
-              },
-              "order": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "phone": {
+              "name": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
-              "pipelineId": {
+              "order": {
                 "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "templateId": {
-                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -110,48 +68,30 @@
             "relations": {},
             "storage": {
               "fields": {
-                "beforePipelineId": {
-                  "column": "beforePipelineId"
-                },
-                "contactName": {
-                  "column": "contactName"
-                },
                 "createdAt": {
                   "column": "createdAt"
+                },
+                "default": {
+                  "column": "default"
                 },
                 "deletedAt": {
                   "column": "deletedAt"
                 },
-                "enrollmentDate": {
-                  "column": "enrollmentDate"
-                },
                 "id": {
                   "column": "id"
                 },
-                "lastContact": {
-                  "column": "lastContact"
-                },
-                "messageResponse": {
-                  "column": "messageResponse"
+                "name": {
+                  "column": "name"
                 },
                 "order": {
                   "column": "order"
-                },
-                "phone": {
-                  "column": "phone"
-                },
-                "pipelineId": {
-                  "column": "pipelineId"
-                },
-                "templateId": {
-                  "column": "templateId"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
                 }
               },
               "namespaceId": "public",
-              "table": "Lead"
+              "table": "Pipeline"
             }
           }
         }
@@ -163,25 +103,15 @@
       "public": {
         "entries": {
           "rls": {
-            "Lead": {
+            "Pipeline": {
               "kind": "rls",
               "namespaceId": "public",
-              "tableName": "Lead"
+              "tableName": "Pipeline"
             }
           },
           "table": {
-            "Lead": {
+            "Pipeline": {
               "columns": {
-                "beforePipelineId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
-                },
-                "contactName": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": false
-                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
@@ -191,15 +121,19 @@
                   },
                   "nullable": false
                 },
+                "default": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
                 "deletedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
                   "nullable": true
-                },
-                "enrollmentDate": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
-                  "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
@@ -210,39 +144,15 @@
                   },
                   "nullable": false
                 },
-                "lastContact": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
-                },
-                "messageResponse": {
-                  "codecId": "pg/bool@1",
-                  "dataType": "pg/bool",
-                  "default": {
-                    "kind": "literal",
-                    "value": false
-                  },
-                  "nullable": true
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
                 },
                 "order": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": false
-                },
-                "phone": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": false
-                },
-                "pipelineId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "templateId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -257,7 +167,13 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "name"
+                  ]
+                }
+              ]
             }
           }
         },
@@ -265,10 +181,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "cd944711f74652bbb7cb5a7b98b44cc1adeb6488e3c599349a4a47c13007c996"
+    "storageHash": "20506b305eba57db7534688cf9a634ee9a967bd7622c6daa6a3b070b8ad6db0d"
   },
   "execution": {
-    "executionHash": "a707f0c738537a1a4232025fb8d4e8e869dadad86bfeb06e3689c21b07372e94",
+    "executionHash": "da476cf88a27b424c1cbca88178ee19425c8e989bc3e608ffa2e05d2313029a2",
     "mutations": {
       "defaults": [
         {
@@ -281,7 +197,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Lead",
+            "entry": "Pipeline",
             "field": "updatedAt",
             "namespace": "public"
           }
