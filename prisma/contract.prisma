@@ -18,7 +18,8 @@ model Lead {
   templateId       Int?
   pipelineId       Int
   beforePipelineId Int?
-  // pipeline             Pipeline  @relation(fields: [pipelineId], references: [id])
+  @@rls
+  // pipeline            Pipeline  @relation(fields: [pipelineId], references: [id])
   // beforePipeline       Pipeline? @relation("beforePipeline", fields: [beforePipelineId], references: [id])
   // lastTemplate         Template? @relation(fields: [lastTemplateId], references: [id])
 }
