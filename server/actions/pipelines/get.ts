@@ -1,10 +1,11 @@
 'use server';
 
-import type { PipelineFilters } from '@/app/pipelines/types';
+import type { Pipeline, PipelineFilters } from '@/app/pipelines/types';
+
 import { OrderBy } from '@/lib/types';
 import { db } from '@/prisma/db';
 
-export async function getPipelines(query: PipelineFilters) {
+export async function getPipelines(query: PipelineFilters): Promise<Pipeline[]> {
   const { orderBy, ...rest } = query;
 
   return db.orm.public.Pipeline.where({
