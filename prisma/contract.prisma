@@ -19,6 +19,15 @@ model Pipeline {
   @@rls
 }
 
+model Template {
+  +DefaultCols
+  name         String    @unique
+  img          String?
+  message      String
+  // leads           Lead[]
+  @@rls
+}
+
 // model Lead {
 //   +DefaultCols
 //   contactName      String
