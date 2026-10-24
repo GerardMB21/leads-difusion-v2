@@ -258,6 +258,11 @@
               "namespaceId": "public",
               "tableName": "Pipeline"
             },
+            "Tag": {
+              "kind": "rls",
+              "namespaceId": "public",
+              "tableName": "Tag"
+            },
             "Template": {
               "kind": "rls",
               "namespaceId": "public",
@@ -448,7 +453,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "8af4d767d224e8f67a4e2824996bb800cecae4debc77a5d0a4fb18f6b913f1b5"
+    "storageHash": "2f2ef3d07a8f1b628d5963b1dc6ed999c0f376a559e1702098b70aa4d3bded57"
   },
   "execution": {
     "executionHash": "5e68fac8173025b188a8d063a9fda23b594b16930f28957be21b2623ecd6f446",

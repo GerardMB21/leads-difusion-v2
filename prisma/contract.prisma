@@ -32,6 +32,7 @@ model Tag {
   +DefaultCols
   name         String    @unique
   // leads        TagsInLeads[]
+  @@rls
 }
 
 // model Lead {
@@ -45,8 +46,8 @@ model Tag {
 //   templateId       Int?
 //   pipelineId       Int
 //   beforePipelineId Int?
-//   @@rls
 //   // pipeline            Pipeline  @relation(fields: [pipelineId], references: [id])
 //   // beforePipeline       Pipeline? @relation("beforePipeline", fields: [beforePipelineId], references: [id])
 //   // lastTemplate         Template? @relation(fields: [lastTemplateId], references: [id])
+//   @@rls
 // }
