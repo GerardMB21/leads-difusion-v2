@@ -2,8 +2,9 @@ import './globals.css';
 import '@fontsource-variable/oswald';
 
 import type { Metadata } from 'next';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
+import { SiteHeader } from '@/components/SiteHeader';
 
 export const metadata: Metadata = {
   title: 'Leads Diffusion',
@@ -23,7 +24,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
           }
         >
           <AppSidebar />
-          <main>{children}</main>
+          <SidebarInset>
+            <SiteHeader />
+            <main>{children}</main>
+          </SidebarInset>
         </SidebarProvider>
       </body>
     </html>
