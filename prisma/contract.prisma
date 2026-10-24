@@ -1,21 +1,24 @@
 // use prisma-8
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+model mixin DefaultCols {
+  id          Int                         @id @default(autoincrement())
+  createdAt   TimestamptzString           @default(now())
+  updatedAt   temporal.updatedAtString()
+  deletedAt   TimestamptzString?
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+model Lead {
+  +DefaultCols
+  contactName      String
+  phone            String
+  order            Int
+  enrollmentDate   TimestamptzString
+  lastContact      Int?
+  messageResponse  Boolean? @default(false)
+  templateId       Int?
+  pipelineId       Int
+  beforePipelineId Int?
+  // pipeline             Pipeline  @relation(fields: [pipelineId], references: [id])
+  // beforePipeline       Pipeline? @relation("beforePipeline", fields: [beforePipelineId], references: [id])
+  // lastTemplate         Template? @relation(fields: [lastTemplateId], references: [id])
 }

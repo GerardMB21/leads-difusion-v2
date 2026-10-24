@@ -4,12 +4,8 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
-    "Post": {
-      "model": "Post",
-      "namespace": "public"
-    },
-    "User": {
-      "model": "User",
+    "Lead": {
+      "model": "Lead",
       "namespace": "public"
     }
   },
@@ -17,23 +13,37 @@
     "namespaces": {
       "public": {
         "models": {
-          "Post": {
+          "Lead": {
             "fields": {
-              "authorId": {
-                "nullable": false,
+              "beforePipelineId": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
-              "content": {
-                "nullable": true,
+              "contactName": {
+                "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
               "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "deletedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "enrollmentDate": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
@@ -47,91 +57,45 @@
                   "kind": "scalar"
                 }
               },
-              "title": {
-                "nullable": false,
+              "lastContact": {
+                "nullable": true,
                 "type": {
-                  "codecId": "pg/text@1",
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
-              "updatedAt": {
-                "nullable": false,
+              "messageResponse": {
+                "nullable": true,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "author": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "authorId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "authorId": {
-                  "column": "authorId"
-                },
-                "content": {
-                  "column": "content"
-                },
-                "createdAt": {
-                  "column": "createdAt"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "title": {
-                  "column": "title"
-                },
-                "updatedAt": {
-                  "column": "updatedAt"
-                }
-              },
-              "namespaceId": "public",
-              "table": "Post"
-            }
-          },
-          "User": {
-            "fields": {
-              "createdAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/bool@1",
                   "kind": "scalar"
                 }
               },
-              "email": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
+              "order": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
-              "name": {
-                "nullable": true,
+              "phone": {
+                "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "pipelineId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "templateId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
@@ -141,55 +105,53 @@
                   "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
-              },
-              "username": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
               }
             },
-            "relations": {
-              "posts": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "authorId"
-                  ]
-                },
-                "to": {
-                  "model": "Post",
-                  "namespace": "public"
-                }
-              }
-            },
+            "relations": {},
             "storage": {
               "fields": {
+                "beforePipelineId": {
+                  "column": "beforePipelineId"
+                },
+                "contactName": {
+                  "column": "contactName"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
-                "email": {
-                  "column": "email"
+                "deletedAt": {
+                  "column": "deletedAt"
+                },
+                "enrollmentDate": {
+                  "column": "enrollmentDate"
                 },
                 "id": {
                   "column": "id"
                 },
-                "name": {
-                  "column": "name"
+                "lastContact": {
+                  "column": "lastContact"
+                },
+                "messageResponse": {
+                  "column": "messageResponse"
+                },
+                "order": {
+                  "column": "order"
+                },
+                "phone": {
+                  "column": "phone"
+                },
+                "pipelineId": {
+                  "column": "pipelineId"
+                },
+                "templateId": {
+                  "column": "templateId"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
-                },
-                "username": {
-                  "column": "username"
                 }
               },
               "namespaceId": "public",
-              "table": "User"
+              "table": "Lead"
             }
           }
         }
@@ -201,17 +163,17 @@
       "public": {
         "entries": {
           "table": {
-            "Post": {
+            "Lead": {
               "columns": {
-                "authorId": {
+                "beforePipelineId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
-                "content": {
+                "contactName": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": true
+                  "nullable": false
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -220,6 +182,16 @@
                     "expression": "now()",
                     "kind": "function"
                   },
+                  "nullable": false
+                },
+                "deletedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "enrollmentDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "nullable": false
                 },
                 "id": {
@@ -231,94 +203,44 @@
                   },
                   "nullable": false
                 },
-                "title": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": false
-                },
-                "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "name": "Post_authorId_idx_e47547ed"
-                  },
-                  "source": {
-                    "columns": [
-                      "authorId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Post"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "User"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "authorId"
-                  ],
-                  "name": "Post_authorId_idx_e47547ed",
-                  "prefix": "Post_authorId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": []
-            },
-            "User": {
-              "columns": {
-                "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nullable": false
-                },
-                "email": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": false
-                },
-                "id": {
+                "lastContact": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "messageResponse": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
                   "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
+                    "kind": "literal",
+                    "value": false
                   },
+                  "nullable": true
+                },
+                "order": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
-                "name": {
+                "phone": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
+                  "nullable": false
+                },
+                "pipelineId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "templateId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "nullable": true
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
                   "nullable": false
-                },
-                "username": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": true
                 }
               },
               "foreignKeys": [],
@@ -328,13 +250,7 @@
                   "id"
                 ]
               },
-              "uniques": [
-                {
-                  "columns": [
-                    "email"
-                  ]
-                }
-              ]
+              "uniques": []
             }
           }
         },
@@ -342,10 +258,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a51b4833fdaffe730572670ccc27dd89af7e0726ab3de7f428d21702d687cc15"
+    "storageHash": "fceae792e24aad16a8ee3481a7d83bd465058122f03fef0cafb47c3e1a24a09a"
   },
   "execution": {
-    "executionHash": "3730158042e7c88d23f35529e89ad90532db0cd5c528c13e701f93cb45aa8a9c",
+    "executionHash": "a707f0c738537a1a4232025fb8d4e8e869dadad86bfeb06e3689c21b07372e94",
     "mutations": {
       "defaults": [
         {
@@ -358,22 +274,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Post",
-            "field": "updatedAt",
-            "namespace": "public"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestamptzStringNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestamptzStringNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "User",
+            "entry": "Lead",
             "field": "updatedAt",
             "namespace": "public"
           }
