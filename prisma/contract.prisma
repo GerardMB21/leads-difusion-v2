@@ -12,8 +12,8 @@ model Pipeline {
   name            String             @unique
   order           Int
   default         Boolean            @default(false)
-  // leads           Lead[]
-  // leadsBefore     Lead[]             @relation("BeforePipeline")
+  leads           Lead[]             @relation("pipeline")
+  leadsBefore     Lead[]             @relation("beforePipeline")
   // workflowsFrom   WorkflowPipeline[] @relation("PipelineFrom")
   // workflowsTo     WorkflowPipeline[] @relation("PipelineTo")
   @@rls
@@ -24,7 +24,7 @@ model Template {
   name         String    @unique
   img          String?
   message      String
-  // leads           Lead[]
+  leads           Lead[]
   @@rls
 }
 
@@ -35,19 +35,19 @@ model Tag {
   @@rls
 }
 
-// model Lead {
-//   +DefaultCols
-//   contactName      String
-//   phone            String
-//   order            Int
-//   enrollmentDate   TimestamptzString
-//   lastContact      Int?
-//   messageResponse  Boolean? @default(false)
-//   templateId       Int?
-//   pipelineId       Int
-//   beforePipelineId Int?
-//   // pipeline            Pipeline  @relation(fields: [pipelineId], references: [id])
-//   // beforePipeline       Pipeline? @relation("beforePipeline", fields: [beforePipelineId], references: [id])
-//   // lastTemplate         Template? @relation(fields: [lastTemplateId], references: [id])
-//   @@rls
-// }
+model Lead {
+  +DefaultCols
+  contactName      String
+  phone            String
+  order            Int
+  enrollmentDate   TimestamptzString
+  lastContact      Int?
+  messageResponse  Boolean? @default(false)
+  templateId       Int?
+  pipelineId       Int
+  beforePipelineId Int?
+  pipeline         Pipeline  @relation("pipeline", fields: [pipelineId], references: [id])
+  beforePipeline   Pipeline? @relation("beforePipeline", fields: [beforePipelineId], references: [id])
+  template         Template? @relation(fields: [templateId], references: [id])
+  @@rls
+}

@@ -23,9 +23,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'2f2ef3d07a8f1b628d5963b1dc6ed999c0f376a559e1702098b70aa4d3bded57'>;
+  StorageHashBase<'69a278a77759168b4f7c9eb3f922795d51f0568590a45216f5901142a5f10b04'>;
 export type ExecutionHash =
-  ExecutionHashBase<'5e68fac8173025b188a8d063a9fda23b594b16930f28957be21b2623ecd6f446'>;
+  ExecutionHashBase<'1e2fae45d0791946070bf397881dfc826575621d0d0f9609517ace05e89adaca'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -270,6 +270,25 @@ export type StorageColumnInputTypes = ColumnTypesFromStorage<
 >;
 
 export namespace Models {
+  export type public_Lead = {
+    beforePipelineId: FieldOutputTypes['public']['Lead']['beforePipelineId'];
+    contactName: FieldOutputTypes['public']['Lead']['contactName'];
+    createdAt: FieldOutputTypes['public']['Lead']['createdAt'];
+    deletedAt: FieldOutputTypes['public']['Lead']['deletedAt'];
+    enrollmentDate: FieldOutputTypes['public']['Lead']['enrollmentDate'];
+    id: FieldOutputTypes['public']['Lead']['id'];
+    lastContact: FieldOutputTypes['public']['Lead']['lastContact'];
+    messageResponse: FieldOutputTypes['public']['Lead']['messageResponse'];
+    order: FieldOutputTypes['public']['Lead']['order'];
+    phone: FieldOutputTypes['public']['Lead']['phone'];
+    pipelineId: FieldOutputTypes['public']['Lead']['pipelineId'];
+    templateId: FieldOutputTypes['public']['Lead']['templateId'];
+    updatedAt: FieldOutputTypes['public']['Lead']['updatedAt'];
+    beforePipeline: public_Pipeline | null;
+    pipeline: public_Pipeline;
+    template: public_Template | null;
+    readonly [RelationKeys]?: 'beforePipeline' | 'pipeline' | 'template';
+  };
   export type public_Pipeline = {
     createdAt: FieldOutputTypes['public']['Pipeline']['createdAt'];
     default: FieldOutputTypes['public']['Pipeline']['default'];
@@ -278,7 +297,9 @@ export namespace Models {
     name: FieldOutputTypes['public']['Pipeline']['name'];
     order: FieldOutputTypes['public']['Pipeline']['order'];
     updatedAt: FieldOutputTypes['public']['Pipeline']['updatedAt'];
-    readonly [RelationKeys]?: never;
+    leads: public_Lead[];
+    leadsBefore: public_Lead[];
+    readonly [RelationKeys]?: 'leads' | 'leadsBefore';
   };
   export type public_Tag = {
     createdAt: FieldOutputTypes['public']['Tag']['createdAt'];
@@ -296,12 +317,14 @@ export namespace Models {
     message: FieldOutputTypes['public']['Template']['message'];
     name: FieldOutputTypes['public']['Template']['name'];
     updatedAt: FieldOutputTypes['public']['Template']['updatedAt'];
-    readonly [RelationKeys]?: never;
+    leads: public_Lead[];
+    readonly [RelationKeys]?: 'leads';
   };
 }
 
 export declare const models: {
   public: {
+    Lead: Models.public_Lead;
     Pipeline: Models.public_Pipeline;
     Tag: Models.public_Tag;
     Template: Models.public_Template;
@@ -326,6 +349,157 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly Lead: {
+              columns: {
+                readonly beforePipelineId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly contactName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly deletedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly enrollmentDate: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly lastContact: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly messageResponse: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: true;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
+                readonly order: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly phone: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly pipelineId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly templateId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'Lead_beforePipelineId_idx_f16addde';
+                  readonly prefix: 'Lead_beforePipelineId_idx';
+                  readonly columns: readonly ['beforePipelineId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Lead_pipelineId_idx_671407ae';
+                  readonly prefix: 'Lead_pipelineId_idx';
+                  readonly columns: readonly ['pipelineId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Lead_templateId_idx_19e0d972';
+                  readonly prefix: 'Lead_templateId_idx';
+                  readonly columns: readonly ['templateId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Lead';
+                    readonly columns: readonly ['pipelineId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Pipeline';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Lead';
+                    readonly columns: readonly ['beforePipelineId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Pipeline';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Lead';
+                    readonly columns: readonly ['templateId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Template';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly Pipeline: {
               columns: {
                 readonly createdAt: {
@@ -494,6 +668,7 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
+    readonly Lead: { readonly namespace: 'public' & NamespaceId; readonly model: 'Lead' };
     readonly Pipeline: { readonly namespace: 'public' & NamespaceId; readonly model: 'Pipeline' };
     readonly Tag: { readonly namespace: 'public' & NamespaceId; readonly model: 'Tag' };
     readonly Template: { readonly namespace: 'public' & NamespaceId; readonly model: 'Template' };
@@ -502,6 +677,131 @@ type ContractBase = Omit<
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly Lead: {
+            readonly fields: {
+              readonly beforePipelineId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly contactName: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly deletedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly enrollmentDate: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly lastContact: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly messageResponse: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly order: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly phone: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly pipelineId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly templateId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly beforePipeline: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Pipeline';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['beforePipelineId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly pipeline: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Pipeline';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['pipelineId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly template: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Template';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['templateId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Lead';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly beforePipelineId: { readonly column: 'beforePipelineId' };
+                readonly contactName: { readonly column: 'contactName' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly deletedAt: { readonly column: 'deletedAt' };
+                readonly enrollmentDate: { readonly column: 'enrollmentDate' };
+                readonly id: { readonly column: 'id' };
+                readonly lastContact: { readonly column: 'lastContact' };
+                readonly messageResponse: { readonly column: 'messageResponse' };
+                readonly order: { readonly column: 'order' };
+                readonly phone: { readonly column: 'phone' };
+                readonly pipelineId: { readonly column: 'pipelineId' };
+                readonly templateId: { readonly column: 'templateId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly Pipeline: {
             readonly fields: {
               readonly createdAt: {
@@ -542,7 +842,24 @@ type ContractBase = Omit<
                 };
               };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly leads: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Lead' };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['pipelineId'];
+                };
+              };
+              readonly leadsBefore: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Lead' };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['beforePipelineId'];
+                };
+              };
+            };
             readonly storage: {
               readonly table: 'Pipeline';
               readonly namespaceId: 'public';
@@ -642,7 +959,16 @@ type ContractBase = Omit<
                 };
               };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly leads: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Lead' };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['templateId'];
+                };
+              };
+            };
             readonly storage: {
               readonly table: 'Template';
               readonly namespaceId: 'public';
@@ -693,6 +1019,15 @@ type ContractBase = Omit<
     readonly executionHash: ExecutionHash;
     readonly mutations: {
       readonly defaults: readonly [
+        {
+          readonly onCreate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'Lead';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
         {
           readonly onCreate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
           readonly onUpdate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
