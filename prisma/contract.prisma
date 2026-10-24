@@ -28,6 +28,12 @@ model Template {
   @@rls
 }
 
+model Tag {
+  +DefaultCols
+  name         String    @unique
+  // leads        TagsInLeads[]
+}
+
 // model Lead {
 //   +DefaultCols
 //   contactName      String

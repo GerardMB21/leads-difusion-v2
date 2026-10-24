@@ -23,9 +23,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'98c8da88b4c351ec7b135a1edf7959f163bc705e4a4eb00bb8d5bd5bd3e70fc6'>;
+  StorageHashBase<'8af4d767d224e8f67a4e2824996bb800cecae4debc77a5d0a4fb18f6b913f1b5'>;
 export type ExecutionHash =
-  ExecutionHashBase<'0e1f9ef838fe5ca0caff51d29b89df256a837808be695a70bd22948d886e0664'>;
+  ExecutionHashBase<'5e68fac8173025b188a8d063a9fda23b594b16930f28957be21b2623ecd6f446'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -280,6 +280,14 @@ export namespace Models {
     updatedAt: FieldOutputTypes['public']['Pipeline']['updatedAt'];
     readonly [RelationKeys]?: never;
   };
+  export type public_Tag = {
+    createdAt: FieldOutputTypes['public']['Tag']['createdAt'];
+    deletedAt: FieldOutputTypes['public']['Tag']['deletedAt'];
+    id: FieldOutputTypes['public']['Tag']['id'];
+    name: FieldOutputTypes['public']['Tag']['name'];
+    updatedAt: FieldOutputTypes['public']['Tag']['updatedAt'];
+    readonly [RelationKeys]?: never;
+  };
   export type public_Template = {
     createdAt: FieldOutputTypes['public']['Template']['createdAt'];
     deletedAt: FieldOutputTypes['public']['Template']['deletedAt'];
@@ -295,6 +303,7 @@ export namespace Models {
 export declare const models: {
   public: {
     Pipeline: Models.public_Pipeline;
+    Tag: Models.public_Tag;
     Template: Models.public_Template;
   };
 };
@@ -361,6 +370,49 @@ type ContractBase = Omit<
                 readonly order: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['name'] }];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
+            readonly Tag: {
+              columns: {
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly deletedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly name: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                   readonly many: false;
                 };
@@ -443,6 +495,7 @@ type ContractBase = Omit<
   readonly targetFamily: 'sql';
   readonly roots: {
     readonly Pipeline: { readonly namespace: 'public' & NamespaceId; readonly model: 'Pipeline' };
+    readonly Tag: { readonly namespace: 'public' & NamespaceId; readonly model: 'Tag' };
     readonly Template: { readonly namespace: 'public' & NamespaceId; readonly model: 'Template' };
   };
   readonly domain: {
@@ -500,6 +553,51 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
                 readonly order: { readonly column: 'order' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly Tag: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly deletedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'Tag';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly deletedAt: { readonly column: 'deletedAt' };
+                readonly id: { readonly column: 'id' };
+                readonly name: { readonly column: 'name' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
@@ -600,6 +698,15 @@ type ContractBase = Omit<
           readonly onUpdate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'Pipeline';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'Tag';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };
