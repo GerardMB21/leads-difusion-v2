@@ -48,6 +48,11 @@ dist/
 
 # skills de agentes (se reinstalan desde skills-lock.json)
 .agents/
-.aider-desk/
+.aider-desk/skills
+.aider-desk/settings.local.json
 .claude/skills/
 .claude/settings.local.json
+.cursor/skills/
+.cursor/settings.local.json
+.devin/skills/
+.devin/settings.local.json
