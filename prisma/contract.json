@@ -23,6 +23,10 @@
     "Template": {
       "model": "Template",
       "namespace": "public"
+    },
+    "WorkflowPipeline": {
+      "model": "WorkflowPipeline",
+      "namespace": "public"
     }
   },
   "domain": {
@@ -316,6 +320,36 @@
                   "model": "Lead",
                   "namespace": "public"
                 }
+              },
+              "workflowsFrom": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "fromPipelineId"
+                  ]
+                },
+                "to": {
+                  "model": "WorkflowPipeline",
+                  "namespace": "public"
+                }
+              },
+              "workflowsTo": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "toPipelineId"
+                  ]
+                },
+                "to": {
+                  "model": "WorkflowPipeline",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -583,6 +617,150 @@
               "namespaceId": "public",
               "table": "Template"
             }
+          },
+          "WorkflowPipeline": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "deletedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "fromPipelineId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "toPipelineId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "waitingTime": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "whenNotResponse": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "whenSendMessage": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "fromPipeline": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "fromPipelineId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Pipeline",
+                  "namespace": "public"
+                }
+              },
+              "toPipeline": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "toPipelineId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Pipeline",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "deletedAt": {
+                  "column": "deletedAt"
+                },
+                "fromPipelineId": {
+                  "column": "fromPipelineId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "toPipelineId": {
+                  "column": "toPipelineId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "waitingTime": {
+                  "column": "waitingTime"
+                },
+                "whenNotResponse": {
+                  "column": "whenNotResponse"
+                },
+                "whenSendMessage": {
+                  "column": "whenSendMessage"
+                }
+              },
+              "namespaceId": "public",
+              "table": "WorkflowPipeline"
+            }
           }
         }
       }
@@ -617,6 +795,11 @@
               "kind": "rls",
               "namespaceId": "public",
               "tableName": "Template"
+            },
+            "WorkflowPipeline": {
+              "kind": "rls",
+              "namespaceId": "public",
+              "tableName": "WorkflowPipeline"
             }
           },
           "table": {
@@ -1047,6 +1230,144 @@
                   ]
                 }
               ]
+            },
+            "WorkflowPipeline": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "deletedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "fromPipelineId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "toPipelineId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "waitingTime": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
+                "whenNotResponse": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
+                "whenSendMessage": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "WorkflowPipeline_fromPipelineId_idx_a5fe301b"
+                  },
+                  "source": {
+                    "columns": [
+                      "fromPipelineId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "WorkflowPipeline"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Pipeline"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "WorkflowPipeline_toPipelineId_idx_d5d3199d"
+                  },
+                  "source": {
+                    "columns": [
+                      "toPipelineId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "WorkflowPipeline"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Pipeline"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "fromPipelineId"
+                  ],
+                  "name": "WorkflowPipeline_fromPipelineId_idx_a5fe301b",
+                  "prefix": "WorkflowPipeline_fromPipelineId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "toPipelineId"
+                  ],
+                  "name": "WorkflowPipeline_toPipelineId_idx_d5d3199d",
+                  "prefix": "WorkflowPipeline_toPipelineId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             }
           }
         },
@@ -1054,10 +1375,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "ec873a2e6cb66320b5cc5e7e23e1f58c535c275d5f4e708fdf9f84d1e40964b9"
+    "storageHash": "1eddabde609593a4a5ae10bd1e03115d511679aee910be1cbcb14a53e15e109c"
   },
   "execution": {
-    "executionHash": "1e2fae45d0791946070bf397881dfc826575621d0d0f9609517ace05e89adaca",
+    "executionHash": "09ab8929ed2f82d5682306451af6bbb3caea7ec411e87a25f4c0d0e47fdac3c5",
     "mutations": {
       "defaults": [
         {
@@ -1116,6 +1437,21 @@
           },
           "ref": {
             "entry": "Template",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestamptzStringNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestamptzStringNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "WorkflowPipeline",
             "field": "updatedAt",
             "namespace": "public"
           }

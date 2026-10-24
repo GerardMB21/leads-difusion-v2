@@ -23,9 +23,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'ec873a2e6cb66320b5cc5e7e23e1f58c535c275d5f4e708fdf9f84d1e40964b9'>;
+  StorageHashBase<'1eddabde609593a4a5ae10bd1e03115d511679aee910be1cbcb14a53e15e109c'>;
 export type ExecutionHash =
-  ExecutionHashBase<'1e2fae45d0791946070bf397881dfc826575621d0d0f9609517ace05e89adaca'>;
+  ExecutionHashBase<'09ab8929ed2f82d5682306451af6bbb3caea7ec411e87a25f4c0d0e47fdac3c5'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -300,7 +300,9 @@ export namespace Models {
     updatedAt: FieldOutputTypes['public']['Pipeline']['updatedAt'];
     leads: public_Lead[];
     leadsBefore: public_Lead[];
-    readonly [RelationKeys]?: 'leads' | 'leadsBefore';
+    workflowsFrom: public_WorkflowPipeline[];
+    workflowsTo: public_WorkflowPipeline[];
+    readonly [RelationKeys]?: 'leads' | 'leadsBefore' | 'workflowsFrom' | 'workflowsTo';
   };
   export type public_Tag = {
     createdAt: FieldOutputTypes['public']['Tag']['createdAt'];
@@ -329,6 +331,21 @@ export namespace Models {
     leads: public_Lead[];
     readonly [RelationKeys]?: 'leads';
   };
+  export type public_WorkflowPipeline = {
+    createdAt: FieldOutputTypes['public']['WorkflowPipeline']['createdAt'];
+    deletedAt: FieldOutputTypes['public']['WorkflowPipeline']['deletedAt'];
+    fromPipelineId: FieldOutputTypes['public']['WorkflowPipeline']['fromPipelineId'];
+    id: FieldOutputTypes['public']['WorkflowPipeline']['id'];
+    name: FieldOutputTypes['public']['WorkflowPipeline']['name'];
+    toPipelineId: FieldOutputTypes['public']['WorkflowPipeline']['toPipelineId'];
+    updatedAt: FieldOutputTypes['public']['WorkflowPipeline']['updatedAt'];
+    waitingTime: FieldOutputTypes['public']['WorkflowPipeline']['waitingTime'];
+    whenNotResponse: FieldOutputTypes['public']['WorkflowPipeline']['whenNotResponse'];
+    whenSendMessage: FieldOutputTypes['public']['WorkflowPipeline']['whenSendMessage'];
+    fromPipeline: public_Pipeline;
+    toPipeline: public_Pipeline;
+    readonly [RelationKeys]?: 'fromPipeline' | 'toPipeline';
+  };
 }
 
 export declare const models: {
@@ -338,6 +355,7 @@ export declare const models: {
     Tag: Models.public_Tag;
     TagInLead: Models.public_TagInLead;
     Template: Models.public_Template;
+    WorkflowPipeline: Models.public_WorkflowPipeline;
   };
 };
 
@@ -725,6 +743,129 @@ type ContractBase = Omit<
               indexes: readonly [];
               foreignKeys: readonly [];
             };
+            readonly WorkflowPipeline: {
+              columns: {
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly deletedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly fromPipelineId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly name: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly toPipelineId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly waitingTime: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
+                  };
+                  readonly many: false;
+                };
+                readonly whenNotResponse: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
+                readonly whenSendMessage: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'WorkflowPipeline_fromPipelineId_idx_a5fe301b';
+                  readonly prefix: 'WorkflowPipeline_fromPipelineId_idx';
+                  readonly columns: readonly ['fromPipelineId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'WorkflowPipeline_toPipelineId_idx_d5d3199d';
+                  readonly prefix: 'WorkflowPipeline_toPipelineId_idx';
+                  readonly columns: readonly ['toPipelineId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'WorkflowPipeline';
+                    readonly columns: readonly ['fromPipelineId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Pipeline';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'WorkflowPipeline';
+                    readonly columns: readonly ['toPipelineId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Pipeline';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
           };
         };
       };
@@ -741,6 +882,10 @@ type ContractBase = Omit<
     readonly Tag: { readonly namespace: 'public' & NamespaceId; readonly model: 'Tag' };
     readonly TagInLead: { readonly namespace: 'public' & NamespaceId; readonly model: 'TagInLead' };
     readonly Template: { readonly namespace: 'public' & NamespaceId; readonly model: 'Template' };
+    readonly WorkflowPipeline: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'WorkflowPipeline';
+    };
   };
   readonly domain: {
     readonly namespaces: {
@@ -939,6 +1084,28 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['beforePipelineId'];
                 };
               };
+              readonly workflowsFrom: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'WorkflowPipeline';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['fromPipelineId'];
+                };
+              };
+              readonly workflowsTo: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'WorkflowPipeline';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['toPipelineId'];
+                };
+              };
             };
             readonly storage: {
               readonly table: 'Pipeline';
@@ -1115,6 +1282,101 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly WorkflowPipeline: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly deletedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly fromPipelineId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly toPipelineId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly waitingTime: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly whenNotResponse: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly whenSendMessage: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+            };
+            readonly relations: {
+              readonly fromPipeline: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Pipeline';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['fromPipelineId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly toPipeline: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Pipeline';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['toPipelineId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'WorkflowPipeline';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly deletedAt: { readonly column: 'deletedAt' };
+                readonly fromPipelineId: { readonly column: 'fromPipelineId' };
+                readonly id: { readonly column: 'id' };
+                readonly name: { readonly column: 'name' };
+                readonly toPipelineId: { readonly column: 'toPipelineId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly waitingTime: { readonly column: 'waitingTime' };
+                readonly whenNotResponse: { readonly column: 'whenNotResponse' };
+                readonly whenSendMessage: { readonly column: 'whenSendMessage' };
+              };
+            };
+          };
         };
       };
     };
@@ -1183,6 +1445,15 @@ type ContractBase = Omit<
           readonly onUpdate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'Template';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestamptzStringNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'WorkflowPipeline';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };

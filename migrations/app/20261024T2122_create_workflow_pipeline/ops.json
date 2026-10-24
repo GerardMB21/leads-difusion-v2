@@ -1,0 +1,290 @@
+[
+  {
+    "id": "table.WorkflowPipeline",
+    "label": "Create table \"WorkflowPipeline\"",
+    "summary": "Creates table \"WorkflowPipeline\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "WorkflowPipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"WorkflowPipeline\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"WorkflowPipeline\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"WorkflowPipeline\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"WorkflowPipeline\"",
+        "sql": "CREATE TABLE \"public\".\"WorkflowPipeline\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deletedAt\" timestamptz,\n  \"fromPipelineId\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"toPipelineId\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"waitingTime\" int4 DEFAULT 0 NOT NULL,\n  \"whenNotResponse\" bool DEFAULT false NOT NULL,\n  \"whenSendMessage\" bool DEFAULT false NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"WorkflowPipeline\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"WorkflowPipeline\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"WorkflowPipeline\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "index.WorkflowPipeline.WorkflowPipeline_fromPipelineId_idx_a5fe301b",
+    "label": "Create index \"WorkflowPipeline_fromPipelineId_idx_a5fe301b\" on \"WorkflowPipeline\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "WorkflowPipeline_fromPipelineId_idx_a5fe301b",
+        "table": "WorkflowPipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"WorkflowPipeline_fromPipelineId_idx_a5fe301b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"WorkflowPipeline_fromPipelineId_idx_a5fe301b\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"WorkflowPipeline_fromPipelineId_idx_a5fe301b\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"WorkflowPipeline_fromPipelineId_idx_a5fe301b\"",
+        "sql": "CREATE INDEX \"WorkflowPipeline_fromPipelineId_idx_a5fe301b\" ON \"public\".\"WorkflowPipeline\" (\"fromPipelineId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"WorkflowPipeline_fromPipelineId_idx_a5fe301b\" exists on \"WorkflowPipeline\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"WorkflowPipeline_fromPipelineId_idx_a5fe301b\"",
+          "i",
+          "I",
+          "\"public\".\"WorkflowPipeline\"",
+          "btree",
+          "[\"fromPipelineId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.WorkflowPipeline.WorkflowPipeline_toPipelineId_idx_d5d3199d",
+    "label": "Create index \"WorkflowPipeline_toPipelineId_idx_d5d3199d\" on \"WorkflowPipeline\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "WorkflowPipeline_toPipelineId_idx_d5d3199d",
+        "table": "WorkflowPipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"WorkflowPipeline_toPipelineId_idx_d5d3199d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"WorkflowPipeline_toPipelineId_idx_d5d3199d\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"WorkflowPipeline_toPipelineId_idx_d5d3199d\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"WorkflowPipeline_toPipelineId_idx_d5d3199d\"",
+        "sql": "CREATE INDEX \"WorkflowPipeline_toPipelineId_idx_d5d3199d\" ON \"public\".\"WorkflowPipeline\" (\"toPipelineId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"WorkflowPipeline_toPipelineId_idx_d5d3199d\" exists on \"WorkflowPipeline\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"WorkflowPipeline_toPipelineId_idx_d5d3199d\"",
+          "i",
+          "I",
+          "\"public\".\"WorkflowPipeline\"",
+          "btree",
+          "[\"toPipelineId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.WorkflowPipeline.WorkflowPipeline_fromPipelineId_fkey",
+    "label": "Add foreign key \"WorkflowPipeline_fromPipelineId_fkey\" on \"WorkflowPipeline\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "WorkflowPipeline_fromPipelineId_fkey",
+        "table": "WorkflowPipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"WorkflowPipeline_fromPipelineId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "WorkflowPipeline_fromPipelineId_fkey",
+          "public",
+          "\"public\".\"WorkflowPipeline\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"WorkflowPipeline_fromPipelineId_fkey\" on \"WorkflowPipeline\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"WorkflowPipeline_fromPipelineId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"WorkflowPipeline\"\nADD CONSTRAINT \"WorkflowPipeline_fromPipelineId_fkey\"\nFOREIGN KEY (\"fromPipelineId\")\nREFERENCES \"public\".\"Pipeline\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"WorkflowPipeline_fromPipelineId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "WorkflowPipeline_fromPipelineId_fkey",
+          "public",
+          "\"public\".\"WorkflowPipeline\"",
+          "f",
+          "[\"fromPipelineId\"]",
+          "\"public\".\"Pipeline\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.WorkflowPipeline.WorkflowPipeline_toPipelineId_fkey",
+    "label": "Add foreign key \"WorkflowPipeline_toPipelineId_fkey\" on \"WorkflowPipeline\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "WorkflowPipeline_toPipelineId_fkey",
+        "table": "WorkflowPipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"WorkflowPipeline_toPipelineId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "WorkflowPipeline_toPipelineId_fkey",
+          "public",
+          "\"public\".\"WorkflowPipeline\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"WorkflowPipeline_toPipelineId_fkey\" on \"WorkflowPipeline\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"WorkflowPipeline_toPipelineId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"WorkflowPipeline\"\nADD CONSTRAINT \"WorkflowPipeline_toPipelineId_fkey\"\nFOREIGN KEY (\"toPipelineId\")\nREFERENCES \"public\".\"Pipeline\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"WorkflowPipeline_toPipelineId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "WorkflowPipeline_toPipelineId_fkey",
+          "public",
+          "\"public\".\"WorkflowPipeline\"",
+          "f",
+          "[\"toPipelineId\"]",
+          "\"public\".\"Pipeline\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.WorkflowPipeline",
+    "label": "Enable row-level security on \"WorkflowPipeline\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "WorkflowPipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"WorkflowPipeline\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "WorkflowPipeline"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"WorkflowPipeline\"",
+        "sql": "ALTER TABLE \"public\".\"WorkflowPipeline\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"WorkflowPipeline\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "WorkflowPipeline"
+        ]
+      }
+    ]
+  }
+]

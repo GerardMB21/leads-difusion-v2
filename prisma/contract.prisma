@@ -14,8 +14,8 @@ model Pipeline {
   default         Boolean            @default(false)
   leads           Lead[]             @relation("pipeline")
   leadsBefore     Lead[]             @relation("beforePipeline")
-  // workflowsFrom   WorkflowPipeline[] @relation("PipelineFrom")
-  // workflowsTo     WorkflowPipeline[] @relation("PipelineTo")
+  workflowsFrom   WorkflowPipeline[] @relation("pipelineFrom")
+  workflowsTo     WorkflowPipeline[] @relation("pipelineTo")
   @@rls
 }
 
@@ -59,5 +59,18 @@ model TagInLead {
   leadId Int
   lead   Lead   @relation(fields: [leadId], references: [id])
   @@id([tagId, leadId])
+  @@rls
+}
+
+model WorkflowPipeline {
+  +DefaultCols
+  name            String
+  fromPipelineId  String
+  toPipelineId    String
+  whenNotResponse Boolean   @default(false)
+  whenSendMessage Boolean   @default(false)
+  waitingTime     Int       @default(0)
+  fromPipeline    Pipeline  @relation("pipelineFrom", fields: [fromPipelineId], references: [id])
+  toPipeline      Pipeline  @relation("pipelineTo", fields: [toPipelineId], references: [id])
   @@rls
 }
