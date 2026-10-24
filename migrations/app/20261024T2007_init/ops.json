@@ -1,0 +1,155 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.Pipeline",
+    "label": "Create table \"Pipeline\"",
+    "summary": "Creates table \"Pipeline\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Pipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Pipeline\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Pipeline\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Pipeline\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Pipeline\"",
+        "sql": "CREATE TABLE \"public\".\"Pipeline\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"default\" bool DEFAULT false NOT NULL,\n  \"deletedAt\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"order\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Pipeline\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Pipeline\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Pipeline\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "unique.Pipeline.Pipeline_name_key",
+    "label": "Add unique constraint on \"Pipeline\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Pipeline_name_key",
+        "table": "Pipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Pipeline_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Pipeline_name_key",
+          "public",
+          "\"public\".\"Pipeline\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Pipeline_name_key\" on \"Pipeline\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Pipeline_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"Pipeline\" ADD CONSTRAINT \"Pipeline_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Pipeline_name_key\" exists on (name)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Pipeline_name_key",
+          "public",
+          "\"public\".\"Pipeline\"",
+          "u",
+          "[\"name\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.Pipeline",
+    "label": "Enable row-level security on \"Pipeline\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "Pipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"Pipeline\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Pipeline"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"Pipeline\"",
+        "sql": "ALTER TABLE \"public\".\"Pipeline\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"Pipeline\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "Pipeline"
+        ]
+      }
+    ]
+  }
+]
