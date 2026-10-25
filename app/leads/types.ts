@@ -13,3 +13,13 @@ export type Lead = {
   beforePipelineId: number | null;
   tags: LeadTag[];
 } & BaseModel;
+
+export type LeadPipeline = {
+  id: number;
+  name: string;
+};
+
+export type LeadRow = Lead & {
+  pipeline: LeadPipeline;
+  beforePipeline: LeadPipeline | null;
+};
