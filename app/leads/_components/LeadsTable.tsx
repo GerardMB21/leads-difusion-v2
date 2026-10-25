@@ -13,7 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 const MAX_VISIBLE_TAGS = 2;
 const MAX_EXTRA_LABEL = 9;
 
-const helper =createColumnHelper<typeof dataTableFeatures, LeadRow>();
+const helper = createColumnHelper<typeof dataTableFeatures, LeadRow>();
 
 const columns = helper.columns([
   helper.accessor('contactName', { header: 'Nombre' }),
