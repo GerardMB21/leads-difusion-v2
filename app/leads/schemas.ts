@@ -56,3 +56,17 @@ export const leadFormSchema = z.object({
 });
 
 export type LeadFormInput = z.infer<typeof leadFormSchema>;
+
+export const importLeadsSchema = z.object({
+  pipelineId: z.coerce.number().pipe(id),
+  tagNames: z.array(tagName),
+});
+
+export type ImportLeadsInput = z.infer<typeof importLeadsSchema>;
+
+export const importLeadRowSchema = z.object({
+  row: z.number().int().min(2),
+  contactName: createLeadSchema.shape.contactName,
+  phone: createLeadSchema.shape.phone,
+  enrollmentDate: createLeadSchema.shape.enrollmentDate,
+});

@@ -23,3 +23,20 @@ export type LeadRow = Lead & {
   pipeline: LeadPipeline;
   beforePipeline: LeadPipeline | null;
 };
+
+export type ImportLeadRow = {
+  row: number;
+  contactName: string;
+  phone: string;
+  enrollmentDate?: string;
+};
+
+export type ImportIssue = {
+  row: number;
+  reason: string;
+};
+
+export type ImportLeadsResult = {
+  created: number;
+  skipped: ImportIssue[];
+};
