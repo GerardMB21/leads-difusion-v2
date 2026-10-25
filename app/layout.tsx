@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { SiteHeader } from '@/components/SiteHeader';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 export const metadata: Metadata = {
   title: 'Leads Diffusion',
@@ -26,7 +27,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
           <AppSidebar />
           <SidebarInset>
             <SiteHeader />
-            <main>{children}</main>
+            <TooltipProvider>
+              <main>{children}</main>
+            </TooltipProvider>
           </SidebarInset>
         </SidebarProvider>
       </body>
