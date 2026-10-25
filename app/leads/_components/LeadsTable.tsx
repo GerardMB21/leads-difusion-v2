@@ -7,8 +7,13 @@ import { createColumnHelper } from '@tanstack/react-table';
 import DataTable, { dataTableFeatures } from '@/components/DataTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStore } from '../_store';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-const helper = createColumnHelper<typeof dataTableFeatures, LeadRow>();
+const MAX_VISIBLE_TAGS = 2;
+const MAX_EXTRA_LABEL = 9;
+
+const helper =createColumnHelper<typeof dataTableFeatures, LeadRow>();
 
 const columns = helper.columns([
   helper.accessor('contactName', { header: 'Nombre' }),
@@ -18,13 +23,58 @@ const columns = helper.columns([
       new Date(row.original.enrollmentDate).toLocaleDateString('es', { dateStyle: 'medium' }),
   }),
   helper.accessor('phone', { header: 'Contacto' }),
+  helper.accessor('tags', {
+    header: 'Tags',
+    cell: ({ row }) => {
+      const tags = row.original.tags;
+      const visible = tags.slice(0, MAX_VISIBLE_TAGS);
+      const extra = tags.slice(MAX_VISIBLE_TAGS);
+
+      if (!tags.length) return '-';
+
+      return (
+        <div className="flex items-center justify-start gap-2">
+          {visible.map((tag) => (
+            <Badge key={tag.id} variant="outline">
+              {tag.name}
+            </Badge>
+          ))}
+          {extra.length > 0 && (
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Badge variant="outline" className="rounded-full">
+                    +{Math.min(extra.length, MAX_EXTRA_LABEL)}
+                  </Badge>
+                }
+              />
+              <TooltipContent>
+                <ul className="flex flex-col gap-2">
+                  {extra.map((tag) => (
+                    <li key={tag.id}>{tag.name}</li>
+                  ))}
+                </ul>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+      );
+    },
+  }),
   helper.accessor('pipelineId', {
     header: 'Pipeline',
-    cell: ({ row }) => row.original.pipeline.name,
+    cell: ({ row }) => <Badge>{row.original.pipeline.name}</Badge>,
   }),
   helper.accessor('beforePipelineId', {
     header: 'Anterior Pipeline',
-    cell: ({ row }) => row.original.beforePipeline?.name ?? '—',
+    cell: ({ row }) => {
+      const original = row.original;
+      const beforePipeline = original.beforePipeline;
+
+      if (!beforePipeline) return '-';
+
+      return <Badge variant="outline">{row.original.beforePipeline?.name}</Badge>;
+    },
   }),
 ]);
 
