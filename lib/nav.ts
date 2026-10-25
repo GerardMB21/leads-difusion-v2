@@ -2,8 +2,8 @@ import { IconAutomation, IconPipeline, IconTemplate, IconUsersGroup } from '@tab
 
 export const navMain = [
   { title: 'Pipelines', url: '/pipelines', icon: IconPipeline },
-  { title: 'Templates', url: '/templates', icon: IconTemplate },
   { title: 'Leads', url: '/leads', icon: IconUsersGroup },
+  { title: 'Templates', url: '/templates', icon: IconTemplate },
   { title: 'Workflows', url: '/workflows', icon: IconAutomation },
 ];
 
