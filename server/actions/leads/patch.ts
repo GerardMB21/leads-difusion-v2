@@ -4,10 +4,10 @@ import type { Lead } from '@/app/leads/types';
 
 import { updateLeadSchema, type UpdateLeadInput } from '@/app/leads/schemas';
 import { db } from '@/prisma/db';
-import { findLead, LEAD_NOT_FOUND } from '@/server/queries/leads';
+import { findLead, LEAD_NOT_FOUND, resolveTagIds } from '@/server/queries/leads';
 
 export async function patchLead(id: number, input: UpdateLeadInput): Promise<Lead> {
-  const { tagIds, ...data } = updateLeadSchema.parse(input);
+  const { tagIds, tagNames, ...data } = updateLeadSchema.parse(input);
 
   await db.transaction(async (tx) => {
     const lead = await tx.orm.public.Lead.where({ id, deletedAt: null }).first();
@@ -18,10 +18,12 @@ export async function patchLead(id: number, input: UpdateLeadInput): Promise<Lea
       await tx.orm.public.Lead.where({ id }).update(data);
     }
 
-    if (tagIds) {
+    if (tagIds || tagNames) {
+      const resolved = await resolveTagIds(tx, tagIds, tagNames);
+
       await tx.orm.public.TagInLead.where({ leadId: id }).deleteAll();
 
-      for (const tagId of new Set(tagIds)) {
+      for (const tagId of resolved) {
         await tx.orm.public.TagInLead.create({ tagId, leadId: id });
       }
     }
