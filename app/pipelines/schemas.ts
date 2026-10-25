@@ -10,3 +10,9 @@ export const createPipelineSchema = z.object({
 });
 
 export type CreatePipelineInput = z.infer<typeof createPipelineSchema>;
+
+export const updatePipelineSchema = createPipelineSchema
+  .partial()
+  .refine((value) => Object.keys(value).length > 0, 'Debes enviar al menos un campo');
+
+export type UpdatePipelineInput = z.infer<typeof updatePipelineSchema>;
