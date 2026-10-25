@@ -1,23 +1,26 @@
 'use client';
 
-import type { NormalizedError } from '@/lib/types';
+import type { Pipeline } from '../types';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { api, getApiErrorMessage } from '@/lib/api';
 import { createPipelineSchema, type CreatePipelineInput } from '../schemas';
 
 interface Props {
-  defaultOrder: number;
+  defaultOrder?: number;
+  pipeline?: Pipeline;
   onSuccess: () => void;
 }
 
-const PipelineForm = ({ defaultOrder, onSuccess }: Props) => {
+const PipelineForm = ({ defaultOrder = 0, pipeline, onSuccess }: Props) => {
+  const isEditing = !!pipeline;
+
   const {
     register,
     control,
@@ -26,20 +29,24 @@ const PipelineForm = ({ defaultOrder, onSuccess }: Props) => {
     formState: { errors, isSubmitting },
   } = useForm<CreatePipelineInput>({
     resolver: zodResolver(createPipelineSchema),
-    defaultValues: { name: '', order: defaultOrder, default: false },
+    defaultValues: pipeline
+      ? { name: pipeline.name, order: pipeline.order, default: pipeline.default }
+      : { name: '', order: defaultOrder, default: false },
   });
 
   const onSubmit = async (values: CreatePipelineInput) => {
     try {
-      await axios.post('/api/pipelines', values);
+      if (pipeline) await api.patch(`/pipelines/${pipeline.id}`, values);
+      else await api.post('/pipelines', values);
 
       onSuccess();
     } catch (error) {
-      const message = axios.isAxiosError<NormalizedError>(error)
-        ? error.response?.data.message
-        : undefined;
-
-      setError('root', { message: message ?? 'No se pudo crear el pipeline' });
+      setError('root', {
+        message: getApiErrorMessage(
+          error,
+          isEditing ? 'No se pudo actualizar el pipeline' : 'No se pudo crear el pipeline',
+        ),
+      });
     }
   };
 
@@ -78,7 +85,7 @@ const PipelineForm = ({ defaultOrder, onSuccess }: Props) => {
         />
         <FieldError errors={[errors.root]} />
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Creando...' : 'Crear pipeline'}
+          {isSubmitting ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear pipeline'}
         </Button>
       </FieldGroup>
     </form>
