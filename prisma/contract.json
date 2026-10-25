@@ -637,7 +637,7 @@
               "fromPipelineId": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/text@1",
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
@@ -658,7 +658,7 @@
               "toPipelineId": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/text@1",
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
@@ -1248,8 +1248,8 @@
                   "nullable": true
                 },
                 "fromPipelineId": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "id": {
@@ -1267,8 +1267,8 @@
                   "nullable": false
                 },
                 "toPipelineId": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "updatedAt": {
@@ -1375,7 +1375,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "1eddabde609593a4a5ae10bd1e03115d511679aee910be1cbcb14a53e15e109c"
+    "storageHash": "4d6eb1c38a50606c6683dbcd2cb5516d37cb911c3708c31ca4d67ab93cd5405a"
   },
   "execution": {
     "executionHash": "09ab8929ed2f82d5682306451af6bbb3caea7ec411e87a25f4c0d0e47fdac3c5",

@@ -65,8 +65,8 @@ model TagInLead {
 model WorkflowPipeline {
   +DefaultCols
   name            String
-  fromPipelineId  String
-  toPipelineId    String
+  fromPipelineId  Int
+  toPipelineId    Int
   whenNotResponse Boolean   @default(false)
   whenSendMessage Boolean   @default(false)
   waitingTime     Int       @default(0)

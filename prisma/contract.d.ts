@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'1eddabde609593a4a5ae10bd1e03115d511679aee910be1cbcb14a53e15e109c'>;
+  StorageHashBase<'4d6eb1c38a50606c6683dbcd2cb5516d37cb911c3708c31ca4d67ab93cd5405a'>;
 export type ExecutionHash =
   ExecutionHashBase<'09ab8929ed2f82d5682306451af6bbb3caea7ec411e87a25f4c0d0e47fdac3c5'>;
 export type ProfileHash =
@@ -759,8 +759,8 @@ type ContractBase = Omit<
                   readonly many: false;
                 };
                 readonly fromPipelineId: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
                   readonly many: false;
                 };
@@ -781,8 +781,8 @@ type ContractBase = Omit<
                   readonly many: false;
                 };
                 readonly toPipelineId: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
                   readonly many: false;
                 };
@@ -1300,7 +1300,7 @@ type ContractBase = Omit<
               };
               readonly fromPipelineId: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly id: {
                 readonly nullable: false;
@@ -1312,7 +1312,7 @@ type ContractBase = Omit<
               };
               readonly toPipelineId: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly updatedAt: {
                 readonly nullable: false;

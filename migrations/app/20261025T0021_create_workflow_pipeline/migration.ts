@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from '../../snapshots/1eddabde609593a4a5ae10bd1e03115d511679aee910be1cbcb14a53e15e109c/contract';
-import endContract from '../../snapshots/1eddabde609593a4a5ae10bd1e03115d511679aee910be1cbcb14a53e15e109c/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/4d6eb1c38a50606c6683dbcd2cb5516d37cb911c3708c31ca4d67ab93cd5405a/contract';
+import endContract from '../../snapshots/4d6eb1c38a50606c6683dbcd2cb5516d37cb911c3708c31ca4d67ab93cd5405a/contract.json' with { type: 'json' };
 import type { Contract as Start } from '../../snapshots/ec873a2e6cb66320b5cc5e7e23e1f58c535c275d5f4e708fdf9f84d1e40964b9/contract';
 import startContract from '../../snapshots/ec873a2e6cb66320b5cc5e7e23e1f58c535c275d5f4e708fdf9f84d1e40964b9/contract.json' with { type: 'json' };
 import {
@@ -29,10 +29,10 @@ export default class M extends Migration<Start, End> {
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
           col('deletedAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
-          col('fromPipelineId', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('fromPipelineId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('name', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
-          col('toPipelineId', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('toPipelineId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('updatedAt', 'timestamptz', {
             notNull: true,
             codecRef: { codecId: 'pg/timestamptz-string@1' },

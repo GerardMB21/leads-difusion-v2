@@ -28,7 +28,7 @@
     "execute": [
       {
         "description": "create table \"WorkflowPipeline\"",
-        "sql": "CREATE TABLE \"public\".\"WorkflowPipeline\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deletedAt\" timestamptz,\n  \"fromPipelineId\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"toPipelineId\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"waitingTime\" int4 DEFAULT 0 NOT NULL,\n  \"whenNotResponse\" bool DEFAULT false NOT NULL,\n  \"whenSendMessage\" bool DEFAULT false NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "sql": "CREATE TABLE \"public\".\"WorkflowPipeline\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deletedAt\" timestamptz,\n  \"fromPipelineId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"toPipelineId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"waitingTime\" int4 DEFAULT 0 NOT NULL,\n  \"whenNotResponse\" bool DEFAULT false NOT NULL,\n  \"whenSendMessage\" bool DEFAULT false NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
         "params": []
       }
     ],
