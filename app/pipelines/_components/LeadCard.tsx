@@ -28,16 +28,16 @@ const LeadCard = ({ lead, className, ref, ...rest }: Props) => {
       {...rest}
     >
       <div className="flex items-center justify-between gap-2">
-        <Badge variant="outline" className="shrink-0">
+        <span className="truncate text-sm font-medium">{contactName}</span>
+        <Badge className="shrink-0">
           {new Date(enrollmentDate).toLocaleDateString('es', { dateStyle: 'medium' })}
         </Badge>
-        <span className="truncate text-sm font-medium">{contactName}</span>
       </div>
       <p className="text-base font-semibold">{phone}</p>
       {tags.length > 0 && (
         <div className="flex min-w-0 items-center justify-start gap-1 overflow-hidden">
           {visibleTags.map((tag) => (
-            <Badge key={tag.id} variant="secondary" className="min-w-0 truncate">
+            <Badge key={tag.id} variant="outline" className="min-w-0 truncate">
               {tag.name}
             </Badge>
           ))}
