@@ -4,7 +4,7 @@ import type { Pipeline } from '../types';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { IconDots, IconPencil, IconTrash } from '@tabler/icons-react';
+import { IconCirclePlus, IconDots, IconPencil, IconTrash } from '@tabler/icons-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,10 +22,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { api, getApiErrorMessage } from '@/lib/api';
+import LeadForm from './LeadForm';
 import PipelineForm from './PipelineForm';
 
 const PipelineActions = ({ pipeline }: { pipeline: Pipeline }) => {
   const router = useRouter();
+  const [leadOpen, setLeadOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -56,6 +58,10 @@ const PipelineActions = ({ pipeline }: { pipeline: Pipeline }) => {
           <IconDots />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => setLeadOpen(true)}>
+            <IconCirclePlus />
+            Lead
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setEditOpen(true)}>
             <IconPencil />
             Editar
@@ -66,6 +72,22 @@ const PipelineActions = ({ pipeline }: { pipeline: Pipeline }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <Dialog open={leadOpen} onOpenChange={setLeadOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Nuevo lead</DialogTitle>
+            <DialogDescription>Se agregará al pipeline {pipeline.name}.</DialogDescription>
+          </DialogHeader>
+          <LeadForm
+            pipeline={pipeline}
+            onSuccess={() => {
+              setLeadOpen(false);
+              router.refresh();
+            }}
+          />
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent>

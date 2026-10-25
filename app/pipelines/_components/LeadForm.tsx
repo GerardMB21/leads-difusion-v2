@@ -1,0 +1,117 @@
+'use client';
+
+import type { LeadTag, Pipeline } from '../types';
+
+import { useEffect, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
+
+import { leadFormSchema, type LeadFormInput } from '@/app/leads/schemas';
+import { Button } from '@/components/ui/button';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { api, getApiErrorMessage } from '@/lib/api';
+import TagsCombobox from './TagsCombobox';
+
+const LEAD_CREATE_TIMEOUT = 10_000;
+
+interface Props {
+  pipeline: Pipeline;
+  onSuccess: () => void;
+}
+
+const LeadForm = ({ pipeline, onSuccess }: Props) => {
+  const [tagOptions, setTagOptions] = useState<string[]>([]);
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LeadFormInput>({
+    resolver: zodResolver(leadFormSchema),
+    defaultValues: {
+      contactName: '',
+      phone: '',
+      enrollmentDate: new Date().toLocaleDateString('en-CA'),
+      tags: [],
+    },
+  });
+
+  useEffect(() => {
+    api
+      .get<LeadTag[]>('/tags')
+      .then(({ data }) => setTagOptions(data.map(({ name }) => name)))
+      .catch(() => setTagOptions([]));
+  }, []);
+
+  const onSubmit = async ({ enrollmentDate, tags, ...values }: LeadFormInput) => {
+    try {
+      await api.post(
+        '/leads',
+        {
+          ...values,
+          order: pipeline.leads.length,
+          pipelineId: pipeline.id,
+          enrollmentDate: new Date(`${enrollmentDate}T00:00:00`).toISOString(),
+          tagNames: tags,
+        },
+        { timeout: LEAD_CREATE_TIMEOUT },
+      );
+
+      onSuccess();
+    } catch (error) {
+      setError('root', { message: getApiErrorMessage(error, 'No se pudo crear el lead') });
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <FieldGroup>
+        <Field data-invalid={!!errors.contactName}>
+          <FieldLabel htmlFor="lead-name">Nombre</FieldLabel>
+          <Input id="lead-name" aria-invalid={!!errors.contactName} {...register('contactName')} />
+          <FieldError errors={[errors.contactName]} />
+        </Field>
+        <Field data-invalid={!!errors.phone}>
+          <FieldLabel htmlFor="lead-phone">Teléfono</FieldLabel>
+          <Input id="lead-phone" type="tel" aria-invalid={!!errors.phone} {...register('phone')} />
+          <FieldError errors={[errors.phone]} />
+        </Field>
+        <Field data-invalid={!!errors.enrollmentDate}>
+          <FieldLabel htmlFor="lead-date">Fecha de ingreso</FieldLabel>
+          <Input
+            id="lead-date"
+            type="date"
+            aria-invalid={!!errors.enrollmentDate}
+            {...register('enrollmentDate')}
+          />
+          <FieldError errors={[errors.enrollmentDate]} />
+        </Field>
+        <Controller
+          control={control}
+          name="tags"
+          render={({ field }) => (
+            <Field data-invalid={!!errors.tags}>
+              <FieldLabel htmlFor="lead-tags">Etiquetas</FieldLabel>
+              <TagsCombobox
+                id="lead-tags"
+                value={field.value}
+                options={tagOptions}
+                onChange={field.onChange}
+              />
+              <FieldError errors={[errors.tags?.root]} />
+            </Field>
+          )}
+        />
+        <FieldError errors={[errors.root]} />
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Creando...' : 'Crear lead'}
+        </Button>
+      </FieldGroup>
+    </form>
+  );
+};
+
+export default LeadForm;
