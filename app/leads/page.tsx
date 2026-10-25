@@ -7,6 +7,7 @@ import { connection } from 'next/server';
 import { getLeads } from '@/server/actions/leads/get';
 
 import ErrorPage from '@/components/ErrorPage';
+import ImportLeadsDialog from '@/components/ImportLeadsDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import LeadsTable from './_components/LeadsTable';
 import Provider from './_components/Provider';
@@ -30,7 +31,10 @@ const Leads = async ({ searchParams }: PageProps) => {
 
   return (
     <Provider data={leads}>
-      <div className="p-4">
+      <div className="flex flex-col gap-4 p-4">
+        <div className="flex items-center justify-end">
+          <ImportLeadsDialog />
+        </div>
         <LeadsTable />
       </div>
     </Provider>
