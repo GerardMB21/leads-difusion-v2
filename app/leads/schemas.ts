@@ -2,6 +2,12 @@ import { z } from 'zod';
 
 import { OrderBy } from '@/lib/types';
 
+const tagName = z
+  .string()
+  .trim()
+  .min(1, 'La etiqueta no puede estar vacía')
+  .max(50, 'Máximo 50 caracteres');
+
 const id = z.number({ error: 'Debe ser un número' }).int('Debe ser un entero').min(1);
 
 export const createLeadSchema = z.object({
@@ -22,6 +28,7 @@ export const createLeadSchema = z.object({
   pipelineId: id,
   beforePipelineId: id.nullable().optional(),
   tagIds: z.array(id).optional(),
+  tagNames: z.array(tagName).optional(),
 });
 
 export type CreateLeadInput = z.infer<typeof createLeadSchema>;
@@ -40,3 +47,12 @@ export const leadFiltersSchema = z.object({
 });
 
 export type LeadFilters = z.infer<typeof leadFiltersSchema>;
+
+export const leadFormSchema = z.object({
+  contactName: createLeadSchema.shape.contactName,
+  phone: createLeadSchema.shape.phone,
+  enrollmentDate: z.string().min(1, 'La fecha es obligatoria'),
+  tags: z.array(tagName),
+});
+
+export type LeadFormInput = z.infer<typeof leadFormSchema>;
