@@ -16,3 +16,20 @@ export const updatePipelineSchema = createPipelineSchema
   .refine((value) => Object.keys(value).length > 0, 'Debes enviar al menos un campo');
 
 export type UpdatePipelineInput = z.infer<typeof updatePipelineSchema>;
+
+const positiveId = z.number().int().min(1);
+const position = z.number().int().min(0);
+
+export const reorderSchema = z.object({
+  pipelines: z.array(z.object({ id: positiveId, order: position })),
+  leads: z.array(
+    z.object({
+      id: positiveId,
+      order: position,
+      pipelineId: positiveId,
+      beforePipelineId: positiveId.optional(),
+    }),
+  ),
+});
+
+export type ReorderInput = z.infer<typeof reorderSchema>;
