@@ -5,6 +5,7 @@ import { db } from '@/prisma/db';
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 export const LEAD_NOT_FOUND = 'Lead no encontrado';
+export const PIPELINE_NOT_FOUND = 'Pipeline no encontrado';
 
 export function toLead<T extends { tags: { tag: { id: number; name: string } }[] }>(row: T) {
   return {
