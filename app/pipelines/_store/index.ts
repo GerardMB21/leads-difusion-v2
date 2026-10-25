@@ -2,6 +2,9 @@ import type { Pipeline } from '../types';
 
 import { create } from 'zustand';
 
+export const pipelineKey = (id: number) => `pipeline-${id}`;
+export const leadKey = (id: number) => `lead-${id}`;
+
 export type State = {
   initialLoading: boolean;
   data: Pipeline[];
@@ -10,7 +13,8 @@ export type State = {
 export type Action = {
   setData: (data: Pipeline[]) => void;
   setInitialLoading: (payload: boolean) => void;
-  moveLead: (leadId: number, toPipelineId: number) => void;
+  setPipelineLayout: (keys: string[]) => void;
+  setLeadLayout: (layout: Record<string, string[]>) => void;
 };
 
 const initialState: State = {
@@ -22,22 +26,29 @@ export const useStore = create<State & Action>((set) => ({
   ...initialState,
   setData: (data) => set(() => ({ data })),
   setInitialLoading: (initialLoading) => set(() => ({ initialLoading })),
-  moveLead: (leadId, toPipelineId) =>
+  setPipelineLayout: (keys) =>
     set(({ data }) => {
-      const lead = data.flatMap((pipeline) => pipeline.leads).find(({ id }) => id === leadId);
-
-      if (!lead || lead.pipelineId === toPipelineId) return {};
-
-      const moved = { ...lead, pipelineId: toPipelineId };
+      const byKey = new Map(data.map((pipeline) => [pipelineKey(pipeline.id), pipeline]));
 
       return {
-        data: data.map((pipeline) => {
-          const leads = pipeline.leads.filter(({ id }) => id !== leadId);
+        data: keys.flatMap((key) => byKey.get(key) ?? []),
+      };
+    }),
+  setLeadLayout: (layout) =>
+    set(({ data }) => {
+      const byKey = new Map(
+        data.flatMap((pipeline) => pipeline.leads).map((lead) => [leadKey(lead.id), lead]),
+      );
 
-          return pipeline.id === toPipelineId
-            ? { ...pipeline, leads: [...leads, moved] }
-            : { ...pipeline, leads };
-        }),
+      return {
+        data: data.map((pipeline) => ({
+          ...pipeline,
+          leads: (layout[pipelineKey(pipeline.id)] ?? []).flatMap((key) => {
+            const lead = byKey.get(key);
+
+            return lead ? { ...lead, pipelineId: pipeline.id } : [];
+          }),
+        })),
       };
     }),
 }));
