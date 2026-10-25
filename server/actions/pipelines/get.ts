@@ -8,7 +8,7 @@ import { db } from '@/prisma/db';
 export async function getPipelines(query: PipelineFilters): Promise<Pipeline[]> {
   const { orderBy, ...rest } = query;
 
-  return db.orm.public.Pipeline.where({
+  const pipelines = await db.orm.public.Pipeline.where({
     ...rest,
     deletedAt: null,
   })
@@ -19,5 +19,19 @@ export async function getPipelines(query: PipelineFilters): Promise<Pipeline[]> 
 
       return order;
     })
+    .include('leads', (leads) =>
+      leads
+        .where((l) => l.deletedAt.isNull())
+        .orderBy((l) => l.order.asc())
+        .include('tags', (tags) => tags.include('tag')),
+    )
     .all();
+
+  return pipelines.map((pipeline) => ({
+    ...pipeline,
+    leads: pipeline.leads.map((lead) => ({
+      ...lead,
+      tags: lead.tags.map(({ tag }) => ({ id: tag.id, name: tag.name })),
+    })),
+  }));
 }
