@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { useStore } from '../_store';
 import { TRIGGERS } from '../schemas';
-import FilterCombobox from './FilterCombobox';
+import FilterCombobox from '@/components/FilterCombobox';
 
 const SEARCH_DEBOUNCE = 300;
 
