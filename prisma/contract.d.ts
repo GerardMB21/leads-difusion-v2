@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d84bf04e7c53c3c2d48a1210d6e06a1c1c5b8057a62d9b30ea5cd3f811937f6a'>;
+  StorageHashBase<'0c858dcc937c38cf1762ca77b000f1de6bf876c0e2f3cd70d9780dfab6052bc3'>;
 export type ExecutionHash =
   ExecutionHashBase<'ea1b9aea523e6ae24c8cff4288e1c25a34f887cced4814266b3c9086bd1efd37'>;
 export type ProfileHash =
@@ -305,7 +305,9 @@ export namespace Models {
     total: FieldOutputTypes['public']['Diffusion']['total'];
     updatedAt: FieldOutputTypes['public']['Diffusion']['updatedAt'];
     pipeline: public_Pipeline | null;
-    readonly [RelationKeys]?: 'pipeline';
+    tags: public_TagInDiffusion[];
+    templates: public_TemplateInDiffusion[];
+    readonly [RelationKeys]?: 'pipeline' | 'tags' | 'templates';
   };
   export type public_Lead = {
     beforePipelineId: FieldOutputTypes['public']['Lead']['beforePipelineId'];
@@ -350,6 +352,13 @@ export namespace Models {
     leads: public_TagInLead[];
     readonly [RelationKeys]?: 'leads';
   };
+  export type public_TagInDiffusion = {
+    diffusionId: FieldOutputTypes['public']['TagInDiffusion']['diffusionId'];
+    tagId: FieldOutputTypes['public']['TagInDiffusion']['tagId'];
+    diffusion: public_Diffusion;
+    tag: public_Tag;
+    readonly [RelationKeys]?: 'diffusion' | 'tag';
+  };
   export type public_TagInLead = {
     leadId: FieldOutputTypes['public']['TagInLead']['leadId'];
     tagId: FieldOutputTypes['public']['TagInLead']['tagId'];
@@ -367,6 +376,13 @@ export namespace Models {
     updatedAt: FieldOutputTypes['public']['Template']['updatedAt'];
     leads: public_Lead[];
     readonly [RelationKeys]?: 'leads';
+  };
+  export type public_TemplateInDiffusion = {
+    diffusionId: FieldOutputTypes['public']['TemplateInDiffusion']['diffusionId'];
+    templateId: FieldOutputTypes['public']['TemplateInDiffusion']['templateId'];
+    diffusion: public_Diffusion;
+    template: public_Template;
+    readonly [RelationKeys]?: 'diffusion' | 'template';
   };
   export type public_WorkflowPipeline = {
     createdAt: FieldOutputTypes['public']['WorkflowPipeline']['createdAt'];
@@ -391,8 +407,10 @@ export declare const models: {
     Lead: Models.public_Lead;
     Pipeline: Models.public_Pipeline;
     Tag: Models.public_Tag;
+    TagInDiffusion: Models.public_TagInDiffusion;
     TagInLead: Models.public_TagInLead;
     Template: Models.public_Template;
+    TemplateInDiffusion: Models.public_TemplateInDiffusion;
     WorkflowPipeline: Models.public_WorkflowPipeline;
   };
 };
@@ -795,6 +813,64 @@ type ContractBase = Omit<
               indexes: readonly [];
               foreignKeys: readonly [];
             };
+            readonly TagInDiffusion: {
+              columns: {
+                readonly diffusionId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly tagId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['tagId', 'diffusionId'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'TagInDiffusion_diffusionId_idx_67f61184';
+                  readonly prefix: 'TagInDiffusion_diffusionId_idx';
+                  readonly columns: readonly ['diffusionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'TagInDiffusion_tagId_idx_86854244';
+                  readonly prefix: 'TagInDiffusion_tagId_idx';
+                  readonly columns: readonly ['tagId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'TagInDiffusion';
+                    readonly columns: readonly ['tagId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Tag';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'TagInDiffusion';
+                    readonly columns: readonly ['diffusionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Diffusion';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly TagInLead: {
               columns: {
                 readonly leadId: {
@@ -907,6 +983,64 @@ type ContractBase = Omit<
               uniques: readonly [{ readonly columns: readonly ['name'] }];
               indexes: readonly [];
               foreignKeys: readonly [];
+            };
+            readonly TemplateInDiffusion: {
+              columns: {
+                readonly diffusionId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly templateId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['templateId', 'diffusionId'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'TemplateInDiffusion_diffusionId_idx_67f61184';
+                  readonly prefix: 'TemplateInDiffusion_diffusionId_idx';
+                  readonly columns: readonly ['diffusionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'TemplateInDiffusion_templateId_idx_19e0d972';
+                  readonly prefix: 'TemplateInDiffusion_templateId_idx';
+                  readonly columns: readonly ['templateId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'TemplateInDiffusion';
+                    readonly columns: readonly ['templateId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Template';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'TemplateInDiffusion';
+                    readonly columns: readonly ['diffusionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Diffusion';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
             };
             readonly WorkflowPipeline: {
               columns: {
@@ -1059,8 +1193,16 @@ type ContractBase = Omit<
     readonly Lead: { readonly namespace: 'public' & NamespaceId; readonly model: 'Lead' };
     readonly Pipeline: { readonly namespace: 'public' & NamespaceId; readonly model: 'Pipeline' };
     readonly Tag: { readonly namespace: 'public' & NamespaceId; readonly model: 'Tag' };
+    readonly TagInDiffusion: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'TagInDiffusion';
+    };
     readonly TagInLead: { readonly namespace: 'public' & NamespaceId; readonly model: 'TagInLead' };
     readonly Template: { readonly namespace: 'public' & NamespaceId; readonly model: 'Template' };
+    readonly TemplateInDiffusion: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'TemplateInDiffusion';
+    };
     readonly WorkflowPipeline: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'WorkflowPipeline';
@@ -1154,6 +1296,28 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['pipelineId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly tags: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'TagInDiffusion';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['diffusionId'];
+                };
+              };
+              readonly templates: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'TemplateInDiffusion';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['diffusionId'];
                 };
               };
             };
@@ -1464,6 +1628,49 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly TagInDiffusion: {
+            readonly fields: {
+              readonly diffusionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly tagId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly diffusion: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Diffusion';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['diffusionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly tag: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Tag' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['tagId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'TagInDiffusion';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly diffusionId: { readonly column: 'diffusionId' };
+                readonly tagId: { readonly column: 'tagId' };
+              };
+            };
+          };
           readonly TagInLead: {
             readonly fields: {
               readonly leadId: {
@@ -1565,6 +1772,52 @@ type ContractBase = Omit<
                 readonly message: { readonly column: 'message' };
                 readonly name: { readonly column: 'name' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly TemplateInDiffusion: {
+            readonly fields: {
+              readonly diffusionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly templateId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly diffusion: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Diffusion';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['diffusionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly template: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Template';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['templateId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'TemplateInDiffusion';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly diffusionId: { readonly column: 'diffusionId' };
+                readonly templateId: { readonly column: 'templateId' };
               };
             };
           };

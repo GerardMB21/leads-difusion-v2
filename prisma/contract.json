@@ -20,12 +20,20 @@
       "model": "Tag",
       "namespace": "public"
     },
+    "TagInDiffusion": {
+      "model": "TagInDiffusion",
+      "namespace": "public"
+    },
     "TagInLead": {
       "model": "TagInLead",
       "namespace": "public"
     },
     "Template": {
       "model": "Template",
+      "namespace": "public"
+    },
+    "TemplateInDiffusion": {
+      "model": "TemplateInDiffusion",
       "namespace": "public"
     },
     "WorkflowPipeline": {
@@ -182,6 +190,36 @@
                 },
                 "to": {
                   "model": "Pipeline",
+                  "namespace": "public"
+                }
+              },
+              "tags": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "diffusionId"
+                  ]
+                },
+                "to": {
+                  "model": "TagInDiffusion",
+                  "namespace": "public"
+                }
+              },
+              "templates": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "diffusionId"
+                  ]
+                },
+                "to": {
+                  "model": "TemplateInDiffusion",
                   "namespace": "public"
                 }
               }
@@ -656,6 +694,70 @@
               "table": "Tag"
             }
           },
+          "TagInDiffusion": {
+            "fields": {
+              "diffusionId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "tagId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "diffusion": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "diffusionId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Diffusion",
+                  "namespace": "public"
+                }
+              },
+              "tag": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tagId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tag",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "diffusionId": {
+                  "column": "diffusionId"
+                },
+                "tagId": {
+                  "column": "tagId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "TagInDiffusion"
+            }
+          },
           "TagInLead": {
             "fields": {
               "leadId": {
@@ -815,6 +917,70 @@
               },
               "namespaceId": "public",
               "table": "Template"
+            }
+          },
+          "TemplateInDiffusion": {
+            "fields": {
+              "diffusionId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "templateId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "diffusion": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "diffusionId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Diffusion",
+                  "namespace": "public"
+                }
+              },
+              "template": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "templateId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Template",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "diffusionId": {
+                  "column": "diffusionId"
+                },
+                "templateId": {
+                  "column": "templateId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "TemplateInDiffusion"
             }
           },
           "WorkflowPipeline": {
@@ -990,6 +1156,11 @@
               "namespaceId": "public",
               "tableName": "Tag"
             },
+            "TagInDiffusion": {
+              "kind": "rls",
+              "namespaceId": "public",
+              "tableName": "TagInDiffusion"
+            },
             "TagInLead": {
               "kind": "rls",
               "namespaceId": "public",
@@ -999,6 +1170,11 @@
               "kind": "rls",
               "namespaceId": "public",
               "tableName": "Template"
+            },
+            "TemplateInDiffusion": {
+              "kind": "rls",
+              "namespaceId": "public",
+              "tableName": "TemplateInDiffusion"
             },
             "WorkflowPipeline": {
               "kind": "rls",
@@ -1438,6 +1614,85 @@
                 }
               ]
             },
+            "TagInDiffusion": {
+              "columns": {
+                "diffusionId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "tagId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "TagInDiffusion_tagId_idx_86854244"
+                  },
+                  "source": {
+                    "columns": [
+                      "tagId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "TagInDiffusion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Tag"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "TagInDiffusion_diffusionId_idx_67f61184"
+                  },
+                  "source": {
+                    "columns": [
+                      "diffusionId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "TagInDiffusion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Diffusion"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "diffusionId"
+                  ],
+                  "name": "TagInDiffusion_diffusionId_idx_67f61184",
+                  "prefix": "TagInDiffusion_diffusionId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tagId"
+                  ],
+                  "name": "TagInDiffusion_tagId_idx_86854244",
+                  "prefix": "TagInDiffusion_tagId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "tagId",
+                  "diffusionId"
+                ]
+              },
+              "uniques": []
+            },
             "TagInLead": {
               "columns": {
                 "leadId": {
@@ -1577,6 +1832,85 @@
                   ]
                 }
               ]
+            },
+            "TemplateInDiffusion": {
+              "columns": {
+                "diffusionId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "templateId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "TemplateInDiffusion_templateId_idx_19e0d972"
+                  },
+                  "source": {
+                    "columns": [
+                      "templateId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "TemplateInDiffusion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Template"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "TemplateInDiffusion_diffusionId_idx_67f61184"
+                  },
+                  "source": {
+                    "columns": [
+                      "diffusionId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "TemplateInDiffusion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Diffusion"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "diffusionId"
+                  ],
+                  "name": "TemplateInDiffusion_diffusionId_idx_67f61184",
+                  "prefix": "TemplateInDiffusion_diffusionId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "templateId"
+                  ],
+                  "name": "TemplateInDiffusion_templateId_idx_19e0d972",
+                  "prefix": "TemplateInDiffusion_templateId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "templateId",
+                  "diffusionId"
+                ]
+              },
+              "uniques": []
             },
             "WorkflowPipeline": {
               "columns": {
@@ -1735,7 +2069,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d84bf04e7c53c3c2d48a1210d6e06a1c1c5b8057a62d9b30ea5cd3f811937f6a"
+    "storageHash": "0c858dcc937c38cf1762ca77b000f1de6bf876c0e2f3cd70d9780dfab6052bc3"
   },
   "execution": {
     "executionHash": "ea1b9aea523e6ae24c8cff4288e1c25a34f887cced4814266b3c9086bd1efd37",
