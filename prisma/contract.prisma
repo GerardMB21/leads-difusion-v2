@@ -86,5 +86,25 @@ model Diffusion {
   finishedAt    TimestamptzString?
   nextSendAt    TimestamptzString?
   pipeline      Pipeline?             @relation("pipeline", fields: [pipelineId], references: [id])
+  tags          TagInDiffusion[]
+  templates     TemplateInDiffusion[]
+  @@rls
+}
+
+model TagInDiffusion {
+  tagId         Int
+  tag           Tag         @relation(fields: [tagId], references: [id])
+  diffusionId   Int
+  diffusion     Diffusion   @relation(fields: [diffusionId], references: [id])
+  @@id([tagId, diffusionId])
+  @@rls
+}
+
+model TemplateInDiffusion {
+  templateId    Int
+  template      Tag         @relation(fields: [templateId], references: [id])
+  diffusionId   Int
+  diffusion     Diffusion   @relation(fields: [diffusionId], references: [id])
+  @@id([templateId, diffusionId])
   @@rls
 }
