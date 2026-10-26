@@ -12,7 +12,7 @@ import { toLead } from '@/server/queries/leads';
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, '\\$&');
 
 export async function getLeads(query: LeadFilters): Promise<LeadRow[]> {
-  const { orderBy, search, ...filters } = leadFiltersSchema.parse(query);
+  const { orderBy, search, tagIds, ...filters } = leadFiltersSchema.parse(query);
 
   let leadsQuery = db.orm.public.Lead.where({ ...filters, deletedAt: null });
 
@@ -20,6 +20,10 @@ export async function getLeads(query: LeadFilters): Promise<LeadRow[]> {
     const pattern = `%${escapeLike(search)}%`;
 
     leadsQuery = leadsQuery.where((l) => or(l.contactName.ilike(pattern), l.phone.ilike(pattern)));
+  }
+
+  for (const tagId of new Set(tagIds)) {
+    leadsQuery = leadsQuery.where((l) => l.tags.some((t) => t.tagId.eq(tagId)));
   }
 
   const leads = await leadsQuery
