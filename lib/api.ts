@@ -4,7 +4,7 @@ import type { NormalizedError } from '@/lib/types';
 
 export const api = axios.create({
   baseURL: '/api',
-  timeout: 2000,
+  timeout: 5_000,
 });
 
 export function getApiErrorMessage(error: unknown, fallback: string) {
