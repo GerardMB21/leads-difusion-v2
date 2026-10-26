@@ -2,15 +2,27 @@
 
 import type { LeadRow } from '@/app/leads/types';
 
+import { or } from '@prisma/orm-postgres/orm-client';
+
 import { leadFiltersSchema, type LeadFilters } from '@/app/leads/schemas';
 import { OrderBy } from '@/lib/types';
 import { db } from '@/prisma/db';
 import { toLead } from '@/server/queries/leads';
 
-export async function getLeads(query: LeadFilters): Promise<LeadRow[]> {
-  const { orderBy, ...filters } = leadFiltersSchema.parse(query);
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, '\\$&');
 
-  const leads = await db.orm.public.Lead.where({ ...filters, deletedAt: null })
+export async function getLeads(query: LeadFilters): Promise<LeadRow[]> {
+  const { orderBy, search, ...filters } = leadFiltersSchema.parse(query);
+
+  let leadsQuery = db.orm.public.Lead.where({ ...filters, deletedAt: null });
+
+  if (search) {
+    const pattern = `%${escapeLike(search)}%`;
+
+    leadsQuery = leadsQuery.where((l) => or(l.contactName.ilike(pattern), l.phone.ilike(pattern)));
+  }
+
+  const leads = await leadsQuery
     .orderBy((l) => (orderBy === OrderBy.DESC ? l.order.desc() : l.order.asc()))
     .include('tags', (tags) => tags.include('tag'))
     .include('pipeline')
