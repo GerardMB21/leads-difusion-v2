@@ -8,6 +8,7 @@ import {
   type UpdateTemplateInput,
 } from '@/app/templates/schemas';
 import { db } from '@/prisma/db';
+import { sanitizeMessage } from '@/server/sanitize';
 import { TEMPLATE_NOT_FOUND, TEMPLATES_BUCKET } from '@/server/queries/templates';
 import { deleteFile, uploadFile } from '@/server/storage';
 
@@ -16,7 +17,11 @@ export async function patchTemplate(
   input: UpdateTemplateInput,
   image?: File | null,
 ): Promise<Template> {
-  const { removeImage, ...data } = updateTemplateSchema.parse(input);
+  const { removeImage, ...parsed } = updateTemplateSchema.parse(input);
+  const data = {
+    ...parsed,
+    ...(parsed.message !== undefined && { message: sanitizeMessage(parsed.message) }),
+  };
   const file = image ? imageSchema.parse(image) : null;
 
   const current = await db.orm.public.Template.where({ id, deletedAt: null }).first();

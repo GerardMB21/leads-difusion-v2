@@ -11,7 +11,7 @@ export async function getTemplates(query: TemplateFilters = {}): Promise<Templat
   const { orderBy, ...filters } = templateFiltersSchema.parse(query);
 
   return db.orm.public.Template.where({ ...filters, deletedAt: null })
-    .orderBy((t) => (orderBy === OrderBy.DESC ? t.id.desc() : t.id.asc()))
+    .orderBy((t) => (orderBy === OrderBy.ASC ? t.createdAt.asc() : t.createdAt.desc()))
     .all();
 }
 

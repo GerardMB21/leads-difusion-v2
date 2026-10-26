@@ -8,6 +8,7 @@ import {
   type CreateTemplateInput,
 } from '@/app/templates/schemas';
 import { db } from '@/prisma/db';
+import { sanitizeMessage } from '@/server/sanitize';
 import { TEMPLATES_BUCKET } from '@/server/queries/templates';
 import { deleteFile, uploadFile } from '@/server/storage';
 
@@ -15,7 +16,8 @@ export async function createTemplate(
   input: CreateTemplateInput,
   image?: File | null,
 ): Promise<Template> {
-  const data = createTemplateSchema.parse(input);
+  const parsed = createTemplateSchema.parse(input);
+  const data = { ...parsed, message: sanitizeMessage(parsed.message) };
   const file = image ? imageSchema.parse(image) : null;
   const uploaded = file ? await uploadFile(TEMPLATES_BUCKET, file) : null;
 
