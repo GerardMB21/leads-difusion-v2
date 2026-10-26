@@ -2,7 +2,7 @@
 
 import type { WorkflowRow } from '@/app/workflows/types';
 
-import { workflowFiltersSchema, type WorkflowFilters } from '@/app/workflows/schemas';
+import { TRIGGERS, workflowFiltersSchema, type WorkflowFilters } from '@/app/workflows/schemas';
 import { OrderBy } from '@/lib/types';
 import { db } from '@/prisma/db';
 
@@ -13,8 +13,7 @@ export async function getWorkflows(query: WorkflowFilters = {}): Promise<Workflo
 
   let workflows = db.orm.public.WorkflowPipeline.where({
     ...filters,
-    ...(trigger === 'notResponse' && { whenNotResponse: true }),
-    ...(trigger === 'sendMessage' && { whenSendMessage: true }),
+    ...(trigger && { [TRIGGERS.find(({ value }) => value === trigger)!.field]: true }),
     deletedAt: null,
   });
 
