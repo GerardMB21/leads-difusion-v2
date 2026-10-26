@@ -37,7 +37,7 @@ const KanbanColumn = ({ pipeline, index }: { pipeline: Pipeline; index: number }
     <section
       ref={ref}
       className={cn(
-        'flex min-h-full w-72 shrink-0 flex-col gap-3 rounded-xl border border-border bg-muted/50 p-3 shadow-md transition-colors',
+        'flex h-full w-72 shrink-0 flex-col gap-3 overflow-y-auto rounded-xl border border-border bg-muted/50 p-3 shadow-md transition-colors',
         isDragging && 'opacity-40',
       )}
     >
@@ -50,7 +50,7 @@ const KanbanColumn = ({ pipeline, index }: { pipeline: Pipeline; index: number }
           <PipelineActions pipeline={pipeline} />
         </div>
       </header>
-      <div className="flex min-h-16 flex-1 flex-col gap-2">
+      <div className="mb-3 flex min-h-16 flex-1 flex-col gap-2">
         {pipeline.leads.map((lead, leadIndex) => (
           <SortableLeadCard key={lead.id} lead={lead} index={leadIndex} />
         ))}
