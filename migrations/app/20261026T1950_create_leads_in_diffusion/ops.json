@@ -1,0 +1,390 @@
+[
+  {
+    "id": "table.LeadInDiffusion",
+    "label": "Create table \"LeadInDiffusion\"",
+    "summary": "Creates table \"LeadInDiffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "LeadInDiffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"LeadInDiffusion\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadInDiffusion\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"LeadInDiffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"LeadInDiffusion\"",
+        "sql": "CREATE TABLE \"public\".\"LeadInDiffusion\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deletedAt\" timestamptz,\n  \"diffusionId\" int4 NOT NULL,\n  \"error\" text,\n  \"id\" SERIAL NOT NULL,\n  \"leadId\" int4 NOT NULL,\n  \"sentAt\" timestamptz,\n  \"status\" text DEFAULT 'pending' NOT NULL,\n  \"templateId\" int4,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"waited\" int4,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"LeadInDiffusion_status_check_57dbf97e\" CHECK (\"status\" IN ('pending', 'sending', 'sent', 'failed'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"LeadInDiffusion\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"LeadInDiffusion\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"LeadInDiffusion\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "index.LeadInDiffusion.LeadInDiffusion_diffusionId_idx_67f61184",
+    "label": "Create index \"LeadInDiffusion_diffusionId_idx_67f61184\" on \"LeadInDiffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "LeadInDiffusion_diffusionId_idx_67f61184",
+        "table": "LeadInDiffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"LeadInDiffusion_diffusionId_idx_67f61184\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadInDiffusion_diffusionId_idx_67f61184\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"LeadInDiffusion_diffusionId_idx_67f61184\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"LeadInDiffusion_diffusionId_idx_67f61184\"",
+        "sql": "CREATE INDEX \"LeadInDiffusion_diffusionId_idx_67f61184\" ON \"public\".\"LeadInDiffusion\" (\"diffusionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"LeadInDiffusion_diffusionId_idx_67f61184\" exists on \"LeadInDiffusion\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"LeadInDiffusion_diffusionId_idx_67f61184\"",
+          "i",
+          "I",
+          "\"public\".\"LeadInDiffusion\"",
+          "btree",
+          "[\"diffusionId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.LeadInDiffusion.LeadInDiffusion_leadId_idx_9113844c",
+    "label": "Create index \"LeadInDiffusion_leadId_idx_9113844c\" on \"LeadInDiffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "LeadInDiffusion_leadId_idx_9113844c",
+        "table": "LeadInDiffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"LeadInDiffusion_leadId_idx_9113844c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadInDiffusion_leadId_idx_9113844c\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"LeadInDiffusion_leadId_idx_9113844c\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"LeadInDiffusion_leadId_idx_9113844c\"",
+        "sql": "CREATE INDEX \"LeadInDiffusion_leadId_idx_9113844c\" ON \"public\".\"LeadInDiffusion\" (\"leadId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"LeadInDiffusion_leadId_idx_9113844c\" exists on \"LeadInDiffusion\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"LeadInDiffusion_leadId_idx_9113844c\"",
+          "i",
+          "I",
+          "\"public\".\"LeadInDiffusion\"",
+          "btree",
+          "[\"leadId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.LeadInDiffusion.LeadInDiffusion_templateId_idx_19e0d972",
+    "label": "Create index \"LeadInDiffusion_templateId_idx_19e0d972\" on \"LeadInDiffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "LeadInDiffusion_templateId_idx_19e0d972",
+        "table": "LeadInDiffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"LeadInDiffusion_templateId_idx_19e0d972\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadInDiffusion_templateId_idx_19e0d972\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"LeadInDiffusion_templateId_idx_19e0d972\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"LeadInDiffusion_templateId_idx_19e0d972\"",
+        "sql": "CREATE INDEX \"LeadInDiffusion_templateId_idx_19e0d972\" ON \"public\".\"LeadInDiffusion\" (\"templateId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"LeadInDiffusion_templateId_idx_19e0d972\" exists on \"LeadInDiffusion\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"LeadInDiffusion_templateId_idx_19e0d972\"",
+          "i",
+          "I",
+          "\"public\".\"LeadInDiffusion\"",
+          "btree",
+          "[\"templateId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.LeadInDiffusion.LeadInDiffusion_diffusionId_fkey",
+    "label": "Add foreign key \"LeadInDiffusion_diffusionId_fkey\" on \"LeadInDiffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "LeadInDiffusion_diffusionId_fkey",
+        "table": "LeadInDiffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"LeadInDiffusion_diffusionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "LeadInDiffusion_diffusionId_fkey",
+          "public",
+          "\"public\".\"LeadInDiffusion\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"LeadInDiffusion_diffusionId_fkey\" on \"LeadInDiffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"LeadInDiffusion_diffusionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"LeadInDiffusion\"\nADD CONSTRAINT \"LeadInDiffusion_diffusionId_fkey\"\nFOREIGN KEY (\"diffusionId\")\nREFERENCES \"public\".\"Diffusion\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"LeadInDiffusion_diffusionId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "LeadInDiffusion_diffusionId_fkey",
+          "public",
+          "\"public\".\"LeadInDiffusion\"",
+          "f",
+          "[\"diffusionId\"]",
+          "\"public\".\"Diffusion\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.LeadInDiffusion.LeadInDiffusion_leadId_fkey",
+    "label": "Add foreign key \"LeadInDiffusion_leadId_fkey\" on \"LeadInDiffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "LeadInDiffusion_leadId_fkey",
+        "table": "LeadInDiffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"LeadInDiffusion_leadId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "LeadInDiffusion_leadId_fkey",
+          "public",
+          "\"public\".\"LeadInDiffusion\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"LeadInDiffusion_leadId_fkey\" on \"LeadInDiffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"LeadInDiffusion_leadId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"LeadInDiffusion\"\nADD CONSTRAINT \"LeadInDiffusion_leadId_fkey\"\nFOREIGN KEY (\"leadId\")\nREFERENCES \"public\".\"Lead\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"LeadInDiffusion_leadId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "LeadInDiffusion_leadId_fkey",
+          "public",
+          "\"public\".\"LeadInDiffusion\"",
+          "f",
+          "[\"leadId\"]",
+          "\"public\".\"Lead\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.LeadInDiffusion.LeadInDiffusion_templateId_fkey",
+    "label": "Add foreign key \"LeadInDiffusion_templateId_fkey\" on \"LeadInDiffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "LeadInDiffusion_templateId_fkey",
+        "table": "LeadInDiffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"LeadInDiffusion_templateId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "LeadInDiffusion_templateId_fkey",
+          "public",
+          "\"public\".\"LeadInDiffusion\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"LeadInDiffusion_templateId_fkey\" on \"LeadInDiffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"LeadInDiffusion_templateId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"LeadInDiffusion\"\nADD CONSTRAINT \"LeadInDiffusion_templateId_fkey\"\nFOREIGN KEY (\"templateId\")\nREFERENCES \"public\".\"Template\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"LeadInDiffusion_templateId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "LeadInDiffusion_templateId_fkey",
+          "public",
+          "\"public\".\"LeadInDiffusion\"",
+          "f",
+          "[\"templateId\"]",
+          "\"public\".\"Template\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.LeadInDiffusion",
+    "label": "Enable row-level security on \"LeadInDiffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "LeadInDiffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"LeadInDiffusion\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "LeadInDiffusion"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"LeadInDiffusion\"",
+        "sql": "ALTER TABLE \"public\".\"LeadInDiffusion\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"LeadInDiffusion\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "LeadInDiffusion"
+        ]
+      }
+    ]
+  }
+]

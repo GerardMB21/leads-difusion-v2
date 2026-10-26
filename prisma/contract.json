@@ -12,6 +12,10 @@
       "model": "Lead",
       "namespace": "public"
     },
+    "LeadInDiffusion": {
+      "model": "LeadInDiffusion",
+      "namespace": "public"
+    },
     "Pipeline": {
       "model": "Pipeline",
       "namespace": "public"
@@ -67,6 +71,27 @@
               {
                 "name": "completed",
                 "value": "completed"
+              },
+              {
+                "name": "failed",
+                "value": "failed"
+              }
+            ]
+          },
+          "LeadInDiffusionStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "pending",
+                "value": "pending"
+              },
+              {
+                "name": "sending",
+                "value": "sending"
+              },
+              {
+                "name": "sent",
+                "value": "sent"
               },
               {
                 "name": "failed",
@@ -473,6 +498,182 @@
               },
               "namespaceId": "public",
               "table": "Lead"
+            }
+          },
+          "LeadInDiffusion": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "deletedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "diffusionId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "error": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "leadId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "sentAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "LeadInDiffusionStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "templateId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "waited": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "diffusion": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "diffusionId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Diffusion",
+                  "namespace": "public"
+                }
+              },
+              "lead": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "leadId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Lead",
+                  "namespace": "public"
+                }
+              },
+              "template": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "templateId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Template",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "deletedAt": {
+                  "column": "deletedAt"
+                },
+                "diffusionId": {
+                  "column": "diffusionId"
+                },
+                "error": {
+                  "column": "error"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "leadId": {
+                  "column": "leadId"
+                },
+                "sentAt": {
+                  "column": "sentAt"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "templateId": {
+                  "column": "templateId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "waited": {
+                  "column": "waited"
+                }
+              },
+              "namespaceId": "public",
+              "table": "LeadInDiffusion"
             }
           },
           "Pipeline": {
@@ -1146,6 +1347,11 @@
               "namespaceId": "public",
               "tableName": "Lead"
             },
+            "LeadInDiffusion": {
+              "kind": "rls",
+              "namespaceId": "public",
+              "tableName": "LeadInDiffusion"
+            },
             "Pipeline": {
               "kind": "rls",
               "namespaceId": "public",
@@ -1488,6 +1694,181 @@
                   ],
                   "name": "Lead_templateId_idx_19e0d972",
                   "prefix": "Lead_templateId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "LeadInDiffusion": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('pending', 'sending', 'sent', 'failed')",
+                  "name": "LeadInDiffusion_status_check_57dbf97e",
+                  "prefix": "LeadInDiffusion_status_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "deletedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "diffusionId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "error": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "leadId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "sentAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "pending"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "LeadInDiffusionStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "templateId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "waited": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "LeadInDiffusion_diffusionId_idx_67f61184"
+                  },
+                  "source": {
+                    "columns": [
+                      "diffusionId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "LeadInDiffusion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Diffusion"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "LeadInDiffusion_leadId_idx_9113844c"
+                  },
+                  "source": {
+                    "columns": [
+                      "leadId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "LeadInDiffusion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Lead"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "LeadInDiffusion_templateId_idx_19e0d972"
+                  },
+                  "source": {
+                    "columns": [
+                      "templateId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "LeadInDiffusion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Template"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "diffusionId"
+                  ],
+                  "name": "LeadInDiffusion_diffusionId_idx_67f61184",
+                  "prefix": "LeadInDiffusion_diffusionId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "leadId"
+                  ],
+                  "name": "LeadInDiffusion_leadId_idx_9113844c",
+                  "prefix": "LeadInDiffusion_leadId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "templateId"
+                  ],
+                  "name": "LeadInDiffusion_templateId_idx_19e0d972",
+                  "prefix": "LeadInDiffusion_templateId_idx",
                   "unique": false
                 }
               ],
@@ -2062,6 +2443,15 @@
                 "completed",
                 "failed"
               ]
+            },
+            "LeadInDiffusionStatus": {
+              "kind": "valueSet",
+              "values": [
+                "pending",
+                "sending",
+                "sent",
+                "failed"
+              ]
             }
           }
         },
@@ -2069,10 +2459,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "0c858dcc937c38cf1762ca77b000f1de6bf876c0e2f3cd70d9780dfab6052bc3"
+    "storageHash": "255ca92e4ad446122e193adb84b17a00badb6c0d1ef526ab62475cd23fbdbbc4"
   },
   "execution": {
-    "executionHash": "ea1b9aea523e6ae24c8cff4288e1c25a34f887cced4814266b3c9086bd1efd37",
+    "executionHash": "d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7",
     "mutations": {
       "defaults": [
         {
@@ -2101,6 +2491,21 @@
           },
           "ref": {
             "entry": "Lead",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestamptzStringNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestamptzStringNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "LeadInDiffusion",
             "field": "updatedAt",
             "namespace": "public"
           }
