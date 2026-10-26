@@ -35,3 +35,11 @@ export async function getPipelines(query: PipelineFilters): Promise<Pipeline[]> 
     })),
   }));
 }
+
+export async function getPipelineOptions(): Promise<{ id: number; name: string }[]> {
+  const pipelines = await db.orm.public.Pipeline.where({ deletedAt: null })
+    .orderBy((p) => p.order.asc())
+    .all();
+
+  return pipelines.map(({ id, name }) => ({ id, name }));
+}
