@@ -1,0 +1,5 @@
+# Generated / noisy files that distort the graph
+migrations/
+prisma/contract.d.ts
+prisma/contract.json
+pnpm-lock.yaml
