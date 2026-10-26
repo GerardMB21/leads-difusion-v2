@@ -9,6 +9,7 @@ export type Workflow = {
   name: string;
   fromPipelineId: number;
   toPipelineId: number;
+  whenResponse: boolean;
   whenNotResponse: boolean;
   whenSendMessage: boolean;
   waitingTime: number;

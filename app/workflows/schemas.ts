@@ -19,6 +19,7 @@ const workflowFields = z.object({
   fromPipelineName: pipelineName.optional(),
   toPipelineId: id.optional(),
   toPipelineName: pipelineName.optional(),
+  whenResponse: z.boolean(),
   whenNotResponse: z.boolean(),
   whenSendMessage: z.boolean(),
   waitingTime: z
@@ -35,7 +36,9 @@ const NEEDS_PIPELINE = 'Indica el pipeline por id o por nombre, no ambos';
 const bothPipelineRefs = (value: Fields, side: 'from' | 'to') =>
   value[`${side}PipelineId`] !== undefined && value[`${side}PipelineName`] !== undefined;
 
-const noTrigger = (value: Fields) => value.whenNotResponse === value.whenSendMessage;
+const TRIGGER_FIELDS = ['whenResponse', 'whenNotResponse', 'whenSendMessage'] as const;
+
+const activeTriggers = (value: Fields) => TRIGGER_FIELDS.filter((field) => value[field]).length;
 
 export const createWorkflowSchema = workflowFields
   .refine((value) => !bothPipelineRefs(value, 'from'), {
@@ -54,9 +57,9 @@ export const createWorkflowSchema = workflowFields
     path: ['toPipelineId'],
     message: 'El pipeline de destino es obligatorio',
   })
-  .refine((value) => !noTrigger(value), {
-    path: ['whenNotResponse'],
-    message: 'Elige cuándo se activa: cuando no responde o se envía mensaje',
+  .refine((value) => activeTriggers(value) === 1, {
+    path: ['whenResponse'],
+    message: 'Elige exactamente una condición: responde, no responde o se envía mensaje',
   });
 
 export type CreateWorkflowInput = z.infer<typeof createWorkflowSchema>;
@@ -68,11 +71,15 @@ export const updateWorkflowSchema = workflowFields
     message: NEEDS_PIPELINE,
   })
   .refine(
-    (value) =>
-      value.whenNotResponse === undefined ||
-      value.whenSendMessage === undefined ||
-      !noTrigger(value),
-    { path: ['whenNotResponse'], message: 'Elige solo una condición de activación' },
+    (value) => {
+      const sent = TRIGGER_FIELDS.filter((field) => value[field] !== undefined).length;
+
+      return sent === 0 || (sent === TRIGGER_FIELDS.length && activeTriggers(value) === 1);
+    },
+    {
+      path: ['whenResponse'],
+      message: 'Envía las tres condiciones de activación con exactamente una activa',
+    },
   );
 
 export type UpdateWorkflowInput = z.infer<typeof updateWorkflowSchema>;
@@ -84,7 +91,7 @@ export const workflowFiltersSchema = z.object({
     .max(100, 'Máximo 100 caracteres')
     .transform((value) => value || undefined)
     .optional(),
-  trigger: z.enum(['notResponse', 'sendMessage']).optional(),
+  trigger: z.enum(['response', 'notResponse', 'sendMessage']).optional(),
   fromPipelineId: z.coerce.number().int().optional(),
   toPipelineId: z.coerce.number().int().optional(),
   orderBy: z.enum(OrderBy).optional(),
@@ -93,11 +100,15 @@ export const workflowFiltersSchema = z.object({
 export type WorkflowFilters = z.infer<typeof workflowFiltersSchema>;
 
 export const TRIGGERS = [
-  { value: 'notResponse', label: 'No responde' },
-  { value: 'sendMessage', label: 'Se envía mensaje' },
+  { value: 'response', label: 'Responde', field: 'whenResponse' },
+  { value: 'notResponse', label: 'No responde', field: 'whenNotResponse' },
+  { value: 'sendMessage', label: 'Se envía mensaje', field: 'whenSendMessage' },
 ] as const;
 
 export type Trigger = (typeof TRIGGERS)[number]['value'];
+
+export const triggerOf = (workflow: Record<(typeof TRIGGER_FIELDS)[number], boolean>) =>
+  TRIGGERS.find(({ field }) => workflow[field]);
 
 export const pipelineOptionSchema = z.object({
   id: id.nullable(),
@@ -111,7 +122,7 @@ export const workflowFormSchema = z
     name: workflowFields.shape.name,
     from: pipelineOptionSchema.nullable(),
     to: pipelineOptionSchema.nullable(),
-    trigger: z.enum(['notResponse', 'sendMessage']),
+    trigger: z.enum(['response', 'notResponse', 'sendMessage']),
     hours: z
       .number({ error: 'Las horas deben ser un número' })
       .int('Las horas deben ser un entero')
