@@ -75,21 +75,32 @@ model WorkflowPipeline {
   @@rls
 }
 
-// model Diffusion {
-//   +DefaultCols
-//   pipelineId    Int?
-//   total         Int
-//   processed     Int                   @default(0)
-//   sent          Int                   @default(0)
-//   failed        Int                   @default(0)
-//   startAt       TimestamptzString?
-//   finishedAt    TimestamptzString?
-//   nextSendAt    TimestamptzString?
-//   pipeline      Pipeline?             @relation("pipeline", fields: [pipelineId], references: [id])
-//   tags          TagInDiffusion[]
-//   templates     TemplateInDiffusion[]
-//   @@rls
-// }
+enum DiffusionStatus {
+  @@type("pg/text@1")
+  active = "active"
+  pending = "pending"
+  cancelled = "cancelled"
+  sending = "sending"
+  completed    = "completed"
+  failed  = "failed"
+}
+
+model Diffusion {
+  +DefaultCols
+  pipelineId    Int?
+  status        DiffusionStatus   @default(pending)
+  total         Int
+  processed     Int                   @default(0)
+  sent          Int                   @default(0)
+  failed        Int                   @default(0)
+  startAt       TimestamptzString?
+  finishedAt    TimestamptzString?
+  nextSendAt    TimestamptzString?
+  pipeline      Pipeline?             @relation("pipeline", fields: [pipelineId], references: [id])
+  // tags          TagInDiffusion[]
+  // templates     TemplateInDiffusion[]
+  @@rls
+}
 
 // model TagInDiffusion {
 //   tagId         Int

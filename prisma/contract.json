@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "Diffusion": {
+      "model": "Diffusion",
+      "namespace": "public"
+    },
     "Lead": {
       "model": "Lead",
       "namespace": "public"
@@ -32,7 +36,202 @@
   "domain": {
     "namespaces": {
       "public": {
+        "enum": {
+          "DiffusionStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "active",
+                "value": "active"
+              },
+              {
+                "name": "pending",
+                "value": "pending"
+              },
+              {
+                "name": "cancelled",
+                "value": "cancelled"
+              },
+              {
+                "name": "sending",
+                "value": "sending"
+              },
+              {
+                "name": "completed",
+                "value": "completed"
+              },
+              {
+                "name": "failed",
+                "value": "failed"
+              }
+            ]
+          }
+        },
         "models": {
+          "Diffusion": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "deletedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "failed": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "finishedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "nextSendAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "pipelineId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "processed": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "sent": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "startAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "DiffusionStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "total": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "pipeline": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "pipelineId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Pipeline",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "deletedAt": {
+                  "column": "deletedAt"
+                },
+                "failed": {
+                  "column": "failed"
+                },
+                "finishedAt": {
+                  "column": "finishedAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "nextSendAt": {
+                  "column": "nextSendAt"
+                },
+                "pipelineId": {
+                  "column": "pipelineId"
+                },
+                "processed": {
+                  "column": "processed"
+                },
+                "sent": {
+                  "column": "sent"
+                },
+                "startAt": {
+                  "column": "startAt"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "total": {
+                  "column": "total"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Diffusion"
+            }
+          },
           "Lead": {
             "fields": {
               "beforePipelineId": {
@@ -771,6 +970,11 @@
       "public": {
         "entries": {
           "rls": {
+            "Diffusion": {
+              "kind": "rls",
+              "namespaceId": "public",
+              "tableName": "Diffusion"
+            },
             "Lead": {
               "kind": "rls",
               "namespaceId": "public",
@@ -803,6 +1007,149 @@
             }
           },
           "table": {
+            "Diffusion": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('active', 'pending', 'cancelled', 'sending', 'completed', 'failed')",
+                  "name": "Diffusion_status_check_4be23e0f",
+                  "prefix": "Diffusion_status_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "deletedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "failed": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
+                "finishedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "nextSendAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "pipelineId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "processed": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
+                "sent": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
+                "startAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "pending"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "DiffusionStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "total": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Diffusion_pipelineId_idx_671407ae"
+                  },
+                  "source": {
+                    "columns": [
+                      "pipelineId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Diffusion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Pipeline"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "pipelineId"
+                  ],
+                  "name": "Diffusion_pipelineId_idx_671407ae",
+                  "prefix": "Diffusion_pipelineId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Lead": {
               "columns": {
                 "beforePipelineId": {
@@ -1369,18 +1716,46 @@
               },
               "uniques": []
             }
+          },
+          "valueSet": {
+            "DiffusionStatus": {
+              "kind": "valueSet",
+              "values": [
+                "active",
+                "pending",
+                "cancelled",
+                "sending",
+                "completed",
+                "failed"
+              ]
+            }
           }
         },
         "id": "public",
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "4d6eb1c38a50606c6683dbcd2cb5516d37cb911c3708c31ca4d67ab93cd5405a"
+    "storageHash": "d84bf04e7c53c3c2d48a1210d6e06a1c1c5b8057a62d9b30ea5cd3f811937f6a"
   },
   "execution": {
-    "executionHash": "09ab8929ed2f82d5682306451af6bbb3caea7ec411e87a25f4c0d0e47fdac3c5",
+    "executionHash": "ea1b9aea523e6ae24c8cff4288e1c25a34f887cced4814266b3c9086bd1efd37",
     "mutations": {
       "defaults": [
+        {
+          "onCreate": {
+            "id": "timestamptzStringNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestamptzStringNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "Diffusion",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
         {
           "onCreate": {
             "id": "timestamptzStringNow",
