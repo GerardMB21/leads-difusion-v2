@@ -1,6 +1,6 @@
 'use client';
 
-import type { LeadTag, Pipeline } from '../types';
+import type { Lead, LeadTag, Pipeline } from '../types';
 
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,11 +16,13 @@ import TagsCombobox from './TagsCombobox';
 const LEAD_CREATE_TIMEOUT = 10_000;
 
 interface Props {
-  pipeline: Pipeline;
+  pipeline?: Pipeline;
+  lead?: Pick<Lead, 'id' | 'contactName' | 'phone' | 'enrollmentDate' | 'tags'>;
   onSuccess: () => void;
 }
 
-const LeadForm = ({ pipeline, onSuccess }: Props) => {
+const LeadForm = ({ pipeline, lead, onSuccess }: Props) => {
+  const isEditing = !!lead;
   const [tagOptions, setTagOptions] = useState<string[]>([]);
 
   const {
@@ -28,14 +30,16 @@ const LeadForm = ({ pipeline, onSuccess }: Props) => {
     control,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
   } = useForm<LeadFormInput>({
     resolver: zodResolver(leadFormSchema),
     defaultValues: {
-      contactName: '',
-      phone: '',
-      enrollmentDate: new Date().toLocaleDateString('en-CA'),
-      tags: [],
+      contactName: lead?.contactName ?? '',
+      phone: lead?.phone ?? '',
+      enrollmentDate: (lead ? new Date(lead.enrollmentDate) : new Date()).toLocaleDateString(
+        'en-CA',
+      ),
+      tags: lead?.tags.map(({ name }) => name) ?? [],
     },
   });
 
@@ -48,21 +52,40 @@ const LeadForm = ({ pipeline, onSuccess }: Props) => {
 
   const onSubmit = async ({ enrollmentDate, tags, ...values }: LeadFormInput) => {
     try {
-      await api.post(
-        '/leads',
-        {
-          ...values,
-          order: pipeline.leads.length,
-          pipelineId: pipeline.id,
-          enrollmentDate: new Date(`${enrollmentDate}T00:00:00`).toISOString(),
-          tagNames: tags,
-        },
-        { timeout: LEAD_CREATE_TIMEOUT },
-      );
+      if (lead) {
+        await api.patch(
+          `/leads/${lead.id}`,
+          {
+            ...values,
+            ...(dirtyFields.enrollmentDate && {
+              enrollmentDate: new Date(`${enrollmentDate}T00:00:00`).toISOString(),
+            }),
+            tagNames: tags,
+          },
+          { timeout: LEAD_CREATE_TIMEOUT },
+        );
+      } else {
+        await api.post(
+          '/leads',
+          {
+            ...values,
+            order: pipeline!.leads.length,
+            pipelineId: pipeline!.id,
+            enrollmentDate: new Date(`${enrollmentDate}T00:00:00`).toISOString(),
+            tagNames: tags,
+          },
+          { timeout: LEAD_CREATE_TIMEOUT },
+        );
+      }
 
       onSuccess();
     } catch (error) {
-      setError('root', { message: getApiErrorMessage(error, 'No se pudo crear el lead') });
+      setError('root', {
+        message: getApiErrorMessage(
+          error,
+          isEditing ? 'No se pudo actualizar el lead' : 'No se pudo crear el lead',
+        ),
+      });
     }
   };
 
@@ -107,7 +130,7 @@ const LeadForm = ({ pipeline, onSuccess }: Props) => {
         />
         <FieldError errors={[errors.root]} />
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Creando...' : 'Crear lead'}
+          {isSubmitting ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear lead'}
         </Button>
       </FieldGroup>
     </form>

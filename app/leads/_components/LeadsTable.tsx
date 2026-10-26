@@ -8,6 +8,7 @@ import DataTable, { dataTableFeatures } from '@/components/DataTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStore } from '../_store';
 import { Badge } from '@/components/ui/badge';
+import LeadActions from './LeadActions';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const MAX_VISIBLE_TAGS = 2;
@@ -75,6 +76,11 @@ const columns = helper.columns([
 
       return <Badge variant="outline">{row.original.beforePipeline?.name}</Badge>;
     },
+  }),
+  helper.display({
+    id: 'actions',
+    header: '',
+    cell: ({ row }) => <LeadActions lead={row.original} />,
   }),
 ]);
 
