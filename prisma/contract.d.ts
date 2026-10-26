@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'255ca92e4ad446122e193adb84b17a00badb6c0d1ef526ab62475cd23fbdbbc4'>;
+  StorageHashBase<'366a38765083f2a4c4e0b7a9ff07024681c9c08125486d923767317173eec5f8'>;
 export type ExecutionHash =
   ExecutionHashBase<'d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7'>;
 export type ProfileHash =
@@ -423,6 +423,7 @@ export namespace Models {
     updatedAt: FieldOutputTypes['public']['WorkflowPipeline']['updatedAt'];
     waitingTime: FieldOutputTypes['public']['WorkflowPipeline']['waitingTime'];
     whenNotResponse: FieldOutputTypes['public']['WorkflowPipeline']['whenNotResponse'];
+    whenResponse: FieldOutputTypes['public']['WorkflowPipeline']['whenResponse'];
     whenSendMessage: FieldOutputTypes['public']['WorkflowPipeline']['whenSendMessage'];
     fromPipeline: public_Pipeline;
     toPipeline: public_Pipeline;
@@ -1271,6 +1272,16 @@ type ContractBase = Omit<
                   readonly many: false;
                 };
                 readonly whenNotResponse: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
+                readonly whenResponse: {
                   readonly dataType: 'pg/bool';
                   readonly codecId: 'pg/bool@1';
                   readonly nullable: false;
@@ -2157,6 +2168,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly whenResponse: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly whenSendMessage: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
@@ -2201,6 +2216,7 @@ type ContractBase = Omit<
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly waitingTime: { readonly column: 'waitingTime' };
                 readonly whenNotResponse: { readonly column: 'whenNotResponse' };
+                readonly whenResponse: { readonly column: 'whenResponse' };
                 readonly whenSendMessage: { readonly column: 'whenSendMessage' };
               };
             };

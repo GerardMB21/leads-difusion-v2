@@ -67,6 +67,7 @@ model WorkflowPipeline {
   name            String
   fromPipelineId  Int
   toPipelineId    Int
+  whenResponse    Boolean   @default(false)
   whenNotResponse Boolean   @default(false)
   whenSendMessage Boolean   @default(false)
   waitingTime     Int       @default(0)

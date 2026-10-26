@@ -1,0 +1,72 @@
+[
+  {
+    "id": "column.public.WorkflowPipeline.whenResponse",
+    "label": "Add column \"whenResponse\" to \"WorkflowPipeline\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "whenResponse",
+        "table": "WorkflowPipeline"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"whenResponse\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "WorkflowPipeline",
+          "whenResponse"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"whenResponse\" on \"WorkflowPipeline\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"whenResponse\"",
+        "sql": "ALTER TABLE \"public\".\"WorkflowPipeline\" ADD COLUMN \"whenResponse\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"whenResponse\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "WorkflowPipeline",
+          "whenResponse"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"whenResponse\" on \"WorkflowPipeline\""
+        }
+      },
+      {
+        "description": "verify column \"whenResponse\" has type \"boolean\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "WorkflowPipeline",
+          "whenResponse",
+          "boolean"
+        ]
+      },
+      {
+        "description": "verify column \"whenResponse\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "WorkflowPipeline",
+          "whenResponse",
+          "NO"
+        ]
+      }
+    ]
+  }
+]

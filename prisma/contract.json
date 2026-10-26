@@ -1249,6 +1249,13 @@
                   "kind": "scalar"
                 }
               },
+              "whenResponse": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "whenSendMessage": {
                 "nullable": false,
                 "type": {
@@ -1319,6 +1326,9 @@
                 },
                 "whenNotResponse": {
                   "column": "whenNotResponse"
+                },
+                "whenResponse": {
+                  "column": "whenResponse"
                 },
                 "whenSendMessage": {
                   "column": "whenSendMessage"
@@ -2356,6 +2366,15 @@
                   },
                   "nullable": false
                 },
+                "whenResponse": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
                 "whenSendMessage": {
                   "codecId": "pg/bool@1",
                   "dataType": "pg/bool",
@@ -2459,7 +2478,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "255ca92e4ad446122e193adb84b17a00badb6c0d1ef526ab62475cd23fbdbbc4"
+    "storageHash": "366a38765083f2a4c4e0b7a9ff07024681c9c08125486d923767317173eec5f8"
   },
   "execution": {
     "executionHash": "d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7",
