@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Stack
 
-Next.js 16 (App Router, `cacheComponents` and `partialPrefetching` enabled), React 19, Tailwind 4, shadcn/ui (`components/ui`, `@base-ui/react`), pnpm, Prisma **8 rc** against Supabase Postgres. The `@/*` alias maps to the repo root. `.nvmrc` pins Node 26.12.1 (the machine may run an older Node; pnpm only warns).
+Next.js 16 (App Router, `cacheComponents` and `partialPrefetching` enabled), React 19, Tailwind 4, shadcn/ui (`components/ui`, `@base-ui/react`), TanStack Table v9, Tiptap, react-dropzone, pnpm, Prisma **8 rc** against Supabase Postgres. The `@/*` alias maps to the repo root. `.nvmrc` pins Node 26.12.1 (the machine may run an older Node; pnpm only warns).
 
 `AGENTS.md` warns that this Next.js version has breaking changes: read the relevant guide in `node_modules/next/dist/docs/` before writing Next code.
 
@@ -49,3 +49,38 @@ pnpm prisma migration status
 - Without `--advance-ref db`, the next `migration plan` fails with `MIGRATION.PLAN_ORIGIN_UNKNOWN`; the fix is `--from <hash>` or `pnpm prisma migration ref set db <hash>`.
 - Commit `migrations/` entirely (packages, `snapshots/`, `refs/db.json`) together with the regenerated `contract.*`.
 - Prisma's own state lives in the `prisma_contract` schema of the database; do not touch it by hand.
+
+## Architecture
+
+Each feature follows the same layering; copy the existing ones (`leads`, `pipelines`, `templates`) when adding another.
+
+- `app/<feature>/{types,schemas}.ts` hold the types and the zod schemas shared by client and server. `_components/` and `_store/` (zustand) are the client side; `_components/Provider.tsx` copies the server-fetched `data` into the store.
+- `app/api/<feature>/**/route.ts` validate the request with the schema and call a server action. Errors go through `errorResponse` / `handleDbError` from `lib/response.ts` (404 via the `notFound` message, FK violation 400, unique violation 409).
+- `server/actions/<feature>/{get,post,patch,delete}.ts` are the `'use server'` actions that talk to `db`. A `'use server'` file may only export async functions, so shared constants (`LEAD_NOT_FOUND`, `TEMPLATE_NOT_FOUND`, ...) live in `server/queries/`.
+- Pages are server components that `await connection()`, fetch with the action, and wrap the UI in `Provider`. Client code calls the API with `lib/api.ts` (`api`, `getApiErrorMessage`); `router.refresh()` after a mutation.
+- Deletes are soft (`deletedAt`); every read filters `deletedAt: null`.
+- Dialog + form + actions-dropdown pattern: see `pipelines/_components/PipelineActions.tsx`. Lists with row actions use `helper.display({ id: 'actions' })` in the TanStack table.
+- **Security note — auth is pending.** No authentication exists yet: every API route and `'use server'` action is open (a `'use server'` function is a publicly callable endpoint). This matters most because of the Evolution API integration: anyone who can reach `POST /api/whatsapp/send` or the `sendTemplate` action can make the connected WhatsApp number send messages. The lead import and template image upload are open too. Add an auth method (e.g. Supabase Auth with a `proxy.ts` guarding `/api/*` and the pages, plus the same check inside each server action) before exposing the app beyond a private network.
+
+## Supabase Storage
+
+- `server/storage/index.ts` (`server-only`) wraps `@supabase/supabase-js` with the secret key: `uploadFile(bucket, file)` and `deleteFile(bucket, pathOrUrl)`. Object keys are `<uuid>.<ext>` with the extension taken from an allow-list of image MIME types, never from the client file name.
+- The bucket is public; `Template.img` stores the public URL.
+- Env: `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (never `NEXT_PUBLIC_`), `SUPABASE_TEMPLATES_BUCKET` (defaults to `templates`).
+- Template create/update take `multipart/form-data` (`name`, `message`, optional `image`, `removeImage=true` on PATCH). Actions upload first and delete the new file if the DB write fails; replacing or removing an image deletes the old object.
+
+## Templates and rich text
+
+- `Template.message` is HTML from the Tiptap editor (`components/RichTextEditor.tsx`: bold, italic, strike, bullet/ordered lists). It is sanitized on the server with `server/sanitize.ts` (allow-list, no attributes) before saving, and rendered with `components/RichTextContent.tsx`, which trusts already-sanitized HTML. Extend the allow-list there if new editor marks are added.
+
+## Lead import
+
+- `components/ImportLeadsDialog.tsx` (reusable, used in `/leads` and `/pipelines`) posts a `.xlsx`/`.csv` to `POST /api/leads/import`. The route parses with `server/parsers/leads.ts` (first sheet, columns `Contacto principal`, `Teléfono celular (contacto)`, `Captación (contacto)`) and calls `server/actions/leads/import.ts`, which skips existing/duplicate phones and returns `{ created, skipped[] }`.
+- `xlsx` is installed from the SheetJS CDN tarball (npm's 0.18.5 has known vulnerabilities); keep it that way. CSV is decoded as UTF-8 before parsing, otherwise accents break.
+
+## WhatsApp (Evolution API)
+
+- `server/whatsapp/evolution.ts` (`server-only`) sends a template with simulated typing (`sendPresence` composing for a duration proportional to the message length, then `sendText` or `sendMedia`). Images go by URL first and fall back to multipart. Phones are normalized to digits, with country code `51` prepended to 9-digit numbers.
+- `server/whatsapp/htmlToWhatsApp.ts` converts the template HTML with `turndown` to WhatsApp formatting.
+- Entry points: `sendTemplate` action and `POST /api/whatsapp/send` (`{ phone, templateId }`). No UI uses them yet.
+- Env: `EVOLUTION_API_PREFIX`, `EVOLUTION_API_INSTANCE_ID`, `EVOLUTION_API_KEY`. Never log raw axios errors (they contain the apikey header); use `describeError`.
