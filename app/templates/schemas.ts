@@ -10,9 +10,17 @@ export const imageSchema = z
   .refine(({ type }) => IMAGE_TYPES.includes(type), 'Solo se permiten png, jpg, webp o gif')
   .refine(({ size }) => size <= MAX_IMAGE_SIZE, 'La imagen supera los 5 MB');
 
+const hasText = (html: string) =>
+  html
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .trim().length > 0;
+
+const message = z.string().trim().refine(hasText, 'El mensaje es obligatorio');
+
 export const createTemplateSchema = z.object({
   name: z.string().trim().min(1, 'El nombre es obligatorio').max(100, 'Máximo 100 caracteres'),
-  message: z.string().trim().min(1, 'El mensaje es obligatorio'),
+  message,
 });
 
 export type CreateTemplateInput = z.infer<typeof createTemplateSchema>;
