@@ -12,7 +12,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Input } from '@/components/ui/input';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useStore } from '../_store';
-import { MAX_HOURS, workflowFormSchema, type WorkflowFormInput } from '../schemas';
+import { MAX_HOURS, triggerOf, workflowFormSchema, type WorkflowFormInput } from '../schemas';
 import PipelineCombobox from './PipelineCombobox';
 import TriggerCombobox from './TriggerCombobox';
 
@@ -48,7 +48,7 @@ const WorkflowForm = ({ workflow, onSuccess }: Props) => {
       name: workflow?.name ?? '',
       from: workflow?.fromPipeline ?? null,
       to: workflow?.toPipeline ?? null,
-      trigger: workflow?.whenSendMessage ? 'sendMessage' : 'notResponse',
+      trigger: (workflow && triggerOf(workflow)?.value) || 'notResponse',
       hours: workflow ? Math.floor(workflow.waitingTime / 60) : 0,
       minutes: workflow ? workflow.waitingTime % 60 : 0,
     },
@@ -59,6 +59,7 @@ const WorkflowForm = ({ workflow, onSuccess }: Props) => {
       name,
       ...toPipelineFields('from', from),
       ...toPipelineFields('to', to),
+      whenResponse: trigger === 'response',
       whenNotResponse: trigger === 'notResponse',
       whenSendMessage: trigger === 'sendMessage',
       waitingTime: hours * 60 + minutes,

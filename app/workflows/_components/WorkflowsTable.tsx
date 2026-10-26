@@ -8,6 +8,7 @@ import DataTable, { dataTableFeatures } from '@/components/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStore } from '../_store';
+import { triggerOf } from '../schemas';
 import WorkflowActions from './WorkflowActions';
 
 const pad = (value: number) => String(value).padStart(2, '0');
@@ -30,14 +31,7 @@ const columns = helper.columns([
   helper.display({
     id: 'trigger',
     header: 'Se activa',
-    cell: ({ row }) => {
-      const { whenNotResponse, whenSendMessage } = row.original;
-
-      if (whenNotResponse) return 'No responde';
-      if (whenSendMessage) return 'Se envía mensaje';
-
-      return '-';
-    },
+    cell: ({ row }) => triggerOf(row.original)?.label ?? '-',
   }),
   helper.accessor('waitingTime', {
     header: 'Tiempo de espera',
