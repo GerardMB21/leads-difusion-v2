@@ -2,20 +2,17 @@
 
 import type { ColumnDef, RowData } from '@tanstack/react-table';
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   columnFilteringFeature,
   createFilteredRowModel,
   createPaginatedRowModel,
-  filterFn_includesString,
-  globalFilteringFeature,
   rowPaginationFeature,
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -34,11 +31,9 @@ import {
 
 export const dataTableFeatures = tableFeatures({
   columnFilteringFeature,
-  globalFilteringFeature,
   rowPaginationFeature,
   filteredRowModel: createFilteredRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
-  filterFns: { includesString: filterFn_includesString },
 });
 
 export type DataTableFeatures = typeof dataTableFeatures;
@@ -51,8 +46,6 @@ const PAGE_SIZES = [10, 20, 50, 100];
 interface Props<TData extends RowData> {
   columns: DataTableColumn<TData>[];
   data: TData[];
-  searchColumns: string[];
-  searchPlaceholder?: string;
   pageSize?: number;
   emptyMessage?: string;
 }
@@ -60,27 +53,18 @@ interface Props<TData extends RowData> {
 const DataTable = <TData extends RowData>({
   columns,
   data,
-  searchColumns,
-  searchPlaceholder = 'Buscar...',
   pageSize = DEFAULT_PAGE_SIZE,
   emptyMessage = 'Sin resultados.',
 }: Props<TData>) => {
   const initialState = useMemo(() => ({ pagination: { pageIndex: 0, pageSize } }), [pageSize]);
-  const getColumnCanGlobalFilter = useCallback(
-    (column: { id: string }) => searchColumns.includes(column.id),
-    [searchColumns],
-  );
-
   const table = useTable(
     {
       features: dataTableFeatures,
       columns,
       data,
-      globalFilterFn: 'includesString',
-      getColumnCanGlobalFilter,
       initialState,
     },
-    (state) => ({ pagination: state.pagination, globalFilter: state.globalFilter }),
+    (state) => ({ pagination: state.pagination }),
   );
 
   const { pageIndex, pageSize: currentPageSize } = table.state.pagination;
@@ -89,13 +73,6 @@ const DataTable = <TData extends RowData>({
 
   return (
     <div className="flex flex-col gap-4">
-      <Input
-        value={(table.state.globalFilter as string | undefined) ?? ''}
-        onChange={(event) => table.setGlobalFilter(event.target.value)}
-        placeholder={searchPlaceholder}
-        aria-label={searchPlaceholder}
-        className="max-w-sm"
-      />
       <div className="rounded-lg border">
         <Table>
           <TableHeader>
