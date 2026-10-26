@@ -40,6 +40,12 @@ export const updateLeadSchema = createLeadSchema
 export type UpdateLeadInput = z.infer<typeof updateLeadSchema>;
 
 export const leadFiltersSchema = z.object({
+  search: z
+    .string()
+    .trim()
+    .max(100, 'Máximo 100 caracteres')
+    .transform((value) => value || undefined)
+    .optional(),
   pipelineId: z.coerce.number().int().optional(),
   templateId: z.coerce.number().int().optional(),
   messageResponse: z.union([z.boolean(), z.stringbool()]).optional(),

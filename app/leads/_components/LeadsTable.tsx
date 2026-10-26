@@ -84,22 +84,12 @@ const columns = helper.columns([
   }),
 ]);
 
-const SEARCH_COLUMNS = ['contactName', 'phone'];
-
 const LeadsTable = () => {
   const { data, initialLoading } = useStore((state) => state);
 
   if (initialLoading) return <Skeleton className="h-96 w-full rounded-lg" />;
 
-  return (
-    <DataTable
-      columns={columns}
-      data={data}
-      searchColumns={SEARCH_COLUMNS}
-      searchPlaceholder="Buscar por nombre o teléfono"
-      emptyMessage="No hay leads."
-    />
-  );
+  return <DataTable columns={columns} data={data} emptyMessage="No hay leads." />;
 };
 
 export default LeadsTable;
