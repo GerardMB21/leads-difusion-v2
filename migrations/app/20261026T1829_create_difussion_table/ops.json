@@ -1,0 +1,190 @@
+[
+  {
+    "id": "table.Diffusion",
+    "label": "Create table \"Diffusion\"",
+    "summary": "Creates table \"Diffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Diffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Diffusion\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Diffusion\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Diffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Diffusion\"",
+        "sql": "CREATE TABLE \"public\".\"Diffusion\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deletedAt\" timestamptz,\n  \"failed\" int4 DEFAULT 0 NOT NULL,\n  \"finishedAt\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"nextSendAt\" timestamptz,\n  \"pipelineId\" int4,\n  \"processed\" int4 DEFAULT 0 NOT NULL,\n  \"sent\" int4 DEFAULT 0 NOT NULL,\n  \"startAt\" timestamptz,\n  \"total\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Diffusion\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Diffusion\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Diffusion\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "index.Diffusion.Diffusion_pipelineId_idx_671407ae",
+    "label": "Create index \"Diffusion_pipelineId_idx_671407ae\" on \"Diffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Diffusion_pipelineId_idx_671407ae",
+        "table": "Diffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Diffusion_pipelineId_idx_671407ae\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Diffusion_pipelineId_idx_671407ae\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Diffusion_pipelineId_idx_671407ae\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Diffusion_pipelineId_idx_671407ae\"",
+        "sql": "CREATE INDEX \"Diffusion_pipelineId_idx_671407ae\" ON \"public\".\"Diffusion\" (\"pipelineId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Diffusion_pipelineId_idx_671407ae\" exists on \"Diffusion\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Diffusion_pipelineId_idx_671407ae\"",
+          "i",
+          "I",
+          "\"public\".\"Diffusion\"",
+          "btree",
+          "[\"pipelineId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Diffusion.Diffusion_pipelineId_fkey",
+    "label": "Add foreign key \"Diffusion_pipelineId_fkey\" on \"Diffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Diffusion_pipelineId_fkey",
+        "table": "Diffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Diffusion_pipelineId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Diffusion_pipelineId_fkey",
+          "public",
+          "\"public\".\"Diffusion\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Diffusion_pipelineId_fkey\" on \"Diffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Diffusion_pipelineId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Diffusion\"\nADD CONSTRAINT \"Diffusion_pipelineId_fkey\"\nFOREIGN KEY (\"pipelineId\")\nREFERENCES \"public\".\"Pipeline\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Diffusion_pipelineId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Diffusion_pipelineId_fkey",
+          "public",
+          "\"public\".\"Diffusion\"",
+          "f",
+          "[\"pipelineId\"]",
+          "\"public\".\"Pipeline\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.Diffusion",
+    "label": "Enable row-level security on \"Diffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "Diffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"Diffusion\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"Diffusion\"",
+        "sql": "ALTER TABLE \"public\".\"Diffusion\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"Diffusion\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion"
+        ]
+      }
+    ]
+  }
+]

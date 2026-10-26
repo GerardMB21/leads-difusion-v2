@@ -74,3 +74,17 @@ model WorkflowPipeline {
   toPipeline      Pipeline  @relation("pipelineTo", fields: [toPipelineId], references: [id])
   @@rls
 }
+
+model Diffusion {
+  +DefaultCols
+  pipelineId    Int?
+  total         Int
+  processed     Int                   @default(0)
+  sent          Int                   @default(0)
+  failed        Int                   @default(0)
+  startAt       TimestamptzString?
+  finishedAt    TimestamptzString?
+  nextSendAt    TimestamptzString?
+  pipeline      Pipeline?             @relation("pipeline", fields: [pipelineId], references: [id])
+  @@rls
+}
