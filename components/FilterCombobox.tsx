@@ -15,20 +15,26 @@ export type FilterOption = {
 };
 
 interface Props {
+  id?: string;
+  className?: string;
   label: string;
   placeholder: string;
   value: string | null;
   options: FilterOption[];
   searchable?: boolean;
+  clearable?: boolean;
   onChange: (value: string | null) => void;
 }
 
 const FilterCombobox = ({
+  id,
+  className = 'w-full sm:w-52',
   label,
   placeholder,
   value,
   options,
   searchable = false,
+  clearable = true,
   onChange,
 }: Props) => (
   <Combobox
@@ -41,11 +47,12 @@ const FilterCombobox = ({
     onValueChange={(next: FilterOption | null) => onChange(next?.value ?? null)}
   >
     <ComboboxInput
+      id={id}
       aria-label={label}
       placeholder={placeholder}
       readOnly={!searchable}
-      showClear={value !== null}
-      className="w-full sm:w-52"
+      showClear={clearable && value !== null}
+      className={className}
     />
     <ComboboxContent>
       <ComboboxEmpty>Sin resultados</ComboboxEmpty>
