@@ -4,10 +4,6 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
-    "Diffusion": {
-      "model": "Diffusion",
-      "namespace": "public"
-    },
     "Lead": {
       "model": "Lead",
       "namespace": "public"
@@ -20,20 +16,12 @@
       "model": "Tag",
       "namespace": "public"
     },
-    "TagInDiffusion": {
-      "model": "TagInDiffusion",
-      "namespace": "public"
-    },
     "TagInLead": {
       "model": "TagInLead",
       "namespace": "public"
     },
     "Template": {
       "model": "Template",
-      "namespace": "public"
-    },
-    "TemplateInDiffusion": {
-      "model": "TemplateInDiffusion",
       "namespace": "public"
     },
     "WorkflowPipeline": {
@@ -45,184 +33,6 @@
     "namespaces": {
       "public": {
         "models": {
-          "Diffusion": {
-            "fields": {
-              "createdAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "deletedAt": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "failed": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "finishedAt": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "nextSendAt": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "pipelineId": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "processed": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "sent": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "startAt": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "total": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "updatedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "pipeline": {
-                "cardinality": "N:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "pipelineId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Pipeline",
-                  "namespace": "public"
-                }
-              },
-              "tags": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "diffusionId"
-                  ]
-                },
-                "to": {
-                  "model": "TagInDiffusion",
-                  "namespace": "public"
-                }
-              },
-              "templates": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "diffusionId"
-                  ]
-                },
-                "to": {
-                  "model": "TemplateInDiffusion",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "createdAt": {
-                  "column": "createdAt"
-                },
-                "deletedAt": {
-                  "column": "deletedAt"
-                },
-                "failed": {
-                  "column": "failed"
-                },
-                "finishedAt": {
-                  "column": "finishedAt"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "nextSendAt": {
-                  "column": "nextSendAt"
-                },
-                "pipelineId": {
-                  "column": "pipelineId"
-                },
-                "processed": {
-                  "column": "processed"
-                },
-                "sent": {
-                  "column": "sent"
-                },
-                "startAt": {
-                  "column": "startAt"
-                },
-                "total": {
-                  "column": "total"
-                },
-                "updatedAt": {
-                  "column": "updatedAt"
-                }
-              },
-              "namespaceId": "public",
-              "table": "Diffusion"
-            }
-          },
           "Lead": {
             "fields": {
               "beforePipelineId": {
@@ -647,70 +457,6 @@
               "table": "Tag"
             }
           },
-          "TagInDiffusion": {
-            "fields": {
-              "diffusionId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "tagId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "diffusion": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "diffusionId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Diffusion",
-                  "namespace": "public"
-                }
-              },
-              "tag": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "tagId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Tag",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "diffusionId": {
-                  "column": "diffusionId"
-                },
-                "tagId": {
-                  "column": "tagId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "TagInDiffusion"
-            }
-          },
           "TagInLead": {
             "fields": {
               "leadId": {
@@ -872,70 +618,6 @@
               "table": "Template"
             }
           },
-          "TemplateInDiffusion": {
-            "fields": {
-              "diffusionId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "templateId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "diffusion": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "diffusionId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Diffusion",
-                  "namespace": "public"
-                }
-              },
-              "template": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "templateId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Tag",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "diffusionId": {
-                  "column": "diffusionId"
-                },
-                "templateId": {
-                  "column": "templateId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "TemplateInDiffusion"
-            }
-          },
           "WorkflowPipeline": {
             "fields": {
               "createdAt": {
@@ -1089,11 +771,6 @@
       "public": {
         "entries": {
           "rls": {
-            "Diffusion": {
-              "kind": "rls",
-              "namespaceId": "public",
-              "tableName": "Diffusion"
-            },
             "Lead": {
               "kind": "rls",
               "namespaceId": "public",
@@ -1109,11 +786,6 @@
               "namespaceId": "public",
               "tableName": "Tag"
             },
-            "TagInDiffusion": {
-              "kind": "rls",
-              "namespaceId": "public",
-              "tableName": "TagInDiffusion"
-            },
             "TagInLead": {
               "kind": "rls",
               "namespaceId": "public",
@@ -1124,11 +796,6 @@
               "namespaceId": "public",
               "tableName": "Template"
             },
-            "TemplateInDiffusion": {
-              "kind": "rls",
-              "namespaceId": "public",
-              "tableName": "TemplateInDiffusion"
-            },
             "WorkflowPipeline": {
               "kind": "rls",
               "namespaceId": "public",
@@ -1136,127 +803,6 @@
             }
           },
           "table": {
-            "Diffusion": {
-              "columns": {
-                "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nullable": false
-                },
-                "deletedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
-                  "nullable": true
-                },
-                "failed": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "kind": "literal",
-                    "value": 0
-                  },
-                  "nullable": false
-                },
-                "finishedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
-                  "nullable": true
-                },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nullable": false
-                },
-                "nextSendAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
-                  "nullable": true
-                },
-                "pipelineId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
-                },
-                "processed": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "kind": "literal",
-                    "value": 0
-                  },
-                  "nullable": false
-                },
-                "sent": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "kind": "literal",
-                    "value": 0
-                  },
-                  "nullable": false
-                },
-                "startAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
-                  "nullable": true
-                },
-                "total": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "name": "Diffusion_pipelineId_idx_671407ae"
-                  },
-                  "source": {
-                    "columns": [
-                      "pipelineId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Diffusion"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Pipeline"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "pipelineId"
-                  ],
-                  "name": "Diffusion_pipelineId_idx_671407ae",
-                  "prefix": "Diffusion_pipelineId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": []
-            },
             "Lead": {
               "columns": {
                 "beforePipelineId": {
@@ -1545,85 +1091,6 @@
                 }
               ]
             },
-            "TagInDiffusion": {
-              "columns": {
-                "diffusionId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "tagId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "name": "TagInDiffusion_tagId_idx_86854244"
-                  },
-                  "source": {
-                    "columns": [
-                      "tagId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "TagInDiffusion"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Tag"
-                  }
-                },
-                {
-                  "index": {
-                    "name": "TagInDiffusion_diffusionId_idx_67f61184"
-                  },
-                  "source": {
-                    "columns": [
-                      "diffusionId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "TagInDiffusion"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Diffusion"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "diffusionId"
-                  ],
-                  "name": "TagInDiffusion_diffusionId_idx_67f61184",
-                  "prefix": "TagInDiffusion_diffusionId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "tagId"
-                  ],
-                  "name": "TagInDiffusion_tagId_idx_86854244",
-                  "prefix": "TagInDiffusion_tagId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "tagId",
-                  "diffusionId"
-                ]
-              },
-              "uniques": []
-            },
             "TagInLead": {
               "columns": {
                 "leadId": {
@@ -1763,85 +1230,6 @@
                   ]
                 }
               ]
-            },
-            "TemplateInDiffusion": {
-              "columns": {
-                "diffusionId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "templateId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "name": "TemplateInDiffusion_templateId_idx_19e0d972"
-                  },
-                  "source": {
-                    "columns": [
-                      "templateId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "TemplateInDiffusion"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Tag"
-                  }
-                },
-                {
-                  "index": {
-                    "name": "TemplateInDiffusion_diffusionId_idx_67f61184"
-                  },
-                  "source": {
-                    "columns": [
-                      "diffusionId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "TemplateInDiffusion"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Diffusion"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "diffusionId"
-                  ],
-                  "name": "TemplateInDiffusion_diffusionId_idx_67f61184",
-                  "prefix": "TemplateInDiffusion_diffusionId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "templateId"
-                  ],
-                  "name": "TemplateInDiffusion_templateId_idx_19e0d972",
-                  "prefix": "TemplateInDiffusion_templateId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "templateId",
-                  "diffusionId"
-                ]
-              },
-              "uniques": []
             },
             "WorkflowPipeline": {
               "columns": {
@@ -1987,27 +1375,12 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "e01b0228eec5308b57e982873b321e737d2f36b87ddfeea0a9fb24fbec47f365"
+    "storageHash": "4d6eb1c38a50606c6683dbcd2cb5516d37cb911c3708c31ca4d67ab93cd5405a"
   },
   "execution": {
-    "executionHash": "ea1b9aea523e6ae24c8cff4288e1c25a34f887cced4814266b3c9086bd1efd37",
+    "executionHash": "09ab8929ed2f82d5682306451af6bbb3caea7ec411e87a25f4c0d0e47fdac3c5",
     "mutations": {
       "defaults": [
-        {
-          "onCreate": {
-            "id": "timestamptzStringNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestamptzStringNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "Diffusion",
-            "field": "updatedAt",
-            "namespace": "public"
-          }
-        },
         {
           "onCreate": {
             "id": "timestamptzStringNow",

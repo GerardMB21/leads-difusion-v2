@@ -75,36 +75,59 @@ model WorkflowPipeline {
   @@rls
 }
 
-model Diffusion {
-  +DefaultCols
-  pipelineId    Int?
-  total         Int
-  processed     Int                   @default(0)
-  sent          Int                   @default(0)
-  failed        Int                   @default(0)
-  startAt       TimestamptzString?
-  finishedAt    TimestamptzString?
-  nextSendAt    TimestamptzString?
-  pipeline      Pipeline?             @relation("pipeline", fields: [pipelineId], references: [id])
-  tags          TagInDiffusion[]
-  templates     TemplateInDiffusion[]
-  @@rls
-}
+// model Diffusion {
+//   +DefaultCols
+//   pipelineId    Int?
+//   total         Int
+//   processed     Int                   @default(0)
+//   sent          Int                   @default(0)
+//   failed        Int                   @default(0)
+//   startAt       TimestamptzString?
+//   finishedAt    TimestamptzString?
+//   nextSendAt    TimestamptzString?
+//   pipeline      Pipeline?             @relation("pipeline", fields: [pipelineId], references: [id])
+//   tags          TagInDiffusion[]
+//   templates     TemplateInDiffusion[]
+//   @@rls
+// }
 
-model TagInDiffusion {
-  tagId         Int
-  tag           Tag         @relation(fields: [tagId], references: [id])
-  diffusionId   Int
-  diffusion     Diffusion   @relation(fields: [diffusionId], references: [id])
-  @@id([tagId, diffusionId])
-  @@rls
-}
+// model TagInDiffusion {
+//   tagId         Int
+//   tag           Tag         @relation(fields: [tagId], references: [id])
+//   diffusionId   Int
+//   diffusion     Diffusion   @relation(fields: [diffusionId], references: [id])
+//   @@id([tagId, diffusionId])
+//   @@rls
+// }
 
-model TemplateInDiffusion {
-  templateId    Int
-  template      Tag         @relation(fields: [templateId], references: [id])
-  diffusionId   Int
-  diffusion     Diffusion   @relation(fields: [diffusionId], references: [id])
-  @@id([templateId, diffusionId])
-  @@rls
-}
+// model TemplateInDiffusion {
+//   templateId    Int
+//   template      Template    @relation(fields: [templateId], references: [id])
+//   diffusionId   Int
+//   diffusion     Diffusion   @relation(fields: [diffusionId], references: [id])
+//   @@id([templateId, diffusionId])
+//   @@rls
+// }
+
+// enum LeadInDiffusionStatus {
+//   @@type("pg/text@1")
+//   pending = "pending"
+//   sending = "sending"
+//   sent    = "sent"
+//   failed  = "failed"
+// }
+
+// model LeadInDiffusion {
+//   +DefaultCols
+//   diffusionId   Int
+//   leadId        Int
+//   templateId    Int?
+//   status        LeadInDiffusionStatus   @default(pending)
+//   waited        Int?
+//   sentAt        TimestamptzString?
+//   error         String?
+//   diffusion     Diffusion               @relation(fields: [diffusionId], references: [id])
+//   lead          Lead                    @relation(fields: [leadId], references: [id])
+//   template      Template?               @relation(fields: [templateId], references: [id])
+//   @@rls
+// }
