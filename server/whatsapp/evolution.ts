@@ -2,7 +2,9 @@ import 'server-only';
 
 import axios from 'axios';
 
+// import { SEND_LOG, writeLog } from '../logs/fileLog';
 import { htmlToWhatsApp } from './htmlToWhatsApp';
+import { markLeadContacted } from './leadContact';
 
 const TYPING_MS_PER_CHAR = 60;
 const MIN_TYPING_MS = 2000;
@@ -19,7 +21,6 @@ export type EvolutionPresence = 'composing' | 'recording' | 'available' | 'unava
 export type SendTemplateMessageOptions = {
   phone: string;
   template: { name: string; message: string; img: string | null };
-  /** Typing wait; inject a cancellable one to be able to abort a running broadcast. */
   wait?: (ms: number) => Promise<void>;
 };
 
@@ -42,7 +43,6 @@ function getEvolutionConfig() {
   };
 }
 
-// Axios errors carry `config.headers` (with the apikey), so never log the raw error object.
 function describeError(error: unknown) {
   if (axios.isAxiosError(error)) {
     return { status: error.response?.status, data: error.response?.data, message: error.message };
@@ -55,7 +55,6 @@ function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
-/** Digits only, international format; a 9-digit local number gets the default country code. */
 export function normalizePhone(phone: string) {
   const digits = phone.replace(/\D/g, '').replace(/^00/, '');
   const full = digits.length === LOCAL_NUMBER_LENGTH ? `${DEFAULT_COUNTRY_CODE}${digits}` : digits;
@@ -67,7 +66,6 @@ export function normalizePhone(phone: string) {
   return full;
 }
 
-/** Typing time proportional to the message length, with some jitter. */
 export function getTypingDuration(text: string) {
   const base = text.length * TYPING_MS_PER_CHAR;
   const jitter = Math.floor(Math.random() * MAX_TYPING_JITTER_MS);
@@ -75,7 +73,6 @@ export function getTypingDuration(text: string) {
   return Math.min(Math.max(base + jitter, MIN_TYPING_MS), MAX_TYPING_MS);
 }
 
-/** Shows "typing..." in the chat. A failure only loses the simulation, it never blocks the send. */
 export async function sendPresence(number: string, presence: EvolutionPresence, delay: number) {
   const { prefix, instance, ...config } = getEvolutionConfig();
 
@@ -124,7 +121,6 @@ async function sendMediaByMultipart(
   return res.data;
 }
 
-/** Sends the image by URL; if the server rejects it, downloads it and uploads it as multipart. */
 export async function sendMediaMessage(
   number: string,
   caption: string,
@@ -151,7 +147,6 @@ export async function sendMediaMessage(
   }
 }
 
-/** Sends a template simulating typing first: sendMedia when it has an image, sendText otherwise. */
 export async function sendTemplateMessage({
   phone,
   template,
@@ -164,11 +159,13 @@ export async function sendTemplateMessage({
   await sendPresence(number, 'composing', typingMs);
   await wait(typingMs);
 
-  if (template.img) {
-    const extension = template.img.split('?')[0].split('.').pop();
+  const extension = template.img?.split('?')[0].split('.').pop();
+  const response = template.img
+    ? await sendMediaMessage(number, message, template.img, `${template.name}.${extension}`)
+    : await sendTextMessage(number, message);
 
-    return sendMediaMessage(number, message, template.img, `${template.name}.${extension}`);
-  }
+  // await writeLog(SEND_LOG, { phone: number, template: template.name, response });
+  await markLeadContacted(number);
 
-  return sendTextMessage(number, message);
+  return response;
 }

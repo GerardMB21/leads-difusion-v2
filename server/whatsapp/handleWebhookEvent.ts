@@ -1,6 +1,7 @@
 import type { EvolutionMessageData, EvolutionWebhookPayload } from '@/app/whatsapp/types';
 import type { IncomingMessageResult } from './onIncomingMessage';
 
+// import { WEBHOOK_LOG, writeLog } from '../logs/fileLog';
 import { onIncomingMessage } from './onIncomingMessage';
 import { parseIncomingMessage } from './parseIncomingMessage';
 
@@ -40,6 +41,8 @@ export async function handleWebhookEvent(
   payload: EvolutionWebhookPayload,
 ): Promise<WebhookEventResult> {
   const event = payload.event ?? 'unknown';
+
+  // await writeLog(WEBHOOK_LOG, { event, payload: { ...payload, apikey: undefined } });
 
   if (event === 'messages.upsert') {
     return { event, ...(await handleMessagesUpsert(payload)) };
