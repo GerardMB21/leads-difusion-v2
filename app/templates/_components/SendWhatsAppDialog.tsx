@@ -23,22 +23,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { api, getApiErrorMessage } from '@/lib/api';
 
-type Option = { value: string; label: string };
+type Recipient = Pick<LeadRow, 'id' | 'contactName' | 'phone'>;
+type Option = { value: Recipient; label: string };
 
 interface Props {
   template: Template;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSend: (phone: string) => void;
+  onSend: (lead: Recipient) => void;
 }
 
 interface FormProps {
   template: Template;
   onClose: () => void;
-  onSend: (phone: string) => void;
+  onSend: (lead: Recipient) => void;
 }
 
 const SendForm = ({ template, onClose, onSend }: FormProps) => {
@@ -72,16 +73,10 @@ const SendForm = ({ template, onClose, onSend }: FormProps) => {
         contactName.toLowerCase().includes(query) ||
         (queryDigits !== '' && phone.replace(/\D/g, '').includes(queryDigits)),
     )
-    .map(({ contactName, phone }) => ({ value: phone, label: `${contactName} · ${phone}` }));
-
-  const isPhone = /^\+?[\d\s()-]{7,}$/.test(inputValue.trim());
-  const isRegistered = leads.some(({ phone }) => phone.replace(/\D/g, '') === queryDigits);
-
-  if (isPhone && !isRegistered) {
-    const phone = inputValue.trim();
-
-    options.push({ value: phone, label: `Usar número ${phone}` });
-  }
+    .map(({ id, contactName, phone }) => ({
+      value: { id, contactName, phone },
+      label: `${contactName} · ${phone}`,
+    }));
 
   const onSubmit = () => {
     if (!selected) return;
@@ -93,7 +88,7 @@ const SendForm = ({ template, onClose, onSend }: FormProps) => {
   return (
     <>
       <Field>
-        <FieldLabel htmlFor={`send-wa-${template.id}`}>Destinatario</FieldLabel>
+        <FieldLabel htmlFor={`send-wa-${template.id}`}>Lead</FieldLabel>
         <Combobox
           autoHighlight
           filter={null}
@@ -108,19 +103,16 @@ const SendForm = ({ template, onClose, onSend }: FormProps) => {
             placeholder={loadingLeads ? 'Cargando leads...' : 'Busca por nombre o teléfono'}
           />
           <ComboboxContent>
-            <ComboboxEmpty>Sin resultados. Escribe un número para usarlo.</ComboboxEmpty>
+            <ComboboxEmpty>Sin resultados</ComboboxEmpty>
             <ComboboxList>
               {(item: Option) => (
-                <ComboboxItem key={item.value} value={item}>
+                <ComboboxItem key={item.value.id} value={item}>
                   {item.label}
                 </ComboboxItem>
               )}
             </ComboboxList>
           </ComboboxContent>
         </Combobox>
-        <FieldDescription>
-          También puedes escribir un número que no esté registrado.
-        </FieldDescription>
       </Field>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <DialogFooter>
@@ -145,9 +137,7 @@ const SendWhatsAppDialog = ({ template, open, onOpenChange, onSend }: Props) => 
     <DialogContent className="sm:max-w-md">
       <DialogHeader>
         <DialogTitle>Enviar por WhatsApp</DialogTitle>
-        <DialogDescription>
-          Envía el template {template.name} a un lead o a un número nuevo.
-        </DialogDescription>
+        <DialogDescription>Envía el template {template.name} a un lead.</DialogDescription>
       </DialogHeader>
       <SendForm template={template} onClose={() => onOpenChange(false)} onSend={onSend} />
     </DialogContent>

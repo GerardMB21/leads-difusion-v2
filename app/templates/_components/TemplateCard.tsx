@@ -1,5 +1,6 @@
 'use client';
 
+import type { LeadRow } from '@/app/leads/types';
 import type { Template } from '../types';
 
 import { useState } from 'react';
@@ -18,18 +19,22 @@ const TemplateCard = ({ template }: { template: Template }) => {
   const [sendOpen, setSendOpen] = useState(false);
   const [sending, setSending] = useState(false);
 
-  const onSend = async (phone: string) => {
+  const onSend = async ({
+    id,
+    contactName,
+    phone,
+  }: Pick<LeadRow, 'id' | 'contactName' | 'phone'>) => {
     setSending(true);
     try {
       await api.post(
         '/whatsapp/send',
-        { phone, templateId: template.id },
+        { leadId: id, templateId: template.id },
         { timeout: SEND_TIMEOUT },
       );
 
       toast.add({
         title: 'Mensaje enviado',
-        description: `El template ${template.name} se ha enviado al numero ${phone}.`,
+        description: `El template ${template.name} se ha enviado a ${contactName} (${phone}).`,
       });
     } catch (error) {
       toast.add({
