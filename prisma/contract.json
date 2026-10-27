@@ -1752,6 +1752,39 @@
                 },
                 {
                   "columns": [
+                    "lastMessageId"
+                  ],
+                  "name": "Lead_lastMessageId_idx_84e5ba47",
+                  "prefix": "Lead_lastMessageId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "lid"
+                  ],
+                  "name": "Lead_lid_idx_f5efcb21",
+                  "prefix": "Lead_lid_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "phone"
+                  ],
+                  "name": "Lead_phone_idx_8db23f45",
+                  "prefix": "Lead_phone_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "pipelineId",
+                    "deletedAt"
+                  ],
+                  "name": "Lead_pipelineId_deletedAt_idx_45c3bf9b",
+                  "prefix": "Lead_pipelineId_deletedAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
                     "pipelineId"
                   ],
                   "name": "Lead_pipelineId_idx_671407ae",
@@ -2538,7 +2571,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "89af9a46c2737e704e5f30e9809c5b60205dcae27b8096cb3a8e25eca5b4f49b"
+    "storageHash": "75ff83515364fc6afc6d9dec788924d940dfce0f49ffe1b24e666bf7a1100b95"
   },
   "execution": {
     "executionHash": "d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7",

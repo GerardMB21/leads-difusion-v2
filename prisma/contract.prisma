@@ -54,6 +54,10 @@ model Lead {
   beforePipeline   Pipeline? @relation("beforePipeline", fields: [beforePipelineId], references: [id])
   template         Template? @relation(fields: [templateId], references: [id])
   tags             TagInLead[]
+  @@index([phone])
+  @@index([lid])
+  @@index([lastMessageId])
+  @@index([pipelineId, deletedAt])
   @@rls
 }
 

@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'89af9a46c2737e704e5f30e9809c5b60205dcae27b8096cb3a8e25eca5b4f49b'>;
+  StorageHashBase<'75ff83515364fc6afc6d9dec788924d940dfce0f49ffe1b24e666bf7a1100b95'>;
 export type ExecutionHash =
   ExecutionHashBase<'d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7'>;
 export type ProfileHash =
@@ -716,6 +716,30 @@ type ContractBase = Omit<
                   readonly name: 'Lead_beforePipelineId_idx_f16addde';
                   readonly prefix: 'Lead_beforePipelineId_idx';
                   readonly columns: readonly ['beforePipelineId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Lead_lastMessageId_idx_84e5ba47';
+                  readonly prefix: 'Lead_lastMessageId_idx';
+                  readonly columns: readonly ['lastMessageId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Lead_lid_idx_f5efcb21';
+                  readonly prefix: 'Lead_lid_idx';
+                  readonly columns: readonly ['lid'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Lead_phone_idx_8db23f45';
+                  readonly prefix: 'Lead_phone_idx';
+                  readonly columns: readonly ['phone'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Lead_pipelineId_deletedAt_idx_45c3bf9b';
+                  readonly prefix: 'Lead_pipelineId_deletedAt_idx';
+                  readonly columns: readonly ['pipelineId', 'deletedAt'];
                   readonly unique: false;
                 },
                 {

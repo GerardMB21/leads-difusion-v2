@@ -1,0 +1,194 @@
+[
+  {
+    "id": "index.Lead.Lead_lastMessageId_idx_84e5ba47",
+    "label": "Create index \"Lead_lastMessageId_idx_84e5ba47\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Lead_lastMessageId_idx_84e5ba47",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Lead_lastMessageId_idx_84e5ba47\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_lastMessageId_idx_84e5ba47\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Lead_lastMessageId_idx_84e5ba47\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Lead_lastMessageId_idx_84e5ba47\"",
+        "sql": "CREATE INDEX \"Lead_lastMessageId_idx_84e5ba47\" ON \"public\".\"Lead\" (\"lastMessageId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Lead_lastMessageId_idx_84e5ba47\" exists on \"Lead\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_lastMessageId_idx_84e5ba47\"",
+          "i",
+          "I",
+          "\"public\".\"Lead\"",
+          "btree",
+          "[\"lastMessageId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Lead.Lead_lid_idx_f5efcb21",
+    "label": "Create index \"Lead_lid_idx_f5efcb21\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Lead_lid_idx_f5efcb21",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Lead_lid_idx_f5efcb21\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_lid_idx_f5efcb21\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Lead_lid_idx_f5efcb21\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Lead_lid_idx_f5efcb21\"",
+        "sql": "CREATE INDEX \"Lead_lid_idx_f5efcb21\" ON \"public\".\"Lead\" (\"lid\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Lead_lid_idx_f5efcb21\" exists on \"Lead\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_lid_idx_f5efcb21\"",
+          "i",
+          "I",
+          "\"public\".\"Lead\"",
+          "btree",
+          "[\"lid\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Lead.Lead_phone_idx_8db23f45",
+    "label": "Create index \"Lead_phone_idx_8db23f45\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Lead_phone_idx_8db23f45",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Lead_phone_idx_8db23f45\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_phone_idx_8db23f45\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Lead_phone_idx_8db23f45\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Lead_phone_idx_8db23f45\"",
+        "sql": "CREATE INDEX \"Lead_phone_idx_8db23f45\" ON \"public\".\"Lead\" (\"phone\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Lead_phone_idx_8db23f45\" exists on \"Lead\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_phone_idx_8db23f45\"",
+          "i",
+          "I",
+          "\"public\".\"Lead\"",
+          "btree",
+          "[\"phone\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Lead.Lead_pipelineId_deletedAt_idx_45c3bf9b",
+    "label": "Create index \"Lead_pipelineId_deletedAt_idx_45c3bf9b\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Lead_pipelineId_deletedAt_idx_45c3bf9b",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Lead_pipelineId_deletedAt_idx_45c3bf9b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_pipelineId_deletedAt_idx_45c3bf9b\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Lead_pipelineId_deletedAt_idx_45c3bf9b\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Lead_pipelineId_deletedAt_idx_45c3bf9b\"",
+        "sql": "CREATE INDEX \"Lead_pipelineId_deletedAt_idx_45c3bf9b\" ON \"public\".\"Lead\" (\"pipelineId\", \"deletedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Lead_pipelineId_deletedAt_idx_45c3bf9b\" exists on \"Lead\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_pipelineId_deletedAt_idx_45c3bf9b\"",
+          "i",
+          "I",
+          "\"public\".\"Lead\"",
+          "btree",
+          "[\"pipelineId\",\"deletedAt\"]"
+        ]
+      }
+    ]
+  }
+]
