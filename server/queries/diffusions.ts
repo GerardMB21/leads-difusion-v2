@@ -4,7 +4,9 @@ import { db } from '@/prisma/db';
 
 export const DIFFUSION_NOT_FOUND = 'Diffusion no encontrada';
 export const DIFFUSION_NOT_CANCELLABLE =
-  'Solo se pueden cancelar diffusions activas, pendientes o en envío';
+  'Solo se pueden cancelar diffusions que no estén completadas ni canceladas';
+
+export const RUNNING_STATUSES = ['active', 'sending', 'failed'] as const;
 export const INVALID_REFERENCES = 'Algún lead, template, etiqueta o pipeline ya no existe';
 
 export const DIFFUSION_VALIDATION_ERRORS = [DIFFUSION_NOT_CANCELLABLE, INVALID_REFERENCES];

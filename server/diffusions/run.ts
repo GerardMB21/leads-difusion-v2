@@ -2,7 +2,8 @@ import { isAxiosError } from 'axios';
 import { or } from '@prisma/orm-postgres/orm-client';
 
 import { db } from '@/prisma/db';
-import { getDiffusionStats } from '@/server/queries/diffusions';
+import { getDiffusionStats, RUNNING_STATUSES } from '@/server/queries/diffusions';
+import { publishDiffusionChange } from './events';
 import { sendTemplateMessage } from '@/server/whatsapp/evolution';
 import type { Tx } from '@/server/workflows/moveLeads';
 
@@ -11,8 +12,6 @@ const STALE_SENDING_MS = 5 * MINUTE_MS;
 const MAX_ERROR_LENGTH = 500;
 
 export const DIFFUSION_INTERVALS_MINUTES = [3, 5, 8, 10];
-
-const RUNNING_STATUSES = ['active', 'sending', 'failed'] as const;
 
 const pickRandom = <T>(items: T[]) => items[Math.floor(Math.random() * items.length)];
 
@@ -103,6 +102,18 @@ async function sendToLead(diffusionId: number, leadInDiffusionId: number, leadId
   }
 }
 
+const updateRunning = (tx: Tx, diffusionId: number, data: Record<string, unknown>) =>
+  tx.orm.public.Diffusion.where({ id: diffusionId })
+    .where((d) => d.status.in([...RUNNING_STATUSES]))
+    .updateAndCount(data);
+
+const complete = (tx: Tx, diffusionId: number) =>
+  updateRunning(tx, diffusionId, {
+    status: 'completed',
+    nextSendAt: null,
+    finishedAt: new Date().toISOString(),
+  });
+
 async function processDiffusion(diffusionId: number, now: Date) {
   for (;;) {
     const state = await db.transaction(async (tx) => {
@@ -128,11 +139,7 @@ async function processDiffusion(diffusionId: number, now: Date) {
 
       if (!lead) {
         await syncStats(tx, diffusionId);
-        await tx.orm.public.Diffusion.where({ id: diffusionId }).update({
-          status: 'completed',
-          nextSendAt: null,
-          finishedAt: new Date().toISOString(),
-        });
+        await complete(tx, diffusionId);
 
         return 'stop' as const;
       }
@@ -144,13 +151,18 @@ async function processDiffusion(diffusionId: number, now: Date) {
 
       if (!claimed) return 'stop' as const;
 
-      await tx.orm.public.Diffusion.where({ id: diffusionId }).update({
-        status: 'sending',
-        nextSendAt: null,
-      });
+      const started = await updateRunning(tx, diffusionId, { status: 'sending', nextSendAt: null });
+
+      if (!started) {
+        await tx.orm.public.LeadInDiffusion.where({ id: lead.id }).update({ status: 'pending' });
+
+        return 'stop' as const;
+      }
 
       return lead;
     });
+
+    publishDiffusionChange();
 
     if (state === 'stop') return;
 
@@ -167,11 +179,7 @@ async function processDiffusion(diffusionId: number, now: Date) {
       const pending = await nextPendingLead(tx, diffusionId);
 
       if (!pending) {
-        await tx.orm.public.Diffusion.where({ id: diffusionId }).update({
-          status: 'completed',
-          nextSendAt: null,
-          finishedAt: new Date().toISOString(),
-        });
+        await complete(tx, diffusionId);
 
         return false;
       }
@@ -179,16 +187,18 @@ async function processDiffusion(diffusionId: number, now: Date) {
       if (result.ok) {
         const minutes = pickRandom(DIFFUSION_INTERVALS_MINUTES);
 
-        await tx.orm.public.Diffusion.where({ id: diffusionId }).update({
-          status: 'active',
-          nextSendAt: new Date(Date.now() + minutes * MINUTE_MS).toISOString(),
-        });
-      } else {
-        await tx.orm.public.Diffusion.where({ id: diffusionId }).update({ status: 'failed' });
+        return (
+          (await updateRunning(tx, diffusionId, {
+            status: 'active',
+            nextSendAt: new Date(Date.now() + minutes * MINUTE_MS).toISOString(),
+          })) > 0
+        );
       }
 
-      return true;
+      return (await updateRunning(tx, diffusionId, { status: 'failed' })) > 0;
     });
+
+    publishDiffusionChange();
 
     if (!more || result.ok) return;
   }
@@ -204,7 +214,7 @@ async function pickDiffusion(now: Date) {
 
   const due = now.toISOString();
 
-  return db.transaction(async (tx) => {
+  const started = await db.transaction(async (tx) => {
     const next = await tx.orm.public.Diffusion.where({ status: 'pending', deletedAt: null })
       .where((d) => or(d.startAt.isNull(), d.startAt.lte(due)))
       .orderBy((d) => d.id.asc())
@@ -219,6 +229,10 @@ async function pickDiffusion(now: Date) {
 
     return claimed ? next : null;
   });
+
+  if (started) publishDiffusionChange();
+
+  return started;
 }
 
 export async function runDiffusions(now = new Date()) {
