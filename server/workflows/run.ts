@@ -1,7 +1,7 @@
 import { and, or } from '@prisma/orm-postgres/orm-client';
 
 import { db } from '@/prisma/db';
-import { moveLeads } from './moveLeads';
+import { moveLeads, type Tx } from './moveLeads';
 
 const MINUTE_MS = 60_000;
 
@@ -21,8 +21,16 @@ export type RunWorkflowsResult = {
 
 const after = (a: string | null, b: string | null) => !b || (!!a && Date.parse(a) > Date.parse(b));
 
-export async function runWorkflows(dryRun = false, now = new Date()): Promise<RunWorkflowsResult> {
-  const workflows = await db.orm.public.WorkflowPipeline.where({ deletedAt: null })
+export function runWorkflows(dryRun = false, now = new Date()): Promise<RunWorkflowsResult> {
+  return db.transaction((tx) => runWorkflowsIn(tx, dryRun, now));
+}
+
+export async function runWorkflowsIn(
+  tx: Tx,
+  dryRun = false,
+  now = new Date(),
+): Promise<RunWorkflowsResult> {
+  const workflows = await tx.orm.public.WorkflowPipeline.where({ deletedAt: null })
     .orderBy((w) => w.id.desc())
     .all();
 
@@ -35,7 +43,7 @@ export async function runWorkflows(dryRun = false, now = new Date()): Promise<Ru
     if (fromPipelineId === toPipelineId) continue;
 
     const limit = new Date(now.getTime() - waitingTime * MINUTE_MS).toISOString();
-    const pipeline = db.orm.public.Lead.where({ pipelineId: fromPipelineId, deletedAt: null });
+    const pipeline = tx.orm.public.Lead.where({ pipelineId: fromPipelineId, deletedAt: null });
 
     let ids: number[] = [];
 
@@ -69,9 +77,7 @@ export async function runWorkflows(dryRun = false, now = new Date()): Promise<Ru
 
     const moved = dryRun
       ? ids
-      : await db.transaction((tx) =>
-          moveLeads(tx, ids, fromPipelineId, toPipelineId, now.toISOString()),
-        );
+      : await moveLeads(tx, ids, fromPipelineId, toPipelineId, now.toISOString());
 
     for (const leadId of moved) {
       handled.add(leadId);

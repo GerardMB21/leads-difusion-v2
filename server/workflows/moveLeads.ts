@@ -1,6 +1,6 @@
 import { db } from '@/prisma/db';
 
-type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 export async function moveLeads(
   tx: Tx,
