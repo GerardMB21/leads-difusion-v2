@@ -2,7 +2,7 @@ import cron from 'node-cron';
 
 import { runWorkflows } from '@/server/workflows/run';
 
-const WORKFLOWS_SCHEDULE = process.env.CRON_WORKFLOWS_SCHEDULE || '*/5 * * * *';
+const WORKFLOWS_SCHEDULE = process.env.CRON_WORKFLOWS_SCHEDULE || '* * * * *';
 
 let started = false;
 

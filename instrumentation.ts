@@ -1,7 +1,7 @@
-export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    const { startCronJobs } = await import('@/server/cron/startCronJobs');
+// export async function register() {
+//   if (process.env.NEXT_RUNTIME === 'nodejs') {
+//     const { startCronJobs } = await import('@/server/cron/startCronJobs');
 
-    startCronJobs();
-  }
-}
+//     startCronJobs();
+//   }
+// }
