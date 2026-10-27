@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
-import { createLeadSchema, leadFiltersSchema } from '@/app/leads/schemas';
+import { createLeadSchema, deleteLeadsSchema, leadFiltersSchema } from '@/app/leads/schemas';
 import { errorResponse, handleDbError } from '@/lib/response';
+import { deleteLeads } from '@/server/actions/leads/delete';
 import { getLeads } from '@/server/actions/leads/get';
 import { createLead } from '@/server/actions/leads/post';
 import { LEAD_NOT_FOUND } from '@/server/queries/leads';
@@ -38,6 +39,24 @@ export async function POST(req: Request) {
     return handleDbError(error, {
       notFound: LEAD_NOT_FOUND,
       fallback: 'No se pudo crear el lead',
+    });
+  }
+}
+
+export async function DELETE(req: Request) {
+  const body = await req.json().catch(() => null);
+  const parsed = deleteLeadsSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return errorResponse({ status: 400, message: z.prettifyError(parsed.error) });
+  }
+
+  try {
+    return Response.json({ deleted: await deleteLeads(parsed.data) });
+  } catch (error) {
+    return handleDbError(error, {
+      notFound: LEAD_NOT_FOUND,
+      fallback: 'No se pudieron eliminar los leads',
     });
   }
 }
