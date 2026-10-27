@@ -2,11 +2,14 @@
 
 import type { WorkflowRow } from '../types';
 
+import { useRouter } from 'next/navigation';
 import { createColumnHelper } from '@tanstack/react-table';
 
+import BulkActionsBar from '@/components/BulkActionsBar';
 import DataTable, { dataTableFeatures } from '@/components/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { api, getApiErrorMessage } from '@/lib/api';
 import { useStore } from '../_store';
 import { triggerOf } from '../schemas';
 import WorkflowActions from './WorkflowActions';
@@ -45,11 +48,39 @@ const columns = helper.columns([
 ]);
 
 const WorkflowsTable = () => {
-  const { data, initialLoading } = useStore((state) => state);
+  const router = useRouter();
+  const { data, selectedIds, setSelectedIds, initialLoading } = useStore((state) => state);
+
+  const onDelete = async () => {
+    try {
+      await api.delete('/workflows', { data: { ids: selectedIds.map(Number) } });
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'No se pudieron eliminar los workflows'));
+    }
+
+    setSelectedIds([]);
+    router.refresh();
+  };
 
   if (initialLoading) return <Skeleton className="h-96 w-full rounded-lg" />;
 
-  return <DataTable columns={columns} data={data} emptyMessage="No hay workflows." />;
+  return (
+    <div className="flex flex-col gap-4">
+      <BulkActionsBar
+        count={selectedIds.length}
+        noun={['workflow', 'workflows']}
+        onDelete={onDelete}
+      />
+      <DataTable
+        selectable
+        selectedIds={selectedIds}
+        onSelectedIdsChange={setSelectedIds}
+        columns={columns}
+        data={data}
+        emptyMessage="No hay workflows."
+      />
+    </div>
+  );
 };
 
 export default WorkflowsTable;

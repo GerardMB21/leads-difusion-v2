@@ -149,3 +149,12 @@ export const workflowFormSchema = z
   );
 
 export type WorkflowFormInput = z.infer<typeof workflowFormSchema>;
+
+export const deleteWorkflowsSchema = z.object({
+  ids: z
+    .array(id)
+    .min(1, 'Selecciona al menos un workflow')
+    .max(1000, 'Máximo 1000 workflows a la vez'),
+});
+
+export type DeleteWorkflowsInput = z.infer<typeof deleteWorkflowsSchema>;
