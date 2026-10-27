@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { sendTemplateSchema } from '@/app/whatsapp/schemas';
 import { errorResponse, handleDbError } from '@/lib/response';
 import { sendTemplate } from '@/server/actions/whatsapp/sendTemplate';
+import { LEAD_NOT_FOUND } from '@/server/queries/leads';
 import { TEMPLATE_NOT_FOUND } from '@/server/queries/templates';
 
 export async function POST(req: Request) {
@@ -18,6 +19,10 @@ export async function POST(req: Request) {
 
     return new Response(null, { status: 204 });
   } catch (error) {
+    if (error instanceof Error && error.message === LEAD_NOT_FOUND) {
+      return errorResponse({ status: 404, message: LEAD_NOT_FOUND });
+    }
+
     if (error instanceof Error && error.message.startsWith('Teléfono inválido')) {
       return errorResponse({ status: 400, message: error.message });
     }
