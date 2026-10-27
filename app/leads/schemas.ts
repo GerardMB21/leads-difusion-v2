@@ -82,3 +82,9 @@ export const importLeadRowSchema = z.object({
   phone: createLeadSchema.shape.phone,
   enrollmentDate: createLeadSchema.shape.enrollmentDate,
 });
+
+export const deleteLeadsSchema = z.object({
+  ids: z.array(id).min(1, 'Selecciona al menos un lead').max(1000, 'Máximo 1000 leads a la vez'),
+});
+
+export type DeleteLeadsInput = z.infer<typeof deleteLeadsSchema>;
