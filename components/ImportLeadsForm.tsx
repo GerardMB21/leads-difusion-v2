@@ -10,7 +10,7 @@ import { useDropzone } from 'react-dropzone';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import TagsCombobox from '@/app/pipelines/_components/TagsCombobox';
+import TagsCombobox from '@/components/TagsCombobox';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import {
