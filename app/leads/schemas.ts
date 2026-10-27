@@ -22,7 +22,7 @@ export const createLeadSchema = z.object({
     .int('El orden debe ser un entero')
     .min(0, 'El orden no puede ser negativo'),
   enrollmentDate: z.iso.datetime({ offset: true, error: 'Fecha inválida' }).optional(),
-  lastContact: z.number().int().nullable().optional(),
+  lastContact: z.iso.datetime({ offset: true, error: 'Fecha inválida' }).nullable().optional(),
   messageResponse: z.boolean().optional(),
   templateId: id.nullable().optional(),
   pipelineId: id,

@@ -6,7 +6,9 @@ export type Lead = {
   phone: string;
   order: number;
   enrollmentDate: string;
-  lastContact: number | null;
+  lastContact: string | null;
+  lastResponseAt: string | null;
+  movedAt: string | null;
   messageResponse: boolean | null;
   templateId: number | null;
   pipelineId: number;
