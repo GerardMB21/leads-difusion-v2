@@ -72,7 +72,7 @@ export async function processIncomingMessage(
       .all()
   ).find((w) => w.toPipelineId !== w.fromPipelineId);
 
-  if (!workflow || workflow.waitingTime > 0) return result;
+  if (!workflow) return result;
 
   const [moved] = await moveLeads(tx, [lead.id], workflow.fromPipelineId, workflow.toPipelineId);
 
