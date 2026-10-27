@@ -1,10 +1,13 @@
 import type { NormalizedError, PageProps } from '@/lib/types';
+import type { State } from './_store';
 import type { LeadRow } from './types';
 
 import { Suspense } from 'react';
 import { connection } from 'next/server';
 
 import { getLeads } from '@/server/actions/leads/get';
+import { getPipelineOptions } from '@/server/actions/pipelines/get';
+import { getTags } from '@/server/actions/tags/get';
 
 import ErrorPage from '@/components/ErrorPage';
 import ImportLeadsDialog from '@/components/ImportLeadsDialog';
@@ -19,9 +22,17 @@ const Leads = async ({ searchParams }: PageProps) => {
   await connection();
 
   let leads: LeadRow[];
+  let options: Pick<State, 'pipelines' | 'tags'>;
 
   try {
-    leads = await getLeads(params);
+    const [rows, pipelines, tags] = await Promise.all([
+      getLeads(params),
+      getPipelineOptions(),
+      getTags(),
+    ]);
+
+    leads = rows;
+    options = { pipelines, tags };
   } catch (error) {
     const normalized = error as NormalizedError;
 
@@ -31,7 +42,7 @@ const Leads = async ({ searchParams }: PageProps) => {
   }
 
   return (
-    <Provider data={leads}>
+    <Provider data={leads} options={options}>
       <LeadsTable />
     </Provider>
   );
