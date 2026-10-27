@@ -11,7 +11,7 @@ import { api, getApiErrorMessage } from '@/lib/api';
 import { useStore } from '../_store';
 import { diffusionFormSchema, limaToIso, type DiffusionFormInput } from '../schemas';
 import LeadsCombobox from './LeadsCombobox';
-import MultiCombobox from './MultiCombobox';
+import MultiCombobox from '@/components/MultiCombobox';
 
 const CREATE_TIMEOUT = 30_000;
 
