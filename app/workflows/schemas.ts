@@ -26,7 +26,8 @@ const workflowFields = z.object({
     .number({ error: 'El tiempo de espera debe ser un número' })
     .int('El tiempo de espera debe ser un entero')
     .min(0, 'El tiempo de espera no puede ser negativo')
-    .max(MAX_WAITING_TIME, 'El tiempo de espera es demasiado largo'),
+    .max(MAX_WAITING_TIME, 'El tiempo de espera es demasiado largo')
+    .optional(),
 });
 
 type Fields = Partial<z.infer<typeof workflowFields>>;

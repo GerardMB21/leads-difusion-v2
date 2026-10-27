@@ -26,8 +26,11 @@ export async function patchWorkflow(id: number, input: UpdateWorkflowInput): Pro
 
     if (from === to) throw new Error(SAME_PIPELINE);
 
+    const whenNotResponse = data.whenNotResponse ?? current.whenNotResponse;
+
     const workflow = await tx.orm.public.WorkflowPipeline.where({ id }).update({
       ...data,
+      ...(!whenNotResponse && { waitingTime: 0 }),
       fromPipelineId: from,
       toPipelineId: to,
     });

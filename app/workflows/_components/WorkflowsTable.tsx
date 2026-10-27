@@ -38,7 +38,8 @@ const columns = helper.columns([
   }),
   helper.accessor('waitingTime', {
     header: 'Tiempo de espera',
-    cell: ({ row }) => formatWaitingTime(row.original.waitingTime),
+    cell: ({ row }) =>
+      row.original.whenNotResponse ? formatWaitingTime(row.original.waitingTime) : '-',
   }),
   helper.display({
     id: 'actions',

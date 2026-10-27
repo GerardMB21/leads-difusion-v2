@@ -18,6 +18,7 @@ export async function createWorkflow(input: CreateWorkflowInput): Promise<Workfl
 
     return tx.orm.public.WorkflowPipeline.create({
       ...data,
+      waitingTime: data.whenNotResponse ? (data.waitingTime ?? 0) : 0,
       fromPipelineId: from,
       toPipelineId: to,
     });

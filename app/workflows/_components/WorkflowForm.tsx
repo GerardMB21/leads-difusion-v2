@@ -5,7 +5,7 @@ import type { CreateWorkflowInput, PipelineOption, UpdateWorkflowInput } from '.
 import type { WorkflowRow } from '../types';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -54,6 +54,8 @@ const WorkflowForm = ({ workflow, onSuccess }: Props) => {
     },
   });
 
+  const waitsForResponse = useWatch({ control, name: 'trigger' }) === 'notResponse';
+
   const onSubmit = async ({ name, from, to, trigger, hours, minutes }: WorkflowFormInput) => {
     const body: CreateWorkflowInput & UpdateWorkflowInput = {
       name,
@@ -62,7 +64,7 @@ const WorkflowForm = ({ workflow, onSuccess }: Props) => {
       whenResponse: trigger === 'response',
       whenNotResponse: trigger === 'notResponse',
       whenSendMessage: trigger === 'sendMessage',
-      waitingTime: hours * 60 + minutes,
+      ...(trigger === 'notResponse' && { waitingTime: hours * 60 + minutes }),
     };
 
     try {
@@ -137,38 +139,40 @@ const WorkflowForm = ({ workflow, onSuccess }: Props) => {
             </Field>
           )}
         />
-        <div className="grid grid-cols-2 gap-4">
-          <Field data-invalid={!!errors.hours}>
-            <FieldLabel htmlFor="workflow-hours">Horas</FieldLabel>
-            <Input
-              id="workflow-hours"
-              type="number"
-              inputMode="numeric"
-              min={0}
-              max={MAX_HOURS}
-              step={1}
-              aria-invalid={!!errors.hours}
-              onKeyDown={blockNonInteger}
-              {...register('hours', { valueAsNumber: true })}
-            />
-            <FieldError errors={[errors.hours]} />
-          </Field>
-          <Field data-invalid={!!errors.minutes}>
-            <FieldLabel htmlFor="workflow-minutes">Minutos</FieldLabel>
-            <Input
-              id="workflow-minutes"
-              type="number"
-              inputMode="numeric"
-              min={0}
-              max={59}
-              step={1}
-              aria-invalid={!!errors.minutes}
-              onKeyDown={blockNonInteger}
-              {...register('minutes', { valueAsNumber: true })}
-            />
-            <FieldError errors={[errors.minutes]} />
-          </Field>
-        </div>
+        {waitsForResponse && (
+          <div className="grid grid-cols-2 gap-4">
+            <Field data-invalid={!!errors.hours}>
+              <FieldLabel htmlFor="workflow-hours">Horas</FieldLabel>
+              <Input
+                id="workflow-hours"
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={MAX_HOURS}
+                step={1}
+                aria-invalid={!!errors.hours}
+                onKeyDown={blockNonInteger}
+                {...register('hours', { valueAsNumber: true })}
+              />
+              <FieldError errors={[errors.hours]} />
+            </Field>
+            <Field data-invalid={!!errors.minutes}>
+              <FieldLabel htmlFor="workflow-minutes">Minutos</FieldLabel>
+              <Input
+                id="workflow-minutes"
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={59}
+                step={1}
+                aria-invalid={!!errors.minutes}
+                onKeyDown={blockNonInteger}
+                {...register('minutes', { valueAsNumber: true })}
+              />
+              <FieldError errors={[errors.minutes]} />
+            </Field>
+          </div>
+        )}
         <FieldError errors={[errors.root]} />
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear workflow'}
