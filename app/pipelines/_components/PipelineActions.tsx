@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { api, getApiErrorMessage } from '@/lib/api';
-import LeadForm from './LeadForm';
+import LeadForm from '@/components/LeadForm';
 import PipelineForm from './PipelineForm';
 
 const PipelineActions = ({ pipeline }: { pipeline: Pipeline }) => {
