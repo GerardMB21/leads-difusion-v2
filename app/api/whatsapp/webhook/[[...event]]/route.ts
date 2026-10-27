@@ -11,7 +11,9 @@ export async function POST(req: Request) {
   }
 
   try {
-    return Response.json({ ok: true, ...(await handleWebhookEvent(payload)) });
+    await handleWebhookEvent(payload);
+
+    return Response.json({ ok: true });
   } catch (error) {
     console.error('Webhook error: ', error);
 
