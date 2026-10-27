@@ -2,21 +2,11 @@ import type { DiffusionRow } from '../types';
 
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { formatDate } from '../format';
 import { isCancellable } from '../schemas';
 import BadgeList from './BadgeList';
 import CancelDiffusionButton from './CancelDiffusionButton';
 import StatusBadge from './StatusBadge';
-
-const TIME_ZONE = 'America/Lima';
-
-const formatDate = (value: string | null) =>
-  value
-    ? new Date(value).toLocaleString('es-PE', {
-        timeZone: TIME_ZONE,
-        dateStyle: 'short',
-        timeStyle: 'short',
-      })
-    : '-';
 
 const Stat = ({
   label,
