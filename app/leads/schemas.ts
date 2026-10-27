@@ -20,7 +20,8 @@ export const createLeadSchema = z.object({
   order: z
     .number({ error: 'El orden debe ser un número' })
     .int('El orden debe ser un entero')
-    .min(0, 'El orden no puede ser negativo'),
+    .min(0, 'El orden no puede ser negativo')
+    .optional(),
   enrollmentDate: z.iso.datetime({ offset: true, error: 'Fecha inválida' }).optional(),
   lastContact: z.iso.datetime({ offset: true, error: 'Fecha inválida' }).nullable().optional(),
   messageResponse: z.boolean().optional(),
@@ -61,6 +62,7 @@ export const leadFiltersSchema = z.object({
 export type LeadFilters = z.infer<typeof leadFiltersSchema>;
 
 export const leadFormSchema = z.object({
+  pipelineId: z.string().optional(),
   contactName: createLeadSchema.shape.contactName,
   phone: createLeadSchema.shape.phone,
   enrollmentDate: z.string().min(1, 'La fecha es obligatoria'),

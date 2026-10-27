@@ -12,6 +12,7 @@ import { getTags } from '@/server/actions/tags/get';
 import ErrorPage from '@/components/ErrorPage';
 import ImportLeadsDialog from '@/components/ImportLeadsDialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import CreateLeadDialog from './_components/CreateLeadDialog';
 import Filters from './_components/Filters';
 import LeadsTable from './_components/LeadsTable';
 import Provider from './_components/Provider';
@@ -55,7 +56,10 @@ export default function Page(props: PageProps) {
         <Suspense fallback={null}>
           <Filters />
         </Suspense>
-        <ImportLeadsDialog />
+        <div className="flex items-center gap-2">
+          <ImportLeadsDialog />
+          <CreateLeadDialog />
+        </div>
       </div>
       <Suspense fallback={<Skeleton className="h-96 w-full rounded-lg" />}>
         <Leads {...props} />

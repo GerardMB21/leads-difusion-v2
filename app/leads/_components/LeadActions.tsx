@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconDots, IconPencil, IconTrash } from '@tabler/icons-react';
 
-import LeadForm from '@/app/pipelines/_components/LeadForm';
+import LeadForm from '@/components/LeadForm';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
