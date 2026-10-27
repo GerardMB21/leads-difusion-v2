@@ -1,5 +1,5 @@
 import { db } from '@/prisma/db';
-import type { Tx } from '@/server/workflows/moveLeads';
+import { moveLeads, type Tx } from '@/server/workflows/moveLeads';
 import { phoneCandidates } from './phone';
 
 export async function setLastContact(
@@ -12,13 +12,33 @@ export async function setLastContact(
 
   if (!candidates.length) return 0;
 
-  return tx.orm.public.Lead.where((l) => l.phone.in(candidates))
+  const leads = await tx.orm.public.Lead.where((l) => l.phone.in(candidates))
     .where({ deletedAt: null })
-    .updateAndCount({
+    .all();
+
+  for (const lead of leads) {
+    await tx.orm.public.Lead.where({ id: lead.id }).update({
       lastContact: contactedAt,
       messageResponse: false,
       ...(messageId && { lastMessageId: messageId }),
     });
+
+    const workflow = (
+      await tx.orm.public.WorkflowPipeline.where({
+        fromPipelineId: lead.pipelineId,
+        whenSendMessage: true,
+        deletedAt: null,
+      })
+        .orderBy((w) => w.id.desc())
+        .all()
+    ).find((w) => w.toPipelineId !== w.fromPipelineId);
+
+    if (workflow) {
+      await moveLeads(tx, [lead.id], workflow.fromPipelineId, workflow.toPipelineId);
+    }
+  }
+
+  return leads.length;
 }
 
 export async function markLeadContacted(phone: string, messageId: string | null) {
