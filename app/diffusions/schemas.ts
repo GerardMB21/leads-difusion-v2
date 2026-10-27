@@ -20,7 +20,7 @@ export const diffusionStatusSchema = z.enum([
   'failed',
 ]);
 
-export const CANCELLABLE_STATUSES = ['active', 'pending', 'sending'] as const;
+export const CANCELLABLE_STATUSES = ['active', 'pending', 'sending', 'failed'] as const;
 
 export const isCancellable = (status: string) =>
   (CANCELLABLE_STATUSES as readonly string[]).includes(status);
