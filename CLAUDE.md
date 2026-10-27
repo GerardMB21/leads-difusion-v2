@@ -84,3 +84,12 @@ Each feature follows the same layering; copy the existing ones (`leads`, `pipeli
 - `server/whatsapp/htmlToWhatsApp.ts` converts the template HTML with `turndown` to WhatsApp formatting.
 - Entry points: `sendTemplate` action and `POST /api/whatsapp/send` (`{ phone, templateId }`). No UI uses them yet.
 - Env: `EVOLUTION_API_PREFIX`, `EVOLUTION_API_INSTANCE_ID`, `EVOLUTION_API_KEY`. Never log raw axios errors (they contain the apikey header); use `describeError`.
+
+## Workflows (lead movement)
+
+- A `WorkflowPipeline` moves leads from `fromPipelineId` to `toPipelineId`. Exactly one of `whenResponse`, `whenNotResponse`, `whenSendMessage` is true; `waitingTime` is in **minutes**. When a pipeline has several matching workflows, the most recent (highest `id`) wins.
+- `Lead` timestamps (all `timestamptz`): `lastContact` (last message we sent), `lastResponseAt` (last answer), `movedAt` (last pipeline change). The cron counts `whenNotResponse` from the later of `lastContact` and `movedAt`, so a lead cannot chain through several pipelines in one run.
+- `server/workflows/moveLeads.ts` is the only place that moves leads. It updates with `WHERE pipelineId = from`, so repeated webhooks, overlapping cron runs or a manual drag never move a lead twice. These helpers are plain modules, not `'use server'` files, so they are not callable endpoints.
+- **Webhook**: `POST /api/whatsapp/webhook[/...event]` (Evolution `messages.upsert`) -> `server/whatsapp/handleWebhookEvent.ts` -> `onIncomingMessage.ts`. It ignores own messages, statuses and groups, finds the lead by exact phone (`server/whatsapp/phone.ts`: international, `+international` or 9-digit local; never by suffix), sets `messageResponse = true` and `lastResponseAt`, and moves the lead right away when the `whenResponse` workflow has `waitingTime = 0`. The webhook has no authentication yet (same as the original project).
+- **Cron**: `instrumentation.ts` -> `server/cron/startCronJobs.ts` runs `server/workflows/run.ts` (`runWorkflows`) with `node-cron` every 5 minutes (`CRON_WORKFLOWS_SCHEDULE` overrides it, `CRON_ENABLED=false` turns it off). It only works on a long-running Node server (Docker), not serverless. With several instances it is still safe because of the guarded update.
+- `whenSendMessage` is evaluated by the cron from `lastContact`; nothing sets `lastContact` yet because sending diffusions is not built.
