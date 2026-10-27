@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'366a38765083f2a4c4e0b7a9ff07024681c9c08125486d923767317173eec5f8'>;
+  StorageHashBase<'c87605ecbc5c5ca884603436f4dac778b0af197419c3064720c0c7e74393bb3b'>;
 export type ExecutionHash =
   ExecutionHashBase<'d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7'>;
 export type ProfileHash =
@@ -329,7 +329,9 @@ export namespace Models {
     enrollmentDate: FieldOutputTypes['public']['Lead']['enrollmentDate'];
     id: FieldOutputTypes['public']['Lead']['id'];
     lastContact: FieldOutputTypes['public']['Lead']['lastContact'];
+    lastResponseAt: FieldOutputTypes['public']['Lead']['lastResponseAt'];
     messageResponse: FieldOutputTypes['public']['Lead']['messageResponse'];
+    movedAt: FieldOutputTypes['public']['Lead']['movedAt'];
     order: FieldOutputTypes['public']['Lead']['order'];
     phone: FieldOutputTypes['public']['Lead']['phone'];
     pipelineId: FieldOutputTypes['public']['Lead']['pipelineId'];
@@ -635,8 +637,14 @@ type ContractBase = Omit<
                   readonly many: false;
                 };
                 readonly lastContact: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly lastResponseAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
@@ -648,6 +656,12 @@ type ContractBase = Omit<
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/bool@1', false>;
                   };
+                  readonly many: false;
+                };
+                readonly movedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly order: {
@@ -1566,11 +1580,28 @@ type ContractBase = Omit<
               };
               readonly lastContact: {
                 readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly lastResponseAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
               };
               readonly messageResponse: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly movedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
               };
               readonly order: {
                 readonly nullable: false;
@@ -1656,7 +1687,9 @@ type ContractBase = Omit<
                 readonly enrollmentDate: { readonly column: 'enrollmentDate' };
                 readonly id: { readonly column: 'id' };
                 readonly lastContact: { readonly column: 'lastContact' };
+                readonly lastResponseAt: { readonly column: 'lastResponseAt' };
                 readonly messageResponse: { readonly column: 'messageResponse' };
+                readonly movedAt: { readonly column: 'movedAt' };
                 readonly order: { readonly column: 'order' };
                 readonly phone: { readonly column: 'phone' };
                 readonly pipelineId: { readonly column: 'pipelineId' };

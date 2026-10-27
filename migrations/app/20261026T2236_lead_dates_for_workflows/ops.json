@@ -1,0 +1,179 @@
+[
+  {
+    "id": "column.public.Lead.lastResponseAt",
+    "label": "Add column \"lastResponseAt\" to \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lastResponseAt",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lastResponseAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lastResponseAt"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"lastResponseAt\" on \"Lead\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"lastResponseAt\"",
+        "sql": "ALTER TABLE \"public\".\"Lead\" ADD COLUMN \"lastResponseAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lastResponseAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lastResponseAt"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"lastResponseAt\" on \"Lead\""
+        }
+      },
+      {
+        "description": "verify column \"lastResponseAt\" has type \"timestamp with time zone\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lastResponseAt",
+          "timestamp with time zone"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Lead.movedAt",
+    "label": "Add column \"movedAt\" to \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "movedAt",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"movedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "movedAt"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"movedAt\" on \"Lead\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"movedAt\"",
+        "sql": "ALTER TABLE \"public\".\"Lead\" ADD COLUMN \"movedAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"movedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "movedAt"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"movedAt\" on \"Lead\""
+        }
+      },
+      {
+        "description": "verify column \"movedAt\" has type \"timestamp with time zone\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "movedAt",
+          "timestamp with time zone"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterType.Lead.lastContact",
+    "label": "Alter type of \"Lead\".\"lastContact\" to timestamptz",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lastContact",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lastContact\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lastContact"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"lastContact\" on \"Lead\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "alter type of \"lastContact\" to timestamptz",
+        "sql": "ALTER TABLE \"public\".\"Lead\" ALTER COLUMN \"lastContact\" TYPE timestamptz USING NULL::timestamptz",
+        "meta": {
+          "convertedColumn": {
+            "table": "Lead",
+            "column": "lastContact",
+            "by": "conversion"
+          }
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lastContact\" has type \"timestamp with time zone\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lastContact",
+          "timestamp with time zone"
+        ]
+      }
+    ],
+    "meta": {
+      "warning": "TABLE_REWRITE"
+    }
+  }
+]

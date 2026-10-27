@@ -41,7 +41,9 @@ model Lead {
   phone            String
   order            Int
   enrollmentDate   TimestamptzString
-  lastContact      Int?
+  lastContact      TimestamptzString?
+  lastResponseAt   TimestamptzString?
+  movedAt          TimestamptzString?
   messageResponse  Boolean? @default(false)
   templateId       Int?
   pipelineId       Int

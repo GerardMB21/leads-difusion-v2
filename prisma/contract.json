@@ -342,7 +342,14 @@
               "lastContact": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/int4@1",
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "lastResponseAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -350,6 +357,13 @@
                 "nullable": true,
                 "type": {
                   "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "movedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -477,8 +491,14 @@
                 "lastContact": {
                   "column": "lastContact"
                 },
+                "lastResponseAt": {
+                  "column": "lastResponseAt"
+                },
                 "messageResponse": {
                   "column": "messageResponse"
+                },
+                "movedAt": {
+                  "column": "movedAt"
                 },
                 "order": {
                   "column": "order"
@@ -1583,8 +1603,13 @@
                   "nullable": false
                 },
                 "lastContact": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "lastResponseAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "nullable": true
                 },
                 "messageResponse": {
@@ -1594,6 +1619,11 @@
                     "kind": "literal",
                     "value": false
                   },
+                  "nullable": true
+                },
+                "movedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "nullable": true
                 },
                 "order": {
@@ -2478,7 +2508,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "366a38765083f2a4c4e0b7a9ff07024681c9c08125486d923767317173eec5f8"
+    "storageHash": "c87605ecbc5c5ca884603436f4dac778b0af197419c3064720c0c7e74393bb3b"
   },
   "execution": {
     "executionHash": "d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7",
