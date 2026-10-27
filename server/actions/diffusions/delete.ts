@@ -1,6 +1,7 @@
 'use server';
 
 import { db } from '@/prisma/db';
+import { publishDiffusionChange } from '@/server/diffusions/events';
 import { DIFFUSION_NOT_FOUND } from '@/server/queries/diffusions';
 
 export async function deleteDiffusion(id: number): Promise<void> {
@@ -9,4 +10,6 @@ export async function deleteDiffusion(id: number): Promise<void> {
   });
 
   if (!diffusion) throw new Error(DIFFUSION_NOT_FOUND);
+
+  publishDiffusionChange();
 }

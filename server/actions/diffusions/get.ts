@@ -5,7 +5,12 @@ import type { DiffusionRow, DiffusionStatus } from '@/app/diffusions/types';
 import { diffusionFiltersSchema, type DiffusionFilters } from '@/app/diffusions/schemas';
 import { OrderBy } from '@/lib/types';
 import { db } from '@/prisma/db';
-import { DIFFUSION_NOT_FOUND, emptyStats, getDiffusionStats } from '@/server/queries/diffusions';
+import {
+  DIFFUSION_NOT_FOUND,
+  emptyStats,
+  getDiffusionStats,
+  RUNNING_STATUSES,
+} from '@/server/queries/diffusions';
 
 export async function getDiffusions(query: DiffusionFilters = {}): Promise<DiffusionRow[]> {
   const { orderBy, ...filters } = diffusionFiltersSchema.parse(query);
@@ -35,4 +40,19 @@ export async function getDiffusion(id: number): Promise<DiffusionRow> {
   if (!diffusion) throw new Error(DIFFUSION_NOT_FOUND);
 
   return diffusion;
+}
+
+export async function getCurrentDiffusion(): Promise<DiffusionRow | null> {
+  const running = await db.orm.public.Diffusion.where({ deletedAt: null })
+    .where((d) => d.status.in([...RUNNING_STATUSES]))
+    .orderBy((d) => d.id.asc())
+    .first();
+
+  const current =
+    running ??
+    (await db.orm.public.Diffusion.where({ status: 'pending', deletedAt: null })
+      .orderBy((d) => d.id.asc())
+      .first());
+
+  return current ? getDiffusion(current.id) : null;
 }

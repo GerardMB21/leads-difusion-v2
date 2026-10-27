@@ -9,6 +9,7 @@ import {
 } from '@/app/diffusions/schemas';
 import { db } from '@/prisma/db';
 import { DIFFUSION_NOT_CANCELLABLE, DIFFUSION_NOT_FOUND } from '@/server/queries/diffusions';
+import { publishDiffusionChange } from '@/server/diffusions/events';
 import { getDiffusion } from './get';
 
 export async function patchDiffusion(
@@ -31,6 +32,8 @@ export async function patchDiffusion(
       ...(cancelling && { finishedAt: new Date().toISOString() }),
     });
   });
+
+  publishDiffusionChange();
 
   return getDiffusion(id);
 }

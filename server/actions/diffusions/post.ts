@@ -5,6 +5,7 @@ import type { DiffusionRow } from '@/app/diffusions/types';
 import { createDiffusionSchema, type CreateDiffusionInput } from '@/app/diffusions/schemas';
 import { db } from '@/prisma/db';
 import { INVALID_REFERENCES } from '@/server/queries/diffusions';
+import { publishDiffusionChange } from '@/server/diffusions/events';
 import { getDiffusion } from './get';
 
 export async function createDiffusion(input: CreateDiffusionInput): Promise<DiffusionRow> {
@@ -71,6 +72,8 @@ export async function createDiffusion(input: CreateDiffusionInput): Promise<Diff
 
     return diffusion.id;
   });
+
+  publishDiffusionChange();
 
   return getDiffusion(id);
 }
