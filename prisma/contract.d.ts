@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'c87605ecbc5c5ca884603436f4dac778b0af197419c3064720c0c7e74393bb3b'>;
+  StorageHashBase<'89af9a46c2737e704e5f30e9809c5b60205dcae27b8096cb3a8e25eca5b4f49b'>;
 export type ExecutionHash =
   ExecutionHashBase<'d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7'>;
 export type ProfileHash =
@@ -329,7 +329,9 @@ export namespace Models {
     enrollmentDate: FieldOutputTypes['public']['Lead']['enrollmentDate'];
     id: FieldOutputTypes['public']['Lead']['id'];
     lastContact: FieldOutputTypes['public']['Lead']['lastContact'];
+    lastMessageId: FieldOutputTypes['public']['Lead']['lastMessageId'];
     lastResponseAt: FieldOutputTypes['public']['Lead']['lastResponseAt'];
+    lid: FieldOutputTypes['public']['Lead']['lid'];
     messageResponse: FieldOutputTypes['public']['Lead']['messageResponse'];
     movedAt: FieldOutputTypes['public']['Lead']['movedAt'];
     order: FieldOutputTypes['public']['Lead']['order'];
@@ -642,9 +644,21 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly lastMessageId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly lastResponseAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly lid: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
@@ -1585,12 +1599,20 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly lastMessageId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly lastResponseAt: {
                 readonly nullable: true;
                 readonly type: {
                   readonly kind: 'scalar';
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
+              };
+              readonly lid: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly messageResponse: {
                 readonly nullable: true;
@@ -1687,7 +1709,9 @@ type ContractBase = Omit<
                 readonly enrollmentDate: { readonly column: 'enrollmentDate' };
                 readonly id: { readonly column: 'id' };
                 readonly lastContact: { readonly column: 'lastContact' };
+                readonly lastMessageId: { readonly column: 'lastMessageId' };
                 readonly lastResponseAt: { readonly column: 'lastResponseAt' };
+                readonly lid: { readonly column: 'lid' };
                 readonly messageResponse: { readonly column: 'messageResponse' };
                 readonly movedAt: { readonly column: 'movedAt' };
                 readonly order: { readonly column: 'order' };

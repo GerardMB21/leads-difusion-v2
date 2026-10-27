@@ -1,0 +1,122 @@
+[
+  {
+    "id": "column.public.Lead.lastMessageId",
+    "label": "Add column \"lastMessageId\" to \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lastMessageId",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lastMessageId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lastMessageId"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"lastMessageId\" on \"Lead\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"lastMessageId\"",
+        "sql": "ALTER TABLE \"public\".\"Lead\" ADD COLUMN \"lastMessageId\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lastMessageId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lastMessageId"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"lastMessageId\" on \"Lead\""
+        }
+      },
+      {
+        "description": "verify column \"lastMessageId\" has type \"text\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lastMessageId",
+          "text"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Lead.lid",
+    "label": "Add column \"lid\" to \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lid",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lid\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lid"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"lid\" on \"Lead\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"lid\"",
+        "sql": "ALTER TABLE \"public\".\"Lead\" ADD COLUMN \"lid\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lid\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lid"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"lid\" on \"Lead\""
+        }
+      },
+      {
+        "description": "verify column \"lid\" has type \"text\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "lid",
+          "text"
+        ]
+      }
+    ]
+  }
+]

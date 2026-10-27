@@ -44,6 +44,8 @@ model Lead {
   lastContact      TimestamptzString?
   lastResponseAt   TimestamptzString?
   movedAt          TimestamptzString?
+  lastMessageId    String?
+  lid              String?
   messageResponse  Boolean? @default(false)
   templateId       Int?
   pipelineId       Int

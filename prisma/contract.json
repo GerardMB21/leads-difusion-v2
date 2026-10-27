@@ -346,10 +346,24 @@
                   "kind": "scalar"
                 }
               },
+              "lastMessageId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "lastResponseAt": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "lid": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -491,8 +505,14 @@
                 "lastContact": {
                   "column": "lastContact"
                 },
+                "lastMessageId": {
+                  "column": "lastMessageId"
+                },
                 "lastResponseAt": {
                   "column": "lastResponseAt"
+                },
+                "lid": {
+                  "column": "lid"
                 },
                 "messageResponse": {
                   "column": "messageResponse"
@@ -1607,9 +1627,19 @@
                   "dataType": "pg/timestamptz",
                   "nullable": true
                 },
+                "lastMessageId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "lastResponseAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "lid": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "messageResponse": {
@@ -2508,7 +2538,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "c87605ecbc5c5ca884603436f4dac778b0af197419c3064720c0c7e74393bb3b"
+    "storageHash": "89af9a46c2737e704e5f30e9809c5b60205dcae27b8096cb3a8e25eca5b4f49b"
   },
   "execution": {
     "executionHash": "d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7",
