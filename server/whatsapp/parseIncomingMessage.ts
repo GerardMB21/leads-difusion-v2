@@ -6,6 +6,11 @@ import type {
 } from '@/app/whatsapp/types';
 
 const STATUS_JID = 'status@broadcast';
+const LID_SUFFIX = '@lid';
+
+export function isLid(jid?: string) {
+  return !!jid?.endsWith(LID_SUFFIX);
+}
 
 function toPhone(jid?: string) {
   return (jid ?? '').split('@')[0].split(':')[0].replace(/\D/g, '');
@@ -127,15 +132,20 @@ export function parseIncomingMessage(
 ): IncomingMessage | null {
   if (!data?.key?.remoteJid) return null;
 
-  const { remoteJid, fromMe, id, participant } = data.key;
+  const { remoteJid, remoteJidAlt, fromMe, id, participant } = data.key;
   const isGroup = remoteJid.endsWith('@g.us');
+  const lid = isLid(remoteJid) ? remoteJid : null;
+  const phone = lid
+    ? toPhone(isLid(remoteJidAlt) ? undefined : remoteJidAlt)
+    : toPhone(isGroup ? participant : remoteJid);
   const { type, text, media } = resolveContent(data.message);
 
   return {
     instance,
     messageId: id,
     remoteJid,
-    phone: toPhone(isGroup ? participant : remoteJid),
+    phone,
+    lid,
     pushName: data.pushName ?? null,
     fromMe: Boolean(fromMe),
     isGroup,

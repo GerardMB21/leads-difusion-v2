@@ -18,6 +18,7 @@ export type EvolutionMessageKey = {
   fromMe: boolean;
   id: string;
   participant?: string;
+  remoteJidAlt?: string;
 };
 
 export type EvolutionMessageContent = {
@@ -73,6 +74,14 @@ export type EvolutionWebhookPayload<Data = unknown> = {
   apikey?: string;
 };
 
+export type EvolutionMessageUpdate = {
+  keyId?: string;
+  remoteJid?: string;
+  fromMe?: boolean;
+  status?: string;
+  messageId?: string;
+};
+
 export type IncomingMessageType =
   | 'text'
   | 'image'
@@ -90,6 +99,7 @@ export type IncomingMessage = {
   messageId: string;
   remoteJid: string;
   phone: string;
+  lid: string | null;
   pushName: string | null;
   fromMe: boolean;
   isGroup: boolean;

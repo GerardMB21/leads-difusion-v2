@@ -9,6 +9,7 @@ import { phoneCandidates } from './phone';
 export type IncomingMessageResult = {
   messageId: string;
   phone: string;
+  lid: string | null;
   leadId: number | null;
   movedToPipelineId: number | null;
 };
@@ -24,18 +25,27 @@ export async function processIncomingMessage(
   const result: IncomingMessageResult = {
     messageId: message.messageId,
     phone: message.phone,
+    lid: message.lid,
     leadId: null,
     movedToPipelineId: null,
   };
 
   const candidates = phoneCandidates(message.phone);
 
-  if (!candidates.length) return result;
+  const byLid = message.lid
+    ? await tx.orm.public.Lead.where({ lid: message.lid, deletedAt: null })
+        .orderBy((l) => l.updatedAt.desc())
+        .first()
+    : null;
 
-  const lead = await tx.orm.public.Lead.where((l) => l.phone.in(candidates))
-    .where({ deletedAt: null })
-    .orderBy((l) => l.updatedAt.desc())
-    .first();
+  const lead =
+    byLid ??
+    (candidates.length
+      ? await tx.orm.public.Lead.where((l) => l.phone.in(candidates))
+          .where({ deletedAt: null })
+          .orderBy((l) => l.updatedAt.desc())
+          .first()
+      : null);
 
   if (!lead) return result;
 

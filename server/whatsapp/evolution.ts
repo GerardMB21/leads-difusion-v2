@@ -165,7 +165,7 @@ export async function sendTemplateMessage({
     : await sendTextMessage(number, message);
 
   // await writeLog(SEND_LOG, { phone: number, template: template.name, response });
-  await markLeadContacted(number);
+  await markLeadContacted(number, response?.key?.id ?? null);
 
   return response;
 }
