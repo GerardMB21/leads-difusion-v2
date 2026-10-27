@@ -19,8 +19,6 @@ export type RunWorkflowsResult = {
   movedLeads: MovedLead[];
 };
 
-const after = (a: string | null, b: string | null) => !b || (!!a && Date.parse(a) > Date.parse(b));
-
 export function runWorkflows(dryRun = false, now = new Date()): Promise<RunWorkflowsResult> {
   return db.transaction((tx) => runWorkflowsIn(tx, dryRun, now));
 }
@@ -30,7 +28,10 @@ export async function runWorkflowsIn(
   dryRun = false,
   now = new Date(),
 ): Promise<RunWorkflowsResult> {
-  const workflows = await tx.orm.public.WorkflowPipeline.where({ deletedAt: null })
+  const workflows = await tx.orm.public.WorkflowPipeline.where({
+    whenNotResponse: true,
+    deletedAt: null,
+  })
     .orderBy((w) => w.id.desc())
     .all();
 
@@ -43,35 +44,18 @@ export async function runWorkflowsIn(
     if (fromPipelineId === toPipelineId) continue;
 
     const limit = new Date(now.getTime() - waitingTime * MINUTE_MS).toISOString();
-    const pipeline = tx.orm.public.Lead.where({ pipelineId: fromPipelineId, deletedAt: null });
 
-    let ids: number[] = [];
+    const leads = await tx.orm.public.Lead.where({ pipelineId: fromPipelineId, deletedAt: null })
+      .where((l) =>
+        and(
+          or(l.messageResponse.isNull(), l.messageResponse.eq(false)),
+          l.lastContact.lte(limit),
+          or(l.movedAt.isNull(), l.movedAt.lte(limit)),
+        ),
+      )
+      .all();
 
-    if (workflow.whenNotResponse) {
-      const leads = await pipeline
-        .where((l) =>
-          and(
-            or(l.messageResponse.isNull(), l.messageResponse.eq(false)),
-            l.lastContact.lte(limit),
-            or(l.movedAt.isNull(), l.movedAt.lte(limit)),
-          ),
-        )
-        .all();
-
-      ids = leads.map(({ id }) => id);
-    } else if (workflow.whenResponse) {
-      const leads = await pipeline
-        .where((l) => and(l.messageResponse.eq(true), l.lastResponseAt.lte(limit)))
-        .all();
-
-      ids = leads.filter((l) => after(l.lastResponseAt, l.movedAt)).map(({ id }) => id);
-    } else if (workflow.whenSendMessage) {
-      const leads = await pipeline.where((l) => l.lastContact.lte(limit)).all();
-
-      ids = leads.filter((l) => after(l.lastContact, l.movedAt)).map(({ id }) => id);
-    }
-
-    ids = ids.filter((id) => !handled.has(id));
+    const ids = leads.map(({ id }) => id).filter((id) => !handled.has(id));
 
     if (!ids.length) continue;
 

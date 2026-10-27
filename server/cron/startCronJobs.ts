@@ -1,5 +1,5 @@
 import { startDiffusionsCron } from './startDiffusionsCron';
-// import { startWorkflowsCron } from './startWorkflowsCron';
+import { startWorkflowsCron } from './startWorkflowsCron';
 
 let started = false;
 
@@ -9,5 +9,5 @@ export function startCronJobs() {
   started = true;
 
   startDiffusionsCron();
-  // startWorkflowsCron();
+  startWorkflowsCron();
 }
