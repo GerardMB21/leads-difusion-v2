@@ -7,11 +7,19 @@ import { db } from '@/prisma/db';
 import { findLead, resolveTagIds } from '@/server/queries/leads';
 
 export async function createLead(input: CreateLeadInput): Promise<Lead> {
-  const { tagIds, tagNames, enrollmentDate, ...data } = createLeadSchema.parse(input);
+  const { tagIds, tagNames, enrollmentDate, order, ...data } = createLeadSchema.parse(input);
 
   const id = await db.transaction(async (tx) => {
+    const last =
+      order === undefined
+        ? await tx.orm.public.Lead.where({ pipelineId: data.pipelineId, deletedAt: null })
+            .orderBy((l) => l.order.desc())
+            .first()
+        : null;
+
     const lead = await tx.orm.public.Lead.create({
       ...data,
+      order: order ?? (last ? last.order + 1 : 0),
       enrollmentDate: enrollmentDate ?? new Date().toISOString(),
     });
 
