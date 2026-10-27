@@ -1,5 +1,6 @@
 import {
   IconAutomation,
+  IconLayoutDashboard,
   IconPipeline,
   IconSend,
   IconTemplate,
@@ -7,6 +8,7 @@ import {
 } from '@tabler/icons-react';
 
 export const navMain = [
+  { title: 'Dashboard', url: '/', icon: IconLayoutDashboard },
   { title: 'Pipelines', url: '/pipelines', icon: IconPipeline },
   { title: 'Leads', url: '/leads', icon: IconUsersGroup },
   { title: 'Templates', url: '/templates', icon: IconTemplate },
