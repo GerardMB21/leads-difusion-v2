@@ -92,6 +92,8 @@ export async function sendTextMessage(number: string, text: string) {
 
   const res = await axios.post(`${prefix}/message/sendText/${instance}`, { number, text }, config);
 
+  await markLeadContacted(number, res.data?.key?.id ?? null);
+
   return res.data;
 }
 
@@ -129,6 +131,8 @@ export async function sendMediaMessage(
 ) {
   const { prefix, instance, ...config } = getEvolutionConfig();
 
+  let data;
+
   try {
     const res = await axios.post(
       `${prefix}/message/sendMedia/${instance}`,
@@ -136,15 +140,19 @@ export async function sendMediaMessage(
       config,
     );
 
-    return res.data;
+    data = res.data;
   } catch (error) {
     console.error(
       'WhatsApp sendMedia by URL failed, retrying as multipart: ',
       describeError(error),
     );
 
-    return sendMediaByMultipart(number, caption, imgUrl, fileName);
+    data = await sendMediaByMultipart(number, caption, imgUrl, fileName);
   }
+
+  await markLeadContacted(number, data?.key?.id ?? null);
+
+  return data;
 }
 
 export async function sendTemplateMessage({
@@ -165,7 +173,5 @@ export async function sendTemplateMessage({
     : await sendTextMessage(number, message);
 
   // await writeLog(SEND_LOG, { phone: number, template: template.name, response });
-  await markLeadContacted(number, response?.key?.id ?? null);
-
   return response;
 }
