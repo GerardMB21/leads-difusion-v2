@@ -1,0 +1,72 @@
+[
+  {
+    "id": "column.public.Lead.hasWhatsapp",
+    "label": "Add column \"hasWhatsapp\" to \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "hasWhatsapp",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"hasWhatsapp\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "hasWhatsapp"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"hasWhatsapp\" on \"Lead\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"hasWhatsapp\"",
+        "sql": "ALTER TABLE \"public\".\"Lead\" ADD COLUMN \"hasWhatsapp\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"hasWhatsapp\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "hasWhatsapp"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"hasWhatsapp\" on \"Lead\""
+        }
+      },
+      {
+        "description": "verify column \"hasWhatsapp\" has type \"boolean\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "hasWhatsapp",
+          "boolean"
+        ]
+      },
+      {
+        "description": "verify column \"hasWhatsapp\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Lead",
+          "hasWhatsapp",
+          "NO"
+        ]
+      }
+    ]
+  }
+]

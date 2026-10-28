@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'75ff83515364fc6afc6d9dec788924d940dfce0f49ffe1b24e666bf7a1100b95'>;
+  StorageHashBase<'5d130a7928343ebc3266554f73e455c648419759b6fc3b028b8dab17577cfc2a'>;
 export type ExecutionHash =
   ExecutionHashBase<'d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7'>;
 export type ProfileHash =
@@ -327,6 +327,7 @@ export namespace Models {
     createdAt: FieldOutputTypes['public']['Lead']['createdAt'];
     deletedAt: FieldOutputTypes['public']['Lead']['deletedAt'];
     enrollmentDate: FieldOutputTypes['public']['Lead']['enrollmentDate'];
+    hasWhatsapp: FieldOutputTypes['public']['Lead']['hasWhatsapp'];
     id: FieldOutputTypes['public']['Lead']['id'];
     lastContact: FieldOutputTypes['public']['Lead']['lastContact'];
     lastMessageId: FieldOutputTypes['public']['Lead']['lastMessageId'];
@@ -626,6 +627,16 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly hasWhatsapp: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
                   readonly many: false;
                 };
                 readonly id: {
@@ -1612,6 +1623,10 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly hasWhatsapp: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -1731,6 +1746,7 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly deletedAt: { readonly column: 'deletedAt' };
                 readonly enrollmentDate: { readonly column: 'enrollmentDate' };
+                readonly hasWhatsapp: { readonly column: 'hasWhatsapp' };
                 readonly id: { readonly column: 'id' };
                 readonly lastContact: { readonly column: 'lastContact' };
                 readonly lastMessageId: { readonly column: 'lastMessageId' };

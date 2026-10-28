@@ -47,6 +47,7 @@ model Lead {
   lastMessageId    String?
   lid              String?
   messageResponse  Boolean? @default(false)
+  hasWhatsapp      Boolean  @default(true)
   templateId       Int?
   pipelineId       Int
   beforePipelineId Int?

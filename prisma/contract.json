@@ -332,6 +332,13 @@
                   "kind": "scalar"
                 }
               },
+              "hasWhatsapp": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -498,6 +505,9 @@
                 },
                 "enrollmentDate": {
                   "column": "enrollmentDate"
+                },
+                "hasWhatsapp": {
+                  "column": "hasWhatsapp"
                 },
                 "id": {
                   "column": "id"
@@ -1613,6 +1623,15 @@
                   "dataType": "pg/timestamptz",
                   "nullable": false
                 },
+                "hasWhatsapp": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nullable": false
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
@@ -2571,7 +2590,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "75ff83515364fc6afc6d9dec788924d940dfce0f49ffe1b24e666bf7a1100b95"
+    "storageHash": "5d130a7928343ebc3266554f73e455c648419759b6fc3b028b8dab17577cfc2a"
   },
   "execution": {
     "executionHash": "d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7",
