@@ -49,6 +49,7 @@ const LeadsCombobox = ({ id, value, pipelineId, tagIds, invalid, onChange }: Pro
   const fetchLeads = async (text: string) => {
     const { data } = await api.get<DiffusionLead[]>('/leads', {
       params: {
+        hasWhatsapp: true,
         ...(pipelineId && { pipelineId }),
         ...(tagKey && { tagIds: tagKey }),
         ...(text && { search: text }),
@@ -58,8 +59,6 @@ const LeadsCombobox = ({ id, value, pipelineId, tagIds, invalid, onChange }: Pro
     return toLeads(data);
   };
 
-  // Picking a pipeline or tags selects every lead that matches all of them. With neither, the
-  // selection is emptied.
   useEffect(() => {
     if (!hasCriteria) {
       onChangeRef.current([]);
@@ -95,7 +94,6 @@ const LeadsCombobox = ({ id, value, pipelineId, tagIds, invalid, onChange }: Pro
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasCriteria, pipelineId, tagKey]);
 
-  // Typing searches inside the current pipeline and tags, or in every lead when there are none.
   useEffect(() => {
     if (!search) return;
 
