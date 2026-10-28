@@ -29,7 +29,7 @@ export async function createDiffusion(input: CreateDiffusionInput): Promise<Diff
 
     const [leads, templates, tags] = await Promise.all([
       tx.orm.public.Lead.where((l) => l.id.in(unique.leadIds))
-        .where({ deletedAt: null })
+        .where({ deletedAt: null, hasWhatsapp: true })
         .all(),
       tx.orm.public.Template.where((t) => t.id.in(unique.templateIds))
         .where({ deletedAt: null })
