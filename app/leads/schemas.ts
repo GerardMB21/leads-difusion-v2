@@ -48,6 +48,7 @@ export const leadFiltersSchema = z.object({
     .transform((value) => value || undefined)
     .optional(),
   pipelineId: z.coerce.number().int().optional(),
+  hasWhatsapp: z.union([z.boolean(), z.stringbool()]).optional(),
   tagIds: z
     .preprocess(
       (value) => (typeof value === 'string' ? value.split(',').filter(Boolean).map(Number) : value),

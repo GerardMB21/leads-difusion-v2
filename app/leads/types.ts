@@ -10,6 +10,7 @@ export type Lead = {
   lastResponseAt: string | null;
   movedAt: string | null;
   messageResponse: boolean | null;
+  hasWhatsapp: boolean;
   templateId: number | null;
   pipelineId: number;
   beforePipelineId: number | null;
