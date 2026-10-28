@@ -48,3 +48,17 @@ export async function markLeadContacted(phone: string, messageId: string | null)
     console.error('Lead contact error: ', error);
   }
 }
+
+export async function markLeadWithoutWhatsapp(phone: string) {
+  const candidates = phoneCandidates(phone);
+
+  if (!candidates.length) return;
+
+  try {
+    await db.orm.public.Lead.where((l) => l.phone.in(candidates))
+      .where({ deletedAt: null })
+      .updateAll({ hasWhatsapp: false });
+  } catch (error) {
+    console.error('Lead hasWhatsapp error: ', error);
+  }
+}

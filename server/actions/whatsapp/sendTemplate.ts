@@ -2,7 +2,7 @@
 
 import { sendTemplateSchema, type SendTemplateInput } from '@/app/whatsapp/schemas';
 import { db } from '@/prisma/db';
-import { LEAD_NOT_FOUND } from '@/server/queries/leads';
+import { LEAD_NOT_FOUND, LEAD_WITHOUT_WHATSAPP } from '@/server/queries/leads';
 import { TEMPLATE_NOT_FOUND } from '@/server/queries/templates';
 import { sendTemplateMessage } from '@/server/whatsapp/evolution';
 
@@ -12,6 +12,7 @@ export async function sendTemplate(input: SendTemplateInput): Promise<void> {
   const lead = await db.orm.public.Lead.where({ id: leadId, deletedAt: null }).first();
 
   if (!lead) throw new Error(LEAD_NOT_FOUND);
+  if (!lead.hasWhatsapp) throw new Error(LEAD_WITHOUT_WHATSAPP);
 
   const template = await db.orm.public.Template.where({ id: templateId, deletedAt: null }).first();
 

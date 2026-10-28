@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // import { SEND_LOG, writeLog } from '../logs/fileLog';
 import { htmlToWhatsApp } from './htmlToWhatsApp';
-import { markLeadContacted } from './leadContact';
+import { markLeadContacted, markLeadWithoutWhatsapp } from './leadContact';
 
 const TYPING_MS_PER_CHAR = 60;
 const MIN_TYPING_MS = 2000;
@@ -49,6 +49,16 @@ function describeError(error: unknown) {
   }
 
   return error instanceof Error ? error.message : String(error);
+}
+
+function isNotOnWhatsapp(error: unknown) {
+  if (error instanceof Error && error.message.startsWith('Teléfono inválido')) return true;
+
+  return (
+    axios.isAxiosError(error) &&
+    error.response?.status === 400 &&
+    /"exists"\s*:\s*false/.test(JSON.stringify(error.response.data ?? ''))
+  );
 }
 
 function sleep(ms: number) {
@@ -160,7 +170,15 @@ export async function sendTemplateMessage({
   template,
   wait = sleep,
 }: SendTemplateMessageOptions) {
-  const number = normalizePhone(phone);
+  let number: string;
+
+  try {
+    number = normalizePhone(phone);
+  } catch (error) {
+    await markLeadWithoutWhatsapp(phone);
+    throw error;
+  }
+
   const message = htmlToWhatsApp(template.message);
   const typingMs = getTypingDuration(message);
 
@@ -168,9 +186,17 @@ export async function sendTemplateMessage({
   await wait(typingMs);
 
   const extension = template.img?.split('?')[0].split('.').pop();
-  const response = template.img
-    ? await sendMediaMessage(number, message, template.img, `${template.name}.${extension}`)
-    : await sendTextMessage(number, message);
+  let response;
+
+  try {
+    response = template.img
+      ? await sendMediaMessage(number, message, template.img, `${template.name}.${extension}`)
+      : await sendTextMessage(number, message);
+  } catch (error) {
+    if (isNotOnWhatsapp(error)) await markLeadWithoutWhatsapp(number);
+
+    throw error;
+  }
 
   // await writeLog(SEND_LOG, { phone: number, template: template.name, response });
   return response;
