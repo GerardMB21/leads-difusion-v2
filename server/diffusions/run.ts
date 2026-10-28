@@ -85,6 +85,8 @@ async function sendToLead(diffusionId: number, leadInDiffusionId: number, leadId
   const sentAt = () => new Date().toISOString();
 
   if (!lead) return { ok: false as const, error: 'Lead no encontrado', sentAt: sentAt() };
+  if (!lead.hasWhatsapp)
+    return { ok: false as const, error: 'El lead no tiene WhatsApp', sentAt: sentAt() };
   if (!template)
     return { ok: false as const, error: 'Sin templates disponibles', sentAt: sentAt() };
 
