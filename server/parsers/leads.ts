@@ -13,7 +13,7 @@ const COLUMNS = {
 const ZIP_MAGIC = '80,75';
 const EXCEL_EPOCH = Date.UTC(1899, 11, 30);
 const DAY_MS = 86_400_000;
-const DMY = /^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})(?:[ T](\d{1,2}):(\d{2}))?$/;
+const DMY = /^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/;
 
 export const NO_VALID_ROWS = 'El archivo no contiene registros válidos';
 export const MISSING_COLUMNS = 'Faltan columnas en el archivo';
@@ -30,7 +30,7 @@ function toIso(value: unknown): string | null | undefined {
     const dmy = DMY.exec(text);
 
     date = dmy
-      ? new Date(+dmy[3], +dmy[2] - 1, +dmy[1], +(dmy[4] ?? 0), +(dmy[5] ?? 0))
+      ? new Date(+dmy[3], +dmy[2] - 1, +dmy[1], +(dmy[4] ?? 0), +(dmy[5] ?? 0), +(dmy[6] ?? 0))
       : new Date(text);
   }
 
@@ -68,15 +68,24 @@ export function parseLeadsFile(buffer: ArrayBuffer) {
       return;
     }
 
-    const parsed = importLeadRowSchema.safeParse({
-      row,
-      contactName: String(record[COLUMNS.contactName] ?? ''),
-      phone: String(record[COLUMNS.phone] ?? ''),
-      enrollmentDate,
-    });
+    // A cell may hold several phones ("51908917758, 51997323405"): one lead per phone.
+    const phones = String(record[COLUMNS.phone] ?? '')
+      .split(/[,;/\n]+/)
+      .map((phone) => phone.trim())
+      .filter(Boolean);
 
-    if (parsed.success) rows.push(parsed.data);
-    else errors.push({ row, reason: parsed.error.issues.map(({ message }) => message).join(', ') });
+    for (const phone of phones.length ? phones : ['']) {
+      const parsed = importLeadRowSchema.safeParse({
+        row,
+        contactName: String(record[COLUMNS.contactName] ?? ''),
+        phone,
+        enrollmentDate,
+      });
+
+      if (parsed.success) rows.push(parsed.data);
+      else
+        errors.push({ row, reason: parsed.error.issues.map(({ message }) => message).join(', ') });
+    }
   });
 
   return { rows, errors };
