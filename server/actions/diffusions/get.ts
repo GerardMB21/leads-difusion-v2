@@ -1,6 +1,11 @@
 'use server';
 
-import type { DiffusionRow, DiffusionStatus } from '@/app/diffusions/types';
+import type {
+  DiffusionLeadRow,
+  DiffusionRow,
+  DiffusionStatus,
+  LeadInDiffusionStatus,
+} from '@/app/diffusions/types';
 
 import { diffusionFiltersSchema, type DiffusionFilters } from '@/app/diffusions/schemas';
 import { OrderBy } from '@/lib/types';
@@ -55,4 +60,19 @@ export async function getCurrentDiffusion(): Promise<DiffusionRow | null> {
       .first());
 
   return current ? getDiffusion(current.id) : null;
+}
+
+export async function getDiffusionLeads(diffusionId: number): Promise<DiffusionLeadRow[]> {
+  const rows = await db.orm.public.LeadInDiffusion.where({ diffusionId, deletedAt: null })
+    .orderBy((l) => l.id.asc())
+    .include('lead')
+    .include('template')
+    .all();
+
+  return rows.map(({ lead, template, ...row }) => ({
+    ...row,
+    status: row.status as LeadInDiffusionStatus,
+    lead: { id: lead.id, contactName: lead.contactName, phone: lead.phone },
+    template: template ? { id: template.id, name: template.name } : null,
+  }));
 }

@@ -64,3 +64,8 @@ export type DiffusionRow = Diffusion & {
   tags: LeadTag[];
   templates: DiffusionTemplate[];
 };
+
+export type DiffusionLeadRow = LeadInDiffusion & {
+  lead: DiffusionLead;
+  template: DiffusionTemplate | null;
+};
