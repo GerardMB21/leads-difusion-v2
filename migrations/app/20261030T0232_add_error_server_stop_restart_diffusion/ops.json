@@ -1,0 +1,192 @@
+[
+  {
+    "id": "column.public.Diffusion.errorServer",
+    "label": "Add column \"errorServer\" to \"Diffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "errorServer",
+        "table": "Diffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"errorServer\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "errorServer"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"errorServer\" on \"Diffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"errorServer\"",
+        "sql": "ALTER TABLE \"public\".\"Diffusion\" ADD COLUMN \"errorServer\" int4 DEFAULT 0 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"errorServer\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "errorServer"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"errorServer\" on \"Diffusion\""
+        }
+      },
+      {
+        "description": "verify column \"errorServer\" has type \"integer\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "errorServer",
+          "integer"
+        ]
+      },
+      {
+        "description": "verify column \"errorServer\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "errorServer",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Diffusion.restartAt",
+    "label": "Add column \"restartAt\" to \"Diffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "restartAt",
+        "table": "Diffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"restartAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "restartAt"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"restartAt\" on \"Diffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"restartAt\"",
+        "sql": "ALTER TABLE \"public\".\"Diffusion\" ADD COLUMN \"restartAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"restartAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "restartAt"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"restartAt\" on \"Diffusion\""
+        }
+      },
+      {
+        "description": "verify column \"restartAt\" has type \"timestamp with time zone\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "restartAt",
+          "timestamp with time zone"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Diffusion.stoppedAt",
+    "label": "Add column \"stoppedAt\" to \"Diffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "stoppedAt",
+        "table": "Diffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"stoppedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "stoppedAt"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"stoppedAt\" on \"Diffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"stoppedAt\"",
+        "sql": "ALTER TABLE \"public\".\"Diffusion\" ADD COLUMN \"stoppedAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"stoppedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "stoppedAt"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"stoppedAt\" on \"Diffusion\""
+        }
+      },
+      {
+        "description": "verify column \"stoppedAt\" has type \"timestamp with time zone\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Diffusion",
+          "stoppedAt",
+          "timestamp with time zone"
+        ]
+      }
+    ]
+  }
+]

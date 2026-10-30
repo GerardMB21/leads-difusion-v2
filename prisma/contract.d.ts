@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'8f557b5a2a497169535c530772a7ce63b2625044dfec024d255d91e0023a19f1'>;
+  StorageHashBase<'f848aedb35434c4b50e7f95a9d87a1fbb6cc06dce336825aa475905ac645c3c3'>;
 export type ExecutionHash =
   ExecutionHashBase<'d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7'>;
 export type ProfileHash =
@@ -310,15 +310,18 @@ export namespace Models {
     createdAt: FieldOutputTypes['public']['Diffusion']['createdAt'];
     deletedAt: FieldOutputTypes['public']['Diffusion']['deletedAt'];
     error: FieldOutputTypes['public']['Diffusion']['error'];
+    errorServer: FieldOutputTypes['public']['Diffusion']['errorServer'];
     failed: FieldOutputTypes['public']['Diffusion']['failed'];
     finishedAt: FieldOutputTypes['public']['Diffusion']['finishedAt'];
     id: FieldOutputTypes['public']['Diffusion']['id'];
     nextSendAt: FieldOutputTypes['public']['Diffusion']['nextSendAt'];
     pipelineId: FieldOutputTypes['public']['Diffusion']['pipelineId'];
     processed: FieldOutputTypes['public']['Diffusion']['processed'];
+    restartAt: FieldOutputTypes['public']['Diffusion']['restartAt'];
     sent: FieldOutputTypes['public']['Diffusion']['sent'];
     startAt: FieldOutputTypes['public']['Diffusion']['startAt'];
     status: FieldOutputTypes['public']['Diffusion']['status'];
+    stoppedAt: FieldOutputTypes['public']['Diffusion']['stoppedAt'];
     total: FieldOutputTypes['public']['Diffusion']['total'];
     updatedAt: FieldOutputTypes['public']['Diffusion']['updatedAt'];
     pipeline: public_Pipeline | null;
@@ -495,6 +498,16 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly errorServer: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
+                  };
+                  readonly many: false;
+                };
                 readonly failed: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
@@ -543,6 +556,12 @@ type ContractBase = Omit<
                   };
                   readonly many: false;
                 };
+                readonly restartAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly sent: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
@@ -567,6 +586,12 @@ type ContractBase = Omit<
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/text@1', 'pending'>;
                   };
+                  readonly many: false;
+                };
+                readonly stoppedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly total: {
@@ -1495,6 +1520,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly errorServer: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly failed: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -1525,6 +1554,13 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly restartAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
               readonly sent: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -1539,6 +1575,13 @@ type ContractBase = Omit<
               readonly status: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly stoppedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
               };
               readonly total: {
                 readonly nullable: false;
@@ -1595,15 +1638,18 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly deletedAt: { readonly column: 'deletedAt' };
                 readonly error: { readonly column: 'error' };
+                readonly errorServer: { readonly column: 'errorServer' };
                 readonly failed: { readonly column: 'failed' };
                 readonly finishedAt: { readonly column: 'finishedAt' };
                 readonly id: { readonly column: 'id' };
                 readonly nextSendAt: { readonly column: 'nextSendAt' };
                 readonly pipelineId: { readonly column: 'pipelineId' };
                 readonly processed: { readonly column: 'processed' };
+                readonly restartAt: { readonly column: 'restartAt' };
                 readonly sent: { readonly column: 'sent' };
                 readonly startAt: { readonly column: 'startAt' };
                 readonly status: { readonly column: 'status' };
+                readonly stoppedAt: { readonly column: 'stoppedAt' };
                 readonly total: { readonly column: 'total' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };

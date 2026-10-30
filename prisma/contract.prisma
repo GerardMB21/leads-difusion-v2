@@ -108,6 +108,9 @@ model Diffusion {
   finishedAt    TimestamptzString?
   nextSendAt    TimestamptzString?
   error         String?
+  errorServer   Int                   @default(0)
+  stoppedAt     TimestamptzString?
+  restartAt     TimestamptzString?
   pipeline      Pipeline?             @relation("pipeline", fields: [pipelineId], references: [id])
   tags          TagInDiffusion[]
   templates     TemplateInDiffusion[]

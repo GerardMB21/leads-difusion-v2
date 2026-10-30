@@ -128,6 +128,13 @@
                   "kind": "scalar"
                 }
               },
+              "errorServer": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "failed": {
                 "nullable": false,
                 "type": {
@@ -170,6 +177,13 @@
                   "kind": "scalar"
                 }
               },
+              "restartAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "sent": {
                 "nullable": false,
                 "type": {
@@ -195,6 +209,13 @@
                   "entityName": "DiffusionStatus",
                   "namespaceId": "public",
                   "plane": "domain"
+                }
+              },
+              "stoppedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
                 }
               },
               "total": {
@@ -271,6 +292,9 @@
                 "error": {
                   "column": "error"
                 },
+                "errorServer": {
+                  "column": "errorServer"
+                },
                 "failed": {
                   "column": "failed"
                 },
@@ -289,6 +313,9 @@
                 "processed": {
                   "column": "processed"
                 },
+                "restartAt": {
+                  "column": "restartAt"
+                },
                 "sent": {
                   "column": "sent"
                 },
@@ -297,6 +324,9 @@
                 },
                 "status": {
                   "column": "status"
+                },
+                "stoppedAt": {
+                  "column": "stoppedAt"
                 },
                 "total": {
                   "column": "total"
@@ -1491,6 +1521,15 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "errorServer": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
                 "failed": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
@@ -1533,6 +1572,11 @@
                   },
                   "nullable": false
                 },
+                "restartAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
                 "sent": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
@@ -1561,6 +1605,11 @@
                     "namespaceId": "public",
                     "plane": "storage"
                   }
+                },
+                "stoppedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
                 },
                 "total": {
                   "codecId": "pg/int4@1",
@@ -2610,7 +2659,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "8f557b5a2a497169535c530772a7ce63b2625044dfec024d255d91e0023a19f1"
+    "storageHash": "f848aedb35434c4b50e7f95a9d87a1fbb6cc06dce336825aa475905ac645c3c3"
   },
   "execution": {
     "executionHash": "d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7",
