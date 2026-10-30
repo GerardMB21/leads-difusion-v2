@@ -56,6 +56,12 @@ export const updateDiffusionSchema = z
 
 export type UpdateDiffusionInput = z.infer<typeof updateDiffusionSchema>;
 
+export const resumeDiffusionSchema = z.object({
+  retryFailed: z.boolean({ error: 'Debe indicar si se reintentan los leads fallidos' }),
+});
+
+export type ResumeDiffusionInput = z.infer<typeof resumeDiffusionSchema>;
+
 export const diffusionFiltersSchema = z.object({
   id: z.coerce.number().int().optional(),
   status: diffusionStatusSchema.optional(),

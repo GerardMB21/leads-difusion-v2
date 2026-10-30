@@ -7,6 +7,7 @@ export const DIFFUSION_NOT_CANCELLABLE =
   'Solo se pueden cancelar diffusions que no estén completadas ni canceladas';
 export const DIFFUSION_NOT_STOPPABLE =
   'Solo se pueden detener diffusions activas, pendientes, enviando o fallidas';
+export const DIFFUSION_NOT_RESUMABLE = 'Solo se pueden reanudar diffusions detenidas';
 
 export const RUNNING_STATUSES = ['active', 'sending', 'failed'] as const;
 export const MAX_CONSECUTIVE_FAILURES = 3;
