@@ -10,7 +10,7 @@ export const DIFFUSION_NOT_STOPPABLE =
 export const DIFFUSION_NOT_RESUMABLE = 'Solo se pueden reanudar diffusions detenidas';
 
 export const RUNNING_STATUSES = ['active', 'sending', 'failed'] as const;
-export const MAX_CONSECUTIVE_FAILURES = 3;
+export const MAX_SERVER_ERRORS = 3;
 export const CONNECTION_LOST_ERROR = 'La conexión con WhatsApp se ha detenido inesperadamente';
 export const INVALID_REFERENCES = 'Algún lead, template, etiqueta o pipeline ya no existe';
 

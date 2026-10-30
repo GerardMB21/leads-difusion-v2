@@ -5,7 +5,7 @@ import { db } from '@/prisma/db';
 import {
   CONNECTION_LOST_ERROR,
   getDiffusionStats,
-  MAX_CONSECUTIVE_FAILURES,
+  MAX_SERVER_ERRORS,
   RUNNING_STATUSES,
 } from '@/server/queries/diffusions';
 import { publishDiffusionChange } from './events';
@@ -17,6 +17,9 @@ const STALE_SENDING_MS = 5 * MINUTE_MS;
 const MAX_ERROR_LENGTH = 500;
 
 export const DIFFUSION_INTERVALS_MINUTES = [3, 5, 8, 10];
+
+// Only HTTP 500 from the WhatsApp API counts towards the automatic stop.
+const isServerError = (error: unknown) => isAxiosError(error) && error.response?.status === 500;
 
 const pickRandom = <T>(items: T[]) => items[Math.floor(Math.random() * items.length)];
 
@@ -51,15 +54,11 @@ const nextPendingLead = (tx: Tx, diffusionId: number) =>
     .orderBy((l) => l.id.asc())
     .first();
 
-async function hasFailureStreak(tx: Tx, diffusionId: number) {
-  const last = await tx.orm.public.LeadInDiffusion.where({ diffusionId })
+const lastSentLead = (tx: Tx, diffusionId: number) =>
+  tx.orm.public.LeadInDiffusion.where({ diffusionId, status: 'sent' })
     .where((l) => l.sentAt.isNotNull())
     .orderBy((l) => l.sentAt.desc())
-    .limit(MAX_CONSECUTIVE_FAILURES)
-    .all();
-
-  return last.length === MAX_CONSECUTIVE_FAILURES && last.every((l) => l.status === 'failed');
-}
+    .first();
 
 async function failStaleLeads(tx: Tx, diffusionId: number, now: Date) {
   const limit = new Date(now.getTime() - STALE_SENDING_MS).toISOString();
@@ -99,11 +98,27 @@ async function sendToLead(diffusionId: number, leadInDiffusionId: number, leadId
   const { lead, template } = prepared;
   const sentAt = () => new Date().toISOString();
 
-  if (!lead) return { ok: false as const, error: 'Lead no encontrado', sentAt: sentAt() };
+  if (!lead)
+    return {
+      ok: false as const,
+      error: 'Lead no encontrado',
+      serverError: false,
+      sentAt: sentAt(),
+    };
   if (!lead.hasWhatsapp)
-    return { ok: false as const, error: 'El lead no tiene WhatsApp', sentAt: sentAt() };
+    return {
+      ok: false as const,
+      error: 'El lead no tiene WhatsApp',
+      serverError: false,
+      sentAt: sentAt(),
+    };
   if (!template)
-    return { ok: false as const, error: 'Sin templates disponibles', sentAt: sentAt() };
+    return {
+      ok: false as const,
+      error: 'Sin templates disponibles',
+      serverError: false,
+      sentAt: sentAt(),
+    };
 
   try {
     await sendTemplateMessage({
@@ -115,7 +130,12 @@ async function sendToLead(diffusionId: number, leadInDiffusionId: number, leadId
   } catch (error) {
     console.error(`[cron:diffusions] fallo el envio al lead ${leadId}:`, describeSendError(error));
 
-    return { ok: false as const, error: describeSendError(error), sentAt: sentAt() };
+    return {
+      ok: false as const,
+      error: describeSendError(error),
+      serverError: isServerError(error),
+      sentAt: sentAt(),
+    };
   }
 }
 
@@ -186,12 +206,21 @@ async function processDiffusion(diffusionId: number, now: Date) {
     const result = await sendToLead(diffusionId, state.id, state.leadId);
 
     const more = await db.transaction(async (tx) => {
+      const previousSent = result.ok ? await lastSentLead(tx, diffusionId) : null;
+
       await tx.orm.public.LeadInDiffusion.where({ id: state.id }).update({
         status: result.ok ? 'sent' : 'failed',
         sentAt: result.sentAt,
         error: result.ok ? null : result.error,
       });
       await syncStats(tx, diffusionId);
+
+      if (result.ok) {
+        await tx.orm.public.Diffusion.where({ id: diffusionId }).update({
+          beforeSendAt: previousSent?.sentAt ?? null,
+          errorServer: 0,
+        });
+      }
 
       const pending = await nextPendingLead(tx, diffusionId);
 
@@ -212,17 +241,27 @@ async function processDiffusion(diffusionId: number, now: Date) {
         );
       }
 
-      if (await hasFailureStreak(tx, diffusionId)) {
+      if (!result.serverError) {
+        // Any other error fails the lead but breaks the run of consecutive 500 errors.
+        return (await updateRunning(tx, diffusionId, { status: 'failed', errorServer: 0 })) > 0;
+      }
+
+      const current = await tx.orm.public.Diffusion.where({ id: diffusionId }).first();
+      const errorServer = (current?.errorServer ?? 0) + 1;
+
+      if (errorServer >= MAX_SERVER_ERRORS) {
         await updateRunning(tx, diffusionId, {
           status: 'stopped',
           nextSendAt: null,
           error: CONNECTION_LOST_ERROR,
+          errorServer,
+          stoppedAt: new Date().toISOString(),
         });
 
         return false;
       }
 
-      return (await updateRunning(tx, diffusionId, { status: 'failed' })) > 0;
+      return (await updateRunning(tx, diffusionId, { status: 'failed', errorServer })) > 0;
     });
 
     publishDiffusionChange();

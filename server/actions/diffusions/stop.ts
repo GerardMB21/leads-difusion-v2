@@ -17,7 +17,11 @@ export async function stopDiffusion(id: number): Promise<DiffusionRow> {
 
     const stopped = await tx.orm.public.Diffusion.where({ id })
       .where((d) => d.status.in([...STOPPABLE_STATUSES]))
-      .updateAndCount({ status: 'stopped', nextSendAt: null });
+      .updateAndCount({
+        status: 'stopped',
+        nextSendAt: null,
+        stoppedAt: new Date().toISOString(),
+      });
 
     if (!stopped) throw new Error(DIFFUSION_NOT_STOPPABLE);
   });

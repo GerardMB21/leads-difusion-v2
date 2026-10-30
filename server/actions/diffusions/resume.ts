@@ -25,6 +25,8 @@ export async function resumeDiffusion(
       status: 'pending',
       error: null,
       finishedAt: null,
+      errorServer: 0,
+      restartAt: new Date().toISOString(),
     });
 
     if (!resumed) throw new Error(DIFFUSION_NOT_RESUMABLE);
