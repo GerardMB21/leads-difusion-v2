@@ -73,11 +73,3 @@ const LIMA_OFFSET = '-05:00';
 // `value` comes from <input type="datetime-local"> (YYYY-MM-DDTHH:mm) and is read as Lima time
 // whatever the browser's timezone is. Lima has no daylight saving, so the offset is fixed.
 export const limaToIso = (value: string) => new Date(`${value}:00${LIMA_OFFSET}`).toISOString();
-
-export const DEFAULT_STATUS = 'active';
-
-export const parseStatus = (value: unknown) => {
-  const parsed = diffusionStatusSchema.safeParse(value);
-
-  return parsed.success ? parsed.data : DEFAULT_STATUS;
-};

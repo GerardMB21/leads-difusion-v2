@@ -1,4 +1,4 @@
-import type { NormalizedError, PageProps } from '@/lib/types';
+import type { NormalizedError } from '@/lib/types';
 import type { State } from './_store';
 import type { DiffusionRow } from './types';
 
@@ -12,15 +12,11 @@ import { getTemplates } from '@/server/actions/templates/get';
 
 import ErrorPage from '@/components/ErrorPage';
 import { Skeleton } from '@/components/ui/skeleton';
-import { parseStatus } from './schemas';
 import CreateDiffusionDialog from './_components/CreateDiffusionDialog';
 import DiffusionsGrid from './_components/DiffusionsGrid';
-import Filters from './_components/Filters';
 import Provider from './_components/Provider';
 
-const Diffusions = async ({ searchParams }: PageProps) => {
-  const params = await searchParams;
-
+const Diffusions = async () => {
   await connection();
 
   let diffusions: DiffusionRow[];
@@ -28,7 +24,7 @@ const Diffusions = async ({ searchParams }: PageProps) => {
 
   try {
     const [rows, pipelines, tags, templates] = await Promise.all([
-      getDiffusions({ ...params, status: parseStatus(params.status) }),
+      getDiffusions(),
       getPipelineOptions(),
       getTags(),
       getTemplates({}),
@@ -55,17 +51,14 @@ const Diffusions = async ({ searchParams }: PageProps) => {
   );
 };
 
-export default function Page(props: PageProps) {
+export default function Page() {
   return (
     <div className="flex flex-col gap-4 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Suspense fallback={null}>
-          <Filters />
-        </Suspense>
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <CreateDiffusionDialog />
       </div>
       <Suspense fallback={<Skeleton className="h-96 w-full rounded-lg" />}>
-        <Diffusions {...props} />
+        <Diffusions />
       </Suspense>
     </div>
   );
