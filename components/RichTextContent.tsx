@@ -8,7 +8,6 @@ interface Props {
   className?: string;
 }
 
-// `html` must already be sanitized on the server (see server/sanitize.ts).
 const RichTextContent = ({ html, className }: Props) => (
   <div className={cn(RICH_TEXT_STYLES, className)} dangerouslySetInnerHTML={{ __html: html }} />
 );

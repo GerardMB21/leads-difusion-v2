@@ -18,7 +18,6 @@ const MAX_ERROR_LENGTH = 500;
 
 export const DIFFUSION_INTERVALS_MINUTES = [3, 5, 8, 10];
 
-// Only HTTP 500 from the WhatsApp API counts towards the automatic stop.
 const isServerError = (error: unknown) => isAxiosError(error) && error.response?.status === 500;
 
 const pickRandom = <T>(items: T[]) => items[Math.floor(Math.random() * items.length)];
@@ -242,7 +241,6 @@ async function processDiffusion(diffusionId: number, now: Date) {
       }
 
       if (!result.serverError) {
-        // Any other error fails the lead but breaks the run of consecutive 500 errors.
         return (await updateRunning(tx, diffusionId, { status: 'failed', errorServer: 0 })) > 0;
       }
 

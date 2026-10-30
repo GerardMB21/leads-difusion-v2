@@ -28,7 +28,6 @@ export default class M extends Migration<Start, End> {
         table: 'Lead',
         column: 'lastContact',
         type: 'timestamptz',
-        // The old integer values are discarded on purpose (no lead had one), so the new column starts empty.
         using: sql`NULL::timestamptz`,
       }),
     ];

@@ -8,7 +8,6 @@ import { publishDiffusionChange } from '@/server/diffusions/events';
 import { DIFFUSION_NOT_FOUND, DIFFUSION_NOT_STOPPABLE } from '@/server/queries/diffusions';
 import { getDiffusion } from './get';
 
-// Leads still pending stay pending, so a stopped diffusion can be resumed later.
 export async function stopDiffusion(id: number): Promise<DiffusionRow> {
   await db.transaction(async (tx) => {
     const diffusion = await tx.orm.public.Diffusion.where({ id, deletedAt: null }).first();

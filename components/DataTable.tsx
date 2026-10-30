@@ -120,7 +120,6 @@ const DataTable = <TData extends RowData>({
     (state) => ({ pagination: state.pagination, rowSelection: state.rowSelection }),
   );
 
-  // Rows that leave `data` (deleted, or filtered out by the server) leave the selection too.
   useEffect(() => {
     if (!selectable || !selectedIds?.length) return;
 

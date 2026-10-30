@@ -59,8 +59,6 @@ export type DiffusionLead = {
   phone: string;
 };
 
-// `total`, `processed`, `sent` and `failed` are counted from LeadInDiffusion, not read from the
-// counters stored in Diffusion.
 export type DiffusionRow = Diffusion & {
   pipeline: DiffusionPipeline | null;
   tags: LeadTag[];

@@ -68,7 +68,6 @@ export function parseLeadsFile(buffer: ArrayBuffer) {
       return;
     }
 
-    // A cell may hold several phones ("51908917758, 51997323405"): one lead per phone.
     const phones = String(record[COLUMNS.phone] ?? '')
       .split(/[,;/\n]+/)
       .map((phone) => phone.trim())
