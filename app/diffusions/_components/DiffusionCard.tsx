@@ -3,10 +3,11 @@ import type { DiffusionRow } from '../types';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { formatDate } from '../format';
-import { isCancellable } from '../schemas';
+import { isCancellable, isStoppable } from '../schemas';
 import BadgeList from './BadgeList';
 import CancelDiffusionButton from './CancelDiffusionButton';
 import StatusBadge from './StatusBadge';
+import StopDiffusionButton from './StopDiffusionButton';
 
 const Stat = ({
   label,
@@ -30,7 +31,10 @@ const DiffusionCard = ({ diffusion }: { diffusion: DiffusionRow }) => (
         <h3 className="truncate font-medium">Diffusion #{diffusion.id}</h3>
         <StatusBadge status={diffusion.status} />
       </div>
-      {isCancellable(diffusion.status) && <CancelDiffusionButton diffusion={diffusion} />}
+      <div className="flex shrink-0 items-center gap-1">
+        {isStoppable(diffusion.status) && <StopDiffusionButton diffusion={diffusion} />}
+        {isCancellable(diffusion.status) && <CancelDiffusionButton diffusion={diffusion} />}
+      </div>
     </header>
 
     <div className="flex items-center gap-2 text-xs">

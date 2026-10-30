@@ -9,8 +9,9 @@ import { IconSend } from '@tabler/icons-react';
 import BadgeList from '@/app/diffusions/_components/BadgeList';
 import CancelDiffusionButton from '@/app/diffusions/_components/CancelDiffusionButton';
 import StatusBadge from '@/app/diffusions/_components/StatusBadge';
+import StopDiffusionButton from '@/app/diffusions/_components/StopDiffusionButton';
 import { formatDate } from '@/app/diffusions/format';
-import { isCancellable } from '@/app/diffusions/schemas';
+import { isCancellable, isStoppable } from '@/app/diffusions/schemas';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -102,6 +103,7 @@ const CurrentDiffusion = ({ initial }: { initial: DiffusionRow | null }) => {
           {status === 'pending' && <Badge variant="outline">Próxima en la cola</Badge>}
         </div>
         <div className="flex items-center gap-2">
+          {isStoppable(status) && <StopDiffusionButton diffusion={diffusion} />}
           {isCancellable(status) && <CancelDiffusionButton diffusion={diffusion} />}
           {toolbar}
         </div>
