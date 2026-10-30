@@ -107,6 +107,13 @@
         "models": {
           "Diffusion": {
             "fields": {
+              "beforeSendAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -283,6 +290,9 @@
             },
             "storage": {
               "fields": {
+                "beforeSendAt": {
+                  "column": "beforeSendAt"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -1502,6 +1512,11 @@
                 }
               ],
               "columns": {
+                "beforeSendAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
@@ -2659,7 +2674,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f848aedb35434c4b50e7f95a9d87a1fbb6cc06dce336825aa475905ac645c3c3"
+    "storageHash": "de924d92d714be4aec4b55ad6ade005eb88c7e68a19dec3848bbad7c32fa90e0"
   },
   "execution": {
     "executionHash": "d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7",

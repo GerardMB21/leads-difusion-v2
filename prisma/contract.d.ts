@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f848aedb35434c4b50e7f95a9d87a1fbb6cc06dce336825aa475905ac645c3c3'>;
+  StorageHashBase<'de924d92d714be4aec4b55ad6ade005eb88c7e68a19dec3848bbad7c32fa90e0'>;
 export type ExecutionHash =
   ExecutionHashBase<'d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7'>;
 export type ProfileHash =
@@ -307,6 +307,7 @@ export type StorageColumnInputTypes = ColumnTypesFromStorage<
 
 export namespace Models {
   export type public_Diffusion = {
+    beforeSendAt: FieldOutputTypes['public']['Diffusion']['beforeSendAt'];
     createdAt: FieldOutputTypes['public']['Diffusion']['createdAt'];
     deletedAt: FieldOutputTypes['public']['Diffusion']['deletedAt'];
     error: FieldOutputTypes['public']['Diffusion']['error'];
@@ -479,6 +480,12 @@ type ContractBase = Omit<
           readonly table: {
             readonly Diffusion: {
               columns: {
+                readonly beforeSendAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
@@ -1502,6 +1509,13 @@ type ContractBase = Omit<
         readonly models: {
           readonly Diffusion: {
             readonly fields: {
+              readonly beforeSendAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -1635,6 +1649,7 @@ type ContractBase = Omit<
               readonly table: 'Diffusion';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly beforeSendAt: { readonly column: 'beforeSendAt' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly deletedAt: { readonly column: 'deletedAt' };
                 readonly error: { readonly column: 'error' };
