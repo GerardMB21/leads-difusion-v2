@@ -1,5 +1,8 @@
 import type { DiffusionRow } from '../types';
 
+import { IconAlertTriangle } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { formatDate } from '../format';
@@ -39,12 +42,6 @@ const DiffusionCard = ({ diffusion }: { diffusion: DiffusionRow }) => (
       </div>
     </header>
 
-    {diffusion.error && (
-      <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
-        {diffusion.error}
-      </p>
-    )}
-
     <div className="flex items-center gap-2 text-xs">
       <span className="w-16 shrink-0 text-muted-foreground">Pipeline</span>
       {diffusion.pipeline ? <Badge>{diffusion.pipeline.name}</Badge> : '-'}
@@ -79,9 +76,24 @@ const DiffusionCard = ({ diffusion }: { diffusion: DiffusionRow }) => (
       <dd>{formatDate(diffusion.startAt)}</dd>
       <dt className="text-muted-foreground">Fin</dt>
       <dd>{formatDate(diffusion.finishedAt)}</dd>
+      <dt className="text-muted-foreground">Anterior envío</dt>
+      <dd>{formatDate(diffusion.beforeSendAt)}</dd>
       <dt className="text-muted-foreground">Próximo envío</dt>
       <dd>{formatDate(diffusion.nextSendAt)}</dd>
+      {diffusion.status === 'stopped' && (
+        <>
+          <dt className="text-muted-foreground">Detenida</dt>
+          <dd>{formatDate(diffusion.stoppedAt)}</dd>
+        </>
+      )}
     </dl>
+
+    {diffusion.error && (
+      <Alert variant="destructive">
+        <IconAlertTriangle />
+        <AlertDescription>{diffusion.error}</AlertDescription>
+      </Alert>
+    )}
   </article>
 );
 

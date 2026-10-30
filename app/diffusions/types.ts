@@ -16,7 +16,11 @@ export type Diffusion = {
   startAt: string | null;
   finishedAt: string | null;
   nextSendAt: string | null;
+  beforeSendAt: string | null;
+  stoppedAt: string | null;
+  restartAt: string | null;
   error: string | null;
+  errorServer: number;
 } & BaseModel;
 
 export type TagInDiffusion = {
