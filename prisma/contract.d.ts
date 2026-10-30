@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'3bff2f2df7518f0c604d49ad3325910fe9f7f1916fe31552005661ff06ffd2c3'>;
+  StorageHashBase<'8f557b5a2a497169535c530772a7ce63b2625044dfec024d255d91e0023a19f1'>;
 export type ExecutionHash =
   ExecutionHashBase<'d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7'>;
 export type ProfileHash =
@@ -309,6 +309,7 @@ export namespace Models {
   export type public_Diffusion = {
     createdAt: FieldOutputTypes['public']['Diffusion']['createdAt'];
     deletedAt: FieldOutputTypes['public']['Diffusion']['deletedAt'];
+    error: FieldOutputTypes['public']['Diffusion']['error'];
     failed: FieldOutputTypes['public']['Diffusion']['failed'];
     finishedAt: FieldOutputTypes['public']['Diffusion']['finishedAt'];
     id: FieldOutputTypes['public']['Diffusion']['id'];
@@ -485,6 +486,12 @@ type ContractBase = Omit<
                 readonly deletedAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly error: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
@@ -1484,6 +1491,10 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly error: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly failed: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -1583,6 +1594,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly deletedAt: { readonly column: 'deletedAt' };
+                readonly error: { readonly column: 'error' };
                 readonly failed: { readonly column: 'failed' };
                 readonly finishedAt: { readonly column: 'finishedAt' };
                 readonly id: { readonly column: 'id' };
