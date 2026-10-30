@@ -9,6 +9,8 @@ export const DIFFUSION_NOT_STOPPABLE =
   'Solo se pueden detener diffusions activas, pendientes, enviando o fallidas';
 
 export const RUNNING_STATUSES = ['active', 'sending', 'failed'] as const;
+export const MAX_CONSECUTIVE_FAILURES = 3;
+export const CONNECTION_LOST_ERROR = 'La conexión con WhatsApp se ha detenido inesperadamente';
 export const INVALID_REFERENCES = 'Algún lead, template, etiqueta o pipeline ya no existe';
 
 export const DIFFUSION_VALIDATION_ERRORS = [DIFFUSION_NOT_CANCELLABLE, INVALID_REFERENCES];

@@ -2,7 +2,12 @@ import { isAxiosError } from 'axios';
 import { or } from '@prisma/orm-postgres/orm-client';
 
 import { db } from '@/prisma/db';
-import { getDiffusionStats, RUNNING_STATUSES } from '@/server/queries/diffusions';
+import {
+  CONNECTION_LOST_ERROR,
+  getDiffusionStats,
+  MAX_CONSECUTIVE_FAILURES,
+  RUNNING_STATUSES,
+} from '@/server/queries/diffusions';
 import { publishDiffusionChange } from './events';
 import { sendTemplateMessage } from '@/server/whatsapp/evolution';
 import type { Tx } from '@/server/workflows/moveLeads';
@@ -45,6 +50,16 @@ const nextPendingLead = (tx: Tx, diffusionId: number) =>
   tx.orm.public.LeadInDiffusion.where({ diffusionId, status: 'pending', deletedAt: null })
     .orderBy((l) => l.id.asc())
     .first();
+
+async function hasFailureStreak(tx: Tx, diffusionId: number) {
+  const last = await tx.orm.public.LeadInDiffusion.where({ diffusionId })
+    .where((l) => l.sentAt.isNotNull())
+    .orderBy((l) => l.sentAt.desc())
+    .limit(MAX_CONSECUTIVE_FAILURES)
+    .all();
+
+  return last.length === MAX_CONSECUTIVE_FAILURES && last.every((l) => l.status === 'failed');
+}
 
 async function failStaleLeads(tx: Tx, diffusionId: number, now: Date) {
   const limit = new Date(now.getTime() - STALE_SENDING_MS).toISOString();
@@ -195,6 +210,16 @@ async function processDiffusion(diffusionId: number, now: Date) {
             nextSendAt: new Date(Date.now() + minutes * MINUTE_MS).toISOString(),
           })) > 0
         );
+      }
+
+      if (await hasFailureStreak(tx, diffusionId)) {
+        await updateRunning(tx, diffusionId, {
+          status: 'stopped',
+          nextSendAt: null,
+          error: CONNECTION_LOST_ERROR,
+        });
+
+        return false;
       }
 
       return (await updateRunning(tx, diffusionId, { status: 'failed' })) > 0;

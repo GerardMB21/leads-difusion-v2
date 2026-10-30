@@ -37,6 +37,12 @@ const DiffusionCard = ({ diffusion }: { diffusion: DiffusionRow }) => (
       </div>
     </header>
 
+    {diffusion.error && (
+      <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        {diffusion.error}
+      </p>
+    )}
+
     <div className="flex items-center gap-2 text-xs">
       <span className="w-16 shrink-0 text-muted-foreground">Pipeline</span>
       {diffusion.pipeline ? <Badge>{diffusion.pipeline.name}</Badge> : '-'}
