@@ -32,6 +32,8 @@ export const STOPPABLE_STATUSES = ['active', 'pending', 'sending', 'failed'] as 
 export const isStoppable = (status: string) =>
   (STOPPABLE_STATUSES as readonly string[]).includes(status);
 
+export const isResumable = (status: string) => status === 'stopped';
+
 const id = z.number({ error: 'Debe ser un número' }).int('Debe ser un entero').min(1);
 
 const startAt = z.iso.datetime({ offset: true, error: 'Fecha inválida' });
