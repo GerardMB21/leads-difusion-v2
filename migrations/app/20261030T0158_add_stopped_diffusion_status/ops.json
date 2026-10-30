@@ -1,0 +1,99 @@
+[
+  {
+    "id": "dropCheckConstraint.Diffusion.Diffusion_status_check_4be23e0f",
+    "label": "Drop check constraint \"Diffusion_status_check_4be23e0f\" on \"Diffusion\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Diffusion_status_check_4be23e0f",
+        "table": "Diffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Diffusion_status_check_4be23e0f\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Diffusion_status_check_4be23e0f",
+          "public",
+          "\"public\".\"Diffusion\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "constraint \"Diffusion_status_check_4be23e0f\" on \"Diffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"Diffusion_status_check_4be23e0f\"",
+        "sql": "ALTER TABLE \"public\".\"Diffusion\" DROP CONSTRAINT \"Diffusion_status_check_4be23e0f\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Diffusion_status_check_4be23e0f\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Diffusion_status_check_4be23e0f",
+          "public",
+          "\"public\".\"Diffusion\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Diffusion_status_check_4be23e0f\" on \"Diffusion\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Diffusion.Diffusion_status_check_007991d5",
+    "label": "Add check constraint \"Diffusion_status_check_007991d5\" on \"Diffusion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Diffusion_status_check_007991d5",
+        "table": "Diffusion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Diffusion_status_check_007991d5\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Diffusion_status_check_007991d5",
+          "public",
+          "\"public\".\"Diffusion\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Diffusion_status_check_007991d5\" on \"Diffusion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Diffusion_status_check_007991d5\"",
+        "sql": "ALTER TABLE \"public\".\"Diffusion\" ADD CONSTRAINT \"Diffusion_status_check_007991d5\" CHECK (\"status\" IN ('active', 'pending', 'cancelled', 'sending', 'completed', 'failed', 'stopped'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify check constraint \"Diffusion_status_check_007991d5\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4)) AS \"result\"",
+        "params": [
+          "Diffusion_status_check_007991d5",
+          "public",
+          "\"public\".\"Diffusion\"",
+          "c"
+        ]
+      }
+    ]
+  }
+]

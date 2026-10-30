@@ -93,6 +93,7 @@ enum DiffusionStatus {
   sending = "sending"
   completed    = "completed"
   failed  = "failed"
+  stopped = "stopped"
 }
 
 model Diffusion {

@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'5d130a7928343ebc3266554f73e455c648419759b6fc3b028b8dab17577cfc2a'>;
+  StorageHashBase<'3bff2f2df7518f0c604d49ad3325910fe9f7f1916fe31552005661ff06ffd2c3'>;
 export type ExecutionHash =
   ExecutionHashBase<'d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7'>;
 export type ProfileHash =
@@ -243,8 +243,10 @@ type FieldTypeOverrides = {
     readonly models: {
       readonly Diffusion: {
         readonly status: {
-          readonly output: 'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed';
-          readonly input: 'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed';
+          readonly output:
+            'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed' | 'stopped';
+          readonly input:
+            'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed' | 'stopped';
         };
       };
       readonly LeadInDiffusion: {
@@ -274,8 +276,10 @@ type ColumnTypeOverrides = {
   readonly public: {
     readonly Diffusion: {
       readonly status: {
-        readonly output: 'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed';
-        readonly input: 'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed';
+        readonly output:
+          'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed' | 'stopped';
+        readonly input:
+          'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed' | 'stopped';
       };
     };
     readonly LeadInDiffusion: {
@@ -1419,6 +1423,7 @@ type ContractBase = Omit<
                 'sending',
                 'completed',
                 'failed',
+                'stopped',
               ];
             };
             readonly LeadInDiffusionStatus: {
@@ -2329,6 +2334,7 @@ type ContractBase = Omit<
               { readonly name: 'sending'; readonly value: 'sending' },
               { readonly name: 'completed'; readonly value: 'completed' },
               { readonly name: 'failed'; readonly value: 'failed' },
+              { readonly name: 'stopped'; readonly value: 'stopped' },
             ];
           };
           readonly LeadInDiffusionStatus: {
@@ -2349,6 +2355,7 @@ type ContractBase = Omit<
             { readonly name: 'sending'; readonly value: 'sending' },
             { readonly name: 'completed'; readonly value: 'completed' },
             { readonly name: 'failed'; readonly value: 'failed' },
+            { readonly name: 'stopped'; readonly value: 'stopped' },
           ];
           readonly LeadInDiffusionStatus: readonly [
             { readonly name: 'pending'; readonly value: 'pending' },

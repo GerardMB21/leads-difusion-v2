@@ -75,6 +75,10 @@
               {
                 "name": "failed",
                 "value": "failed"
+              },
+              {
+                "name": "stopped",
+                "value": "stopped"
               }
             ]
           },
@@ -1452,8 +1456,8 @@
             "Diffusion": {
               "checks": [
                 {
-                  "expression": "\"status\" IN ('active', 'pending', 'cancelled', 'sending', 'completed', 'failed')",
-                  "name": "Diffusion_status_check_4be23e0f",
+                  "expression": "\"status\" IN ('active', 'pending', 'cancelled', 'sending', 'completed', 'failed', 'stopped')",
+                  "name": "Diffusion_status_check_007991d5",
                   "prefix": "Diffusion_status_check"
                 }
               ],
@@ -2572,7 +2576,8 @@
                 "cancelled",
                 "sending",
                 "completed",
-                "failed"
+                "failed",
+                "stopped"
               ]
             },
             "LeadInDiffusionStatus": {
@@ -2590,7 +2595,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "5d130a7928343ebc3266554f73e455c648419759b6fc3b028b8dab17577cfc2a"
+    "storageHash": "3bff2f2df7518f0c604d49ad3325910fe9f7f1916fe31552005661ff06ffd2c3"
   },
   "execution": {
     "executionHash": "d40b3883f83bca55da8f5068d49f0976b5a33b5a5add7b51e07a84577982d8a7",

@@ -11,6 +11,7 @@ const STYLES: Record<DiffusionStatus, string> = {
   completed: 'bg-green-500/15 text-green-700 dark:text-green-300',
   cancelled: 'bg-slate-500/15 text-slate-700 dark:text-slate-300',
   failed: 'bg-red-500/15 text-red-700 dark:text-red-300',
+  stopped: 'bg-orange-500/15 text-orange-700 dark:text-orange-300',
 };
 
 const StatusBadge = ({ status }: { status: DiffusionStatus }) => (

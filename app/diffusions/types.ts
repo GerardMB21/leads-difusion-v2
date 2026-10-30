@@ -2,7 +2,7 @@ import type { BaseModel } from '@/lib/types';
 import type { LeadTag } from '@/app/pipelines/types';
 
 export type DiffusionStatus =
-  'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed';
+  'active' | 'pending' | 'cancelled' | 'sending' | 'completed' | 'failed' | 'stopped';
 
 export type LeadInDiffusionStatus = 'pending' | 'sending' | 'sent' | 'failed';
 

@@ -9,6 +9,7 @@ export const DIFFUSION_STATUSES = [
   { value: 'completed', label: 'Completada' },
   { value: 'cancelled', label: 'Cancelada' },
   { value: 'failed', label: 'Fallida' },
+  { value: 'stopped', label: 'Detenida' },
 ] as const;
 
 export const diffusionStatusSchema = z.enum([
@@ -18,6 +19,7 @@ export const diffusionStatusSchema = z.enum([
   'completed',
   'cancelled',
   'failed',
+  'stopped',
 ]);
 
 export const CANCELLABLE_STATUSES = ['active', 'pending', 'sending', 'failed'] as const;
